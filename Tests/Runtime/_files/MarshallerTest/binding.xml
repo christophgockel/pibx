@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<binding>
+  <binding>
+    <mapping class="Collection" name="Collection">
+      <collection name="books" get-method="getBooks" set-method="setBooks">
+        <structure map-as="bookType" name="book"/>
+      </collection>
+    </mapping>
+    <mapping class="BookType" abstract="true" type-name="bookType">
+      <value style="element" name="name" get-method="getName" set-method="setName"/>
+      <value style="element" name="ISBN" get-method="getISBN" set-method="setISBN"/>
+      <value style="element" name="price" get-method="getPrice" set-method="setPrice"/>
+      <collection name="authors" get-method="getAuthorNames" set-method="setAuthorNames">
+        <value style="element" name="authorName" type="string"/>
+      </collection>
+      <value style="element" name="description" get-method="getDescription" set-method="setDescription"/>
+      <structure name="promotion">
+        <structure ordered="false" choice="true">
+          <value style="element" name="Discount" test-method="ifPromotionDiscount" get-method="getPromotionDiscount" set-method="setPromotionDiscount" usage="optional"/>
+          <value style="element" name="None" test-method="ifPromotionNone" get-method="getPromotionNone" set-method="setPromotionNone" usage="optional"/>
+        </structure>
+      </structure>
+      <value style="element" name="publicationDate" get-method="getPublicationDate" set-method="setPublicationDate"/>
+      <value style="element" name="bookCategory" get-method="getBookCategory" set-method="setBookCategory"/>
+    </mapping>
+  </binding>
+</binding>
