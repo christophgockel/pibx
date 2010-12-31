@@ -85,7 +85,7 @@ class PiBX_Runtime_Binding {
     }
 
     private function parseBinding(SimpleXMLElement $xml) {
-        $nodes = $xml->xpath('/binding/binding/*');
+        $nodes = $xml->xpath('/binding/*');
 
         foreach ($nodes as $mapping) {
             $attributes = $mapping->attributes();
@@ -231,11 +231,11 @@ class PiBX_Runtime_Binding {
             return '';
         }
         // first lookup in global types
-        $typeNodes = $this->xml->xpath('/binding/binding/mapping[@name="'.$name.'"]');
+        $typeNodes = $this->xml->xpath('/binding/mapping[@name="'.$name.'"]');
 
         if (count($typeNodes) == 0) {
             // second lookup in abstract types
-            $typeNodes = $this->xml->xpath('/binding/binding/mapping[@type-name="'.$name.'"]');
+            $typeNodes = $this->xml->xpath('/binding/mapping[@type-name="'.$name.'"]');
 
             if (count($typeNodes) == 0) {
                 return '';
