@@ -33,8 +33,8 @@ require_once 'PiBX/Runtime/Binding.php';
 class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
 
     public function testBooksBinding() {
-        $filepath = dirname(__FILE__) . '/_files/BindingTest';
-        $bindingFile = $filepath . '/booksBinding.xml';
+        $filepath = dirname(__FILE__) . '/../_files/Books';
+        $bindingFile = $filepath . '/binding.xml';
         $expectedXml = file_get_contents($bindingFile);
         
         $binding = new PiBX_Runtime_Binding($bindingFile);

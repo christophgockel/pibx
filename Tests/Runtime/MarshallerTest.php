@@ -30,8 +30,8 @@ require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../bootstrap.php';
 require_once 'PiBX/Runtime/Binding.php';
 require_once 'PiBX/Runtime/Marshaller.php';
-require_once dirname(__FILE__) . '/_files/MarshallerTest/BookType.php';
-require_once dirname(__FILE__) . '/_files/MarshallerTest/Collection.php';
+require_once dirname(__FILE__) . '/../_files/Books/BookType.php';
+require_once dirname(__FILE__) . '/../_files/Books/Collection.php';
 
 class PiBX_MarshallerTest extends PHPUnit_Framework_TestCase {
 
@@ -74,7 +74,7 @@ class PiBX_MarshallerTest extends PHPUnit_Framework_TestCase {
   </books>
 </Collection>
 XML;
-        $filepath = dirname(__FILE__) . '/_files/MarshallerTest';
+        $filepath = dirname(__FILE__) . '/../_files/Books/';
         $binding = new PiBX_Runtime_Binding($filepath . '/binding.xml');
 		$marshaller = new PiBX_Runtime_Marshaller($binding);
 
