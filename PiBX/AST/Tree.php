@@ -57,6 +57,7 @@ abstract class PiBX_AST_Tree {
 
     public function add(PiBX_AST_Tree $tree) {
         $this->children[] = $tree;
+        return $this;
     }
 
     public function get($index) {
