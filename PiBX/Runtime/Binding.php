@@ -102,7 +102,7 @@ class PiBX_Runtime_Binding {
             //TODO set abstract/root type?
             if (isset($attributes['abstract'])) {
                 $val = (string)$attributes['abstract'];
-                if ($val === 'true')
+                if ($val !== 'true')
                     $ast->setAsRoot();
             }
             $class = (string)$attributes['class'];
