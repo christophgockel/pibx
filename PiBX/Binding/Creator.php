@@ -55,7 +55,6 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         $this->xml = '';
         
         $this->astNodes = array();
-        $this->rootNodes;
     }
 
     public function getXml() {
