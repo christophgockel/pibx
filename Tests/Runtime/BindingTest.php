@@ -64,21 +64,21 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
         $expectedAst2 = new PiBX_AST_Type('BookType', 'BookType');
         $expectedAst2->setClassName('BookType');
 
-        $value1 = new PiBX_AST_Value('name');
+        $value1 = new PiBX_AST_TypeAttribute('name');
         $value1->setStyle('element');
         $value1->setGetMethod('getName');
         $value1->setSetMethod('setName');
 
         $expectedAst2->add($value1);
 
-        $value2 = new PiBX_AST_Value('ISBN');
+        $value2 = new PiBX_AST_TypeAttribute('ISBN');
         $value2->setStyle('element');
         $value2->setGetMethod('getISBN');
         $value2->setSetMethod('setISBN');
 
         $expectedAst2->add($value2);
 
-        $value3 = new PiBX_AST_Value('price');
+        $value3 = new PiBX_AST_TypeAttribute('price');
         $value3->setStyle('element');
         $value3->setGetMethod('getPrice');
         $value3->setSetMethod('setPrice');
@@ -93,7 +93,7 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
 
         $expectedAst2->add($value4);
 
-        $value5 = new PiBX_AST_Value('description');
+        $value5 = new PiBX_AST_TypeAttribute('description');
         $value5->setStyle('element');
         $value5->setGetMethod('getDescription');
         $value5->setSetMethod('setDescription');
@@ -106,7 +106,7 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
         $value6Item1->setTestMethod('ifPromotionDiscount');
         $value6Item1->setGetMethod('getPromotionDiscount');
         $value6Item1->setSetMethod('setPromotionDiscount');
-        $value6Item1Value = new PiBX_AST_Value('Discount');
+        $value6Item1Value = new PiBX_AST_TypeAttribute('Discount');
         $value6Item1Value->setStyle('element');
         $value6Item1Value->setGetMethod('getPromotionDiscount');
         $value6Item1Value->setSetMethod('setPromotionDiscount');
@@ -116,7 +116,7 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
         $value6Item2->setTestMethod('ifPromotionNone');
         $value6Item2->setGetMethod('getPromotionNone');
         $value6Item2->setSetMethod('setPromotionNone');
-        $value6Item2Value = new PiBX_AST_Value('None');
+        $value6Item2Value = new PiBX_AST_TypeAttribute('None');
         $value6Item2Value->setStyle('element');
         $value6Item2Value->setGetMethod('getPromotionNone');
         $value6Item2Value->setSetMethod('setPromotionNone');
@@ -127,14 +127,14 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
 
         $expectedAst2->add($value6);
 
-        $value7 = new PiBX_AST_Value('publicationDate');
+        $value7 = new PiBX_AST_TypeAttribute('publicationDate');
         $value7->setStyle('element');
         $value7->setGetMethod('getPublicationDate');
         $value7->setSetMethod('setPublicationDate');
 
         $expectedAst2->add($value7);
 
-        $value8 = new PiBX_AST_Value('bookCategory');
+        $value8 = new PiBX_AST_TypeAttribute('bookCategory');
         $value8->setStyle('element');
         $value8->setGetMethod('getBookCategory');
         $value8->setSetMethod('setBookCategory');

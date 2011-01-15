@@ -34,6 +34,9 @@ require_once 'PiBX/AST/Tree.php';
  */
 class PiBX_AST_TypeAttribute extends PiBX_AST_Tree {
     private $type;
+    private $style;
+    private $getMethod;
+    private $setMethod;
 
     public function  __construct($name = '', $xmlName = '') {
         parent::__construct($name, $xmlName);
@@ -45,6 +48,26 @@ class PiBX_AST_TypeAttribute extends PiBX_AST_Tree {
     }
     public function getType() {
         return $this->type;
+    }
+    public function setStyle($style) {
+        $this->style = $style;
+    }
+    public function getStyle() {
+        return $this->style;
+    }
+
+    public function setGetMethod($methodName) {
+        $this->getMethod = $methodName;
+    }
+    public function getGetMethod() {
+        return $this->getMethod;
+    }
+
+    public function setSetMethod($methodName) {
+        $this->setMethod = $methodName;
+    }
+    public function getSetMethod() {
+        return $this->setMethod;
     }
 
     public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {

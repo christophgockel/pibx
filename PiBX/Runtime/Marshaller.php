@@ -141,7 +141,7 @@ class PiBX_Runtime_Marshaller {
                     $xml .= $this->marshalObject($object, $currentChoice);
                 }
             }
-        } elseif ($ast instanceof PiBX_AST_Value) {
+        } elseif ($ast instanceof PiBX_AST_TypeAttribute) {
             $getter = $ast->getGetMethod();
             $value = $object->$getter();
             $xml .= $value;

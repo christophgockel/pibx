@@ -36,7 +36,6 @@ require_once 'PiBX/AST/StructureType.php';
 require_once 'PiBX/AST/Tree.php';
 require_once 'PiBX/AST/Type.php';
 require_once 'PiBX/AST/TypeAttribute.php';
-require_once 'PiBX/AST/Value.php';
 /**
  * The PiBX_Runtime_Binding is an object-oriented approach/access to a given
  * <code>binding.xml</xml> file.
@@ -175,7 +174,7 @@ class PiBX_Runtime_Binding {
                         $nameAttribute = (string)$attributes['name'];
 
                         $newPart = new PiBX_AST_StructureElement($name);
-                        $newValue = new PiBX_AST_Value($nameAttribute);
+                        $newValue = new PiBX_AST_TypeAttribute($nameAttribute);
 
                         $style = (string)$attributes['style'];
                         $testMethod = (string)$attributes['test-method'];
@@ -203,7 +202,7 @@ class PiBX_Runtime_Binding {
                 if ($part instanceof PiBX_AST_Collection) {
                     $newPart = new PiBX_AST_CollectionItem($name);
                 } elseif ($part instanceof PiBX_AST_Type) {
-                    $newPart = new PiBX_AST_Value($name);
+                    $newPart = new PiBX_AST_TypeAttribute($name);
                     $style = (string)$attributes['style'];
                     $setMethod = (string)$attributes['set-method'];
                     $getMethod = (string)$attributes['get-method'];
