@@ -43,10 +43,10 @@ class PiBX_AST_TypeAttribute extends PiBX_AST_Tree {
 
     }
 
-    public function setType($type) {
+    public function setAttributeType($type) {
         $this->type = $type;
     }
-    public function getType() {
+    public function getAttributeType() {
         return $this->type;
     }
     public function setStyle($style) {
