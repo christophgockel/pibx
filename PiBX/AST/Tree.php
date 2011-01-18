@@ -53,7 +53,10 @@ abstract class PiBX_AST_Tree {
     public function setParent(PiBX_AST_Tree $tree) {
         $this->parent = $tree;
     }
-    public function getParent() {return $this->parent;}
+
+    public function getParent() {
+        return $this->parent;
+    }
 
     public function add(PiBX_AST_Tree $tree) {
         $this->children[] = $tree;

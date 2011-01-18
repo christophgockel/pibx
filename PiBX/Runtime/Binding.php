@@ -97,7 +97,7 @@ class PiBX_Runtime_Binding {
             }
             $class = (string)$attributes['class'];
             
-            $ast = new PiBX_AST_Type($name, $class);
+            $ast = new PiBX_AST_Type($name);
             //TODO set abstract/root type?
             if (isset($attributes['abstract'])) {
                 $val = (string)$attributes['abstract'];
@@ -141,7 +141,7 @@ class PiBX_Runtime_Binding {
                     $xsdType = (string)$attributes['map-as'];
                     $newPart = new PiBX_AST_Structure($name);
                     // this is a structual reference
-                    $newPart->setXsdType($xsdType);
+//                    $newPart->setXsdType($xsdType);
                     //$newPart->setClassName($class);
                 } elseif ($part instanceof PiBX_AST_Type) {
                     // a structure in a type is the structure "container"
