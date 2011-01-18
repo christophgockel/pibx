@@ -26,55 +26,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once 'PiBX/AST/Tree.php';
-require_once 'PiBX/AST/StructureType.php';
+require_once dirname(__FILE__) . '/bootstrap.php';
+require_once 'PHPUnit/Framework.php';
+require_once 'Tests/CodeGen/Suite.php';
+require_once 'Tests/Runtime/Suite.php';
 /**
- * A Structure represents an (un)ordered set of types/elements.
- * Think of an abstraction of ordered and choice complex-types in a schema.
+ * Test-Suite of PiBX.
  *
  * @author Christoph Gockel
  */
-class PiBX_AST_Structure extends PiBX_AST_Tree {
-    /**
-     * @var PiBX_AST_StructureType An Enum, what type this structure is
-     */
-    private $type;
+class PiBX_Suite extends PHPUnit_Framework_TestSuite {
 
-    public function  __construct($name = '') {
-        parent::__construct($name);
-    }
+    public static function suite() {
+        $suite = new PHPUnit_Framework_TestSuite();
 
-    public function setType(PiBX_AST_StructureType $type) {
-        $this->type = $type;
-    }
+        $suite->addTestSuite('PiBX_CodeGen_Suite');
+        $suite->addTestSuite('PiBX_Runtime_Suite');
 
-    public function getType() {
-        return $this->type;
-    }
-
-    public function getName() {
-        // Normally a Structure itself does not have a name.
-        // But it can have a name when the current AST-composite
-        // is built off the binding.xml
-        if ($this->name !== '') {
-            // Binding -> AST
-            return $this->name;
-        } else {
-            // XSD -> AST
-            return $this->getParent()->getName();
-        }
-    }
-
-    public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {
-        if ($v->visitStructureEnter($this)) {
-            foreach ($this->children as $child) {
-                if ($child->accept($v) === false) {
-                    break;
-                }
-            }
-        }
-
-        return $v->visitStructureLeave($this);
-        //poopoo
+        return $suite;
     }
 }

@@ -33,7 +33,7 @@ require_once 'PiBX/Runtime/Marshaller.php';
 require_once dirname(__FILE__) . '/../_files/Books/BookType.php';
 require_once dirname(__FILE__) . '/../_files/Books/Collection.php';
 
-class PiBX_MarshallerTest extends PHPUnit_Framework_TestCase {
+class PiBX_Runtime_MarshallerTest extends PHPUnit_Framework_TestCase {
 
     public function testTwoBooks() {
         $expectedXml = <<<XML
@@ -105,7 +105,7 @@ XML;
         $c->setBooks($list);
 
         $xml = $marshaller->marshal($c);
-
+        
         $this->assertEquals($expectedXml, $xml);
 
         $dom = new DOMDocument();
@@ -113,5 +113,3 @@ XML;
         $this->assertTrue($dom->schemaValidate($filepath . '/books.xsd'));
     }
 }
-
-?>
