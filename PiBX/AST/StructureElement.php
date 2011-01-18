@@ -38,8 +38,8 @@ class PiBX_AST_StructureElement extends PiBX_AST_Tree {
     protected $getMethod;
     protected $setMethod;
 
-    public function  __construct($name = '') {
-        parent::__construct($name);
+    public function  __construct($name = '', $type = '') {
+        parent::__construct($name, $type);
     }
 
     public function setTestMethod($methodName) {

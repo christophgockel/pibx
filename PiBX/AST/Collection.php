@@ -52,7 +52,6 @@ class PiBX_AST_Collection extends PiBX_AST_Tree {
     }
 
     public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {
-        //$v->visitCollection($this);
         if ($v->visitCollectionEnter($this)) {
             foreach ($this->children as $child) {
                 if ($child->accept($v) === false) {

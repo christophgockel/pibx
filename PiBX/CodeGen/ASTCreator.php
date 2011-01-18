@@ -62,15 +62,6 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
         $this->typeUsage = $typeUsage;
     }
 
-    // TEMPORARY!
-    public function getStack() {
-        return $this->stack;
-    }
-    //TEMPORARY
-    public function getCurrentType() {
-//        return $this->currentType;
-    }
-
     public function getTypeList() {
         return $this->typeList;
     }
@@ -192,7 +183,7 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
                 array_push($this->stack, $sf);
             } elseif ($this->currentType() instanceof PiBX_AST_Collection) {
                 $ci = new PiBX_AST_CollectionItem($tree->getName());
-                $ci->setXsdType($tree->getType());
+                $ci->setType($tree->getType());
                 $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $ci);
                 array_push($this->stack, $sf);
             } elseif ($this->currentType() instanceof PiBX_AST_Structure) {

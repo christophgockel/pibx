@@ -46,8 +46,8 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
      */
     private $isRootType;
 
-    public function  __construct($name = '', $xmlName = '') {
-        parent::__construct($name, $xmlName);
+    public function  __construct($name = '', $type = '') {
+        parent::__construct($name, $type);
 
         $this->isRootType = false;
     }

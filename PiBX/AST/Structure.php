@@ -38,18 +38,18 @@ class PiBX_AST_Structure extends PiBX_AST_Tree {
     /**
      * @var PiBX_AST_StructureType An Enum, what type this structure is
      */
-    private $type;
+    private $structureType;
 
-    public function  __construct($name = '') {
-        parent::__construct($name);
+    public function  __construct($name = '', $type = '') {
+        parent::__construct($name, $type);
     }
 
-    public function setType(PiBX_AST_StructureType $type) {
-        $this->type = $type;
+    public function setStructureType(PiBX_AST_StructureType $type) {
+        $this->structureType = $type;
     }
 
-    public function getType() {
-        return $this->type;
+    public function getStructureType() {
+        return $this->structureType;
     }
 
     public function getName() {

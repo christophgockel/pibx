@@ -33,22 +33,15 @@ require_once 'PiBX/AST/Tree.php';
  * @author Christoph Gockel
  */
 class PiBX_AST_TypeAttribute extends PiBX_AST_Tree {
-    private $type;
     private $style;
     private $getMethod;
     private $setMethod;
 
-    public function  __construct($name = '', $xmlName = '') {
-        parent::__construct($name, $xmlName);
+    public function  __construct($name = '', $type = '') {
+        parent::__construct($name, $type);
 
     }
 
-    public function setAttributeType($type) {
-        $this->type = $type;
-    }
-    public function getAttributeType() {
-        return $this->type;
-    }
     public function setStyle($style) {
         $this->style = $style;
     }

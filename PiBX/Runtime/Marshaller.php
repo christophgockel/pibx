@@ -176,9 +176,9 @@ class PiBX_Runtime_Marshaller {
         if (count($this->asts) == 0) {
             $this->asts = $this->binding->parse();
         }
-
+        
         foreach ($this->asts as &$ast) {
-            $name = $ast->getClassName();
+            $name = $ast->getType();//--$ast->getClassName();
 
             if ($name == $classname) {
                 return $ast;

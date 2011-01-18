@@ -92,20 +92,19 @@ class PiBX_Runtime_Binding {
             $name = (string)$attributes['name'];
             if ($name == '') {
                 // abstract type?
-                $abstractName = (string)$attributes['type-name'];
-                $name = $this->getClassnameForName($abstractName);
+                $name = (string)$attributes['type-name'];
+                //$name = $this->getClassnameForName($abstractName);
             }
             $class = (string)$attributes['class'];
             
             $ast = new PiBX_AST_Type($name);
-            //TODO set abstract/root type?
-            if (isset($attributes['abstract'])) {
-                $val = (string)$attributes['abstract'];
-                if ($val !== 'true')
-                    $ast->setAsRoot();
+            
+            $abstract = (string)$attributes['abstract'];
+            if ($abstract !== 'true') {
+                $ast->setAsRoot();
             }
-            $class = (string)$attributes['class'];
-            $ast->setClassName($class);
+            
+            $ast->setType($class);
             
             $this->parseMapping($mapping, $ast);
             
@@ -137,12 +136,10 @@ class PiBX_Runtime_Binding {
                 $name = (string)$attributes['name'];
 
                 if ($part instanceof PiBX_AST_Collection) {
-                    // a structure in a collection is a reference to this structure
-                    $xsdType = (string)$attributes['map-as'];
+                    // a structure in a collection is a reference to the actual structure
+                    $referencedType = (string)$attributes['map-as'];
                     $newPart = new PiBX_AST_Structure($name);
-                    // this is a structual reference
-//                    $newPart->setXsdType($xsdType);
-                    //$newPart->setClassName($class);
+                    $newPart->setType($referencedType);
                 } elseif ($part instanceof PiBX_AST_Type) {
                     // a structure in a type is the structure "container"
                     $newPart = new PiBX_AST_Structure($name);
@@ -247,28 +244,5 @@ class PiBX_Runtime_Binding {
         $classname = (string)$attributes['class'];
 
         return $classname;
-    }
-
-    /**
-     * Returns the corresponding AST for a given classname.
-     *
-     * @param $classname string The classname
-     * @return PiBX_AST_Tree
-     * @throws RuntimeException When no AST can be found for the given classname
-     */
-    private function getASTForElement($elementname) {
-        if (count($this->asts) == 0) {
-            $this->asts = $this->parse();
-        }
-
-        foreach ($this->asts as &$ast) {
-            $name = $ast->getClassName();
-
-            if ($name == $classname) {
-                return $ast;
-            }
-        }
-
-        throw new RuntimeException('Couldn\'t find AST for class "' . $classname . '"');
     }
 }

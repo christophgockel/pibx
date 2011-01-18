@@ -40,18 +40,17 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
         $binding = new PiBX_Runtime_Binding($bindingFile);
 
         $asts = $binding->parse();
-        print_r($asts);
         $this->assertEquals(2, count($asts));
 
         // first tree/type
         $expectedAst1 = new PiBX_AST_Type('Collection');
-        //$expectedAst1->setAsRoot();
-        $expectedAst1->setClassName('Collection');
+        $expectedAst1->setType('Collection');
+        $expectedAst1->setAsRoot();
         $collection = new PiBX_AST_Collection('books');
         $collection->setGetMethod('getBooks');
         $collection->setSetMethod('setBooks');
         $structure = new PiBX_AST_Structure('book');
-        //$structure->setXsdType('bookType');
+        $structure->setType('bookType');
 
         $expectedAst1->add(
             $collection->add(
@@ -62,8 +61,8 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expectedAst1, $asts[0]);
 
         // second tree/type
-        $expectedAst2 = new PiBX_AST_Type('BookType');
-        $expectedAst2->setClassName('BookType');
+        $expectedAst2 = new PiBX_AST_Type('bookType');
+        $expectedAst2->setType('BookType');
 
         $value1 = new PiBX_AST_TypeAttribute('name');
         $value1->setStyle('element');

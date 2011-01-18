@@ -33,23 +33,29 @@
  * @author Christoph Gockel
  */
 abstract class PiBX_AST_Tree {
+    /**
+     * @var string Name of the current node
+     */
     protected $name;
+    /**
+     * @var PiBX_AST_Tree[] Child-nodes (composite)
+     */
     protected $children;
-
+    /**
+     * @var PiBX_AST_Tree The nodes parent-node
+     */
     protected $parent;
-    protected $xsdType;
-    protected $className;
+    /**
+     * @var string The type of the current node (e.g. "string", "long" for XSD base types or names of complexTypes in a schema).
+     */
+    protected $type;
 
-    public function  __construct($name = '', $xmlName = '', $className = '') {
+    public function  __construct($name = '', $type = '') {
         $this->name = $name;
         $this->children = array();
-        $this->xsdType = $xmlName;
-        $this->className = $className;
+        $this->type = $type;
     }
 
-    /**
-     * experimental
-     */
     public function setParent(PiBX_AST_Tree $tree) {
         $this->parent = $tree;
     }
@@ -61,6 +67,7 @@ abstract class PiBX_AST_Tree {
     public function add(PiBX_AST_Tree $tree) {
         $this->children[] = $tree;
         $tree->setParent($this);
+        
         return $this;
     }
 
@@ -99,20 +106,12 @@ abstract class PiBX_AST_Tree {
         return $this->name;
     }
 
-    public function setXsdType($xsdType) {
-        $this->xsdType = $xsdType;
+    public function setType($type) {
+        $this->type = $type;
     }
 
-    public function getXsdType() {
-        return $this->xsdType;
-    }
-
-    public function setClassName($className) {
-        $this->className = $className;
-    }
-
-    public function getClassName() {
-        return $this->className;
+    public function getType() {
+        return $this->type;
     }
 
     abstract function accept(PiBX_AST_Visitor_VisitorAbstract $v);

@@ -70,10 +70,6 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
     public function visitCollectionEnter(PiBX_AST_Tree $tree) {
         $name = $tree->getParent()->getName();
         
-        if ($tree->countChildren() == 1) {
-
-        }
-        
         $this->xml .= '<collection name="'.$name.'"';
         $getter = PiBX_Binding_Names::createGetterNameFor($tree);
         $setter = PiBX_Binding_Names::createSetterNameFor($tree);
@@ -91,13 +87,13 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
     public function visitCollectionItem(PiBX_AST_Tree $tree) {
         if ($tree->getParent()->countChildren() == 1) {
-            if (in_array($tree->getXsdType(), $this->xsdBaseTypes)) {
-                $this->xml .= '<value style="element" name="'.$tree->getName().'" type="'.$tree->getXsdType().'"/>';
+            if (in_array($tree->getType(), $this->xsdBaseTypes)) {
+                $this->xml .= '<value style="element" name="'.$tree->getName().'" type="'.$tree->getType().'"/>';
             } else {
-                $this->xml .= '<structure map-as="'.$tree->getXsdType().'" name="'.$tree->getName().'"/>';
+                $this->xml .= '<structure map-as="'.$tree->getType().'" name="'.$tree->getName().'"/>';
             }
         } else {
-            //$this->xml .= '<structure map-as="" name="'.$tree->getName().'"/>';
+            throw new RuntimeException('Collections with > 1 children are currently not supported');
         }
         
         return true;
