@@ -156,7 +156,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     }
     
     public function visitStructureEnter(PiBX_AST_Tree $tree) {
-        $structureType = $tree->getType();
+        $structureType = $tree->getStructureType();
         
         if ($structureType === PiBX_AST_StructureType::CHOICE()) {
             $name = $tree->getParent()->getName();
@@ -189,7 +189,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         return true;
     }
     public function visitStructureLeave(PiBX_AST_Tree $tree) {
-        if ($tree->getType() == PiBX_AST_StructureType::CHOICE()) {
+        if ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
             $this->xml .= '</structure>';
         }
         $this->xml .= "</structure>";

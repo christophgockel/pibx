@@ -312,7 +312,7 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
         $this->log($tree->getLevel() . " ". str_pad("  ", $tree->getLevel()) . " choice");
         
         $s = new PiBX_AST_Structure();
-        $s->setType(PiBX_AST_StructureType::CHOICE());
+        $s->setStructureType(PiBX_AST_StructureType::CHOICE());
         $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $s);
         array_push($this->stack, $sf);
 
