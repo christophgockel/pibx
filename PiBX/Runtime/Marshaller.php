@@ -26,7 +26,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once 'PiBX/AST/Visitor/VisitorAbstract.php';
 require_once 'PiBX/AST/Tree.php';
 require_once 'PiBX/AST/Collection.php';
 require_once 'PiBX/AST/CollectionItem.php';
@@ -57,17 +56,18 @@ class PiBX_Runtime_Marshaller {
      */
     private $xml;
 
-    /**
-     * @var PiBX_AST_Tree[] Holds all ASTs of the current Binding
-     */
-    private $asts;
-
     public function __construct(PiBX_Runtime_Binding $binding) {
         $this->binding = $binding;
         $this->xml = '';
-        $this->asts = array();
     }
 
+    /**
+     * Converts the given $object into its XML representation.
+     * 
+     * @param object $object
+     * @return string
+     * @throws InvalidArgumentException When the given parameter is not an object.
+     */
     public function marshal($object) {
         if (!is_object($object)) {
             throw new InvalidArgumentException('Cannot marshal a non-object');
@@ -80,6 +80,14 @@ class PiBX_Runtime_Marshaller {
         return $this->prettyPrint($xml);
     }
 
+    /**
+     * Converts the given parameter $object into its XML representation corresponding
+     * to its AST.
+     * 
+     * @param object $object The object to marshal
+     * @param PiBX_AST_Tree $ast object's AST
+     * @return string
+     */
     private function marshalObject($object, PiBX_AST_Tree $ast) {
         $astName = $ast->getName();
         $xml = '';
@@ -89,69 +97,19 @@ class PiBX_Runtime_Marshaller {
         }
 
         if ( $ast instanceof PiBX_AST_Type ) {
-            if ($ast->hasChildren()) {
-                $childrenCount = $ast->countChildren();
-                for ($i = 0; $i < $childrenCount; $i++) {
-                    $child = $ast->get($i);
-                    $xml .= $this->marshalObject($object, $child);
-                }
-            }
+            $xml .= $this->marshalType($object, $ast);
         } elseif ($ast instanceof PiBX_AST_Collection) {
-            $getter = $ast->getGetMethod();
-            $collectionItems = $object->$getter();
-
-            foreach ($collectionItems as &$item) {
-                if ($ast->hasChildren()) {
-                    $childrenCount = $ast->countChildren();
-
-                    for ($i = 0; $i < $childrenCount; $i++) {
-                        $child = $ast->get($i);
-                        if (is_object($item)) {
-                            // TODO is abstract mapping collection?
-                            $classToMarshal = get_class($item);
-                            $classAst = $this->binding->getASTForClass($classToMarshal);
-                            $structureName = $child->getName();
-                            $classAst->setName($structureName);
-
-                            $xml .= $this->marshalObject($item, $classAst);
-                        } else {
-                            // this collection is just a list of (scalar) values
-                            $xml .= $this->marshalObject($item, $child);
-                        }
-                    }
-                }
-            }
+            $xml .= $this->marshalCollection($object, $ast);
         } elseif ($ast instanceof PiBX_AST_Structure) {
-            if ($ast->getStructureType() === PiBX_AST_StructureType::CHOICE()) {
-                if ($ast->hasChildren()) {
-                    $childrenCount = $ast->countChildren();
-                    $currentChoice = null;
-                    
-                    for ($i = 0; $i < $childrenCount; $i++) {
-                        $child = $ast->get($i);
-
-                        $testMethod = $child->getTestMethod();
-
-                        if ($object->$testMethod()) {
-                            $currentChoice = $child;
-                            break;
-                        }
-                    }
-
-                    $xml .= $this->marshalObject($object, $currentChoice);
-                }
-            }
+            $xml .= $this->marshalStructure($object, $ast);
         } elseif ($ast instanceof PiBX_AST_TypeAttribute) {
-            $getter = $ast->getGetMethod();
-            $value = $object->$getter();
-            $xml .= $value;
+            $xml .= $this->marshalTypeAttribute($object, $ast);
         } elseif ($ast instanceof PiBX_AST_StructureElement) {
-            $getter = $ast->getGetMethod();
-            $value = $object->$getter();
-            $xml .= $value;
+            $xml .= $this->marshalStructureElement($object, $ast);
         } elseif (is_string($object) || ($ast instanceof PiBX_AST_CollectionItem)) {
             $xml .= $object;
         } else {
+            // at the moment this is just a dummy value
             $xml .= get_class($ast);
         }
 
@@ -160,6 +118,90 @@ class PiBX_Runtime_Marshaller {
         }
         
         return $xml;
+    }
+
+    private function marshalType($object, PiBX_AST_Type $ast) {
+        $xml = '';
+        
+        if ($ast->hasChildren()) {
+            $childrenCount = $ast->countChildren();
+            for ($i = 0; $i < $childrenCount; $i++) {
+                $child = $ast->get($i);
+                $xml .= $this->marshalObject($object, $child);
+            }
+        }
+
+        return $xml;
+    }
+
+    private function marshalCollection($object, PiBX_AST_Collection $ast) {
+        $getter = $ast->getGetMethod();
+        $collectionItems = $object->$getter();
+        $xml = '';
+
+        foreach ($collectionItems as &$item) {
+            if ($ast->hasChildren()) {
+                $childrenCount = $ast->countChildren();
+
+                for ($i = 0; $i < $childrenCount; $i++) {
+                    $child = $ast->get($i);
+                    if (is_object($item)) {
+                        // TODO is abstract mapping collection?
+                        $classToMarshal = get_class($item);
+                        $classAst = $this->binding->getASTForClass($classToMarshal);
+                        $structureName = $child->getName();
+                        $classAst->setName($structureName);
+
+                        $xml .= $this->marshalObject($item, $classAst);
+                    } else {
+                        // this collection is just a list of (scalar) values
+                        $xml .= $this->marshalObject($item, $child);
+                    }
+                }
+            }
+        }
+
+        return $xml;
+    }
+
+    private function marshalStructure($object, PiBX_AST_Structure $ast) {
+        $xml = '';
+        
+        if ($ast->getStructureType() === PiBX_AST_StructureType::CHOICE()) {
+            if ($ast->hasChildren()) {
+                $childrenCount = $ast->countChildren();
+                $currentChoice = null;
+
+                for ($i = 0; $i < $childrenCount; $i++) {
+                    $child = $ast->get($i);
+
+                    $testMethod = $child->getTestMethod();
+
+                    if ($object->$testMethod()) {
+                        $currentChoice = $child;
+                        break;
+                    }
+                }
+
+                $xml .= $this->marshalObject($object, $currentChoice);
+            }
+        }
+
+        return $xml;
+    }
+
+    private function marshalTypeAttribute($object, PiBX_AST_TypeAttribute $ast) {
+        $getter = $ast->getGetMethod();
+        $value = $object->$getter();
+        
+        return $value;
+    }
+
+    private function marshalStructureElement($object, PiBX_AST_StructureElement $ast) {
+        $getter = $ast->getGetMethod();
+        $value = $object->$getter();
+
+        return $value;
     }
 
     /**
