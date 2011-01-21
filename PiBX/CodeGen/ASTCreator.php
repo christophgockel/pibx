@@ -163,6 +163,27 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
         }
     }
 
+    public function visitAttributeNode(PiBX_ParseTree_Tree $tree) {
+        $this->plowTypesForLevel($tree->getLevel());
+        $logMessage = $tree->getLevel() . str_pad("  ", $tree->getLevel()) . " attribute (" . $tree->getName() . ")";
+        $this->log($logMessage);
+        
+        if ( !($this->currentType() instanceof PiBX_AST_Type) ) {
+            throw new RuntimeException("Attributes can only be added to types.");
+        }
+        
+        $name = $tree->getName();
+        $type = $tree->getType();
+        
+        $attribute = new PiBX_AST_TypeAttribute($name, $type);
+        $attribute->setStyle('attribute');
+        
+        $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $attribute);
+        array_push($this->stack, $sf);
+
+        $this->lastLevel = $tree->getLevel();
+    }
+
     function visitElementNode(PiBX_ParseTree_Tree $tree) {
         $this->plowTypesForLevel($tree->getLevel());
         $logMessage = $tree->getLevel() . str_pad("  ", $tree->getLevel()) . " element";

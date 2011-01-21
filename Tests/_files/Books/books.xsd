@@ -49,7 +49,7 @@
         </xs:simpleType>
      </xs:element>
   </xs:sequence>
-  <!--<xs:attribute name="itemId" type="xs:string" />-->
+  <xs:attribute name="itemId" type="xs:string" />
 </xs:complexType>
 
 

@@ -26,54 +26,54 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once 'PiBX/AST/Tree.php';
+require_once 'PiBX/ParseTree/Tree.php';
 /**
- * Represents a class attribute/member. It's not an XML-Attribute, it's a class-member.
+ * Represents a <code>&lt;attribute></code>-node of an XML-Schema.
  *
  * @author Christoph Gockel
  */
-class PiBX_AST_TypeAttribute extends PiBX_AST_Tree {
-    private $style;
-    private $getMethod;
-    private $setMethod;
+class PiBX_ParseTree_AttributeNode extends PiBX_ParseTree_Tree {
+    protected $name;
+    protected $type;
+    protected $minOccurs;
+    protected $maxOccurs;
 
-    public function  __construct($name = '', $type = '') {
-        parent::__construct($name, $type);
-        $this->style = 'element';
+    public function  __construct(SimpleXMLElement $xml, $level = 0) {
+        parent::__construct($xml, $level);
+        $attributes = $xml->attributes();
 
-    }
-
-    public function setStyle($style) {
-        $this->style = $style;
-    }
-    public function getStyle() {
-        return $this->style;
-    }
-
-    public function setGetMethod($methodName) {
-        $this->getMethod = $methodName;
-    }
-    public function getGetMethod() {
-        return $this->getMethod;
-    }
-
-    public function setSetMethod($methodName) {
-        $this->setMethod = $methodName;
-    }
-    public function getSetMethod() {
-        return $this->setMethod;
-    }
-
-    public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {
-        if ($v->visitTypeAttributeEnter($this)) {
-            foreach ($this->children as $child) {
-                if ($child->accept($v) === false) {
-                    break;
-                }
-            }
+        $this->name = (string)$attributes['name'];
+        $this->type = (string)$attributes['type'];
+        if (strpos($this->type, ':') !== false) {
+            // remove the namespace prefix
+            $parts = explode(':', $this->type);
+            $this->type = $parts[1];
         }
+        $this->minOccurs = (string)$attributes['minOccurs'];
+        $this->maxOccurs = (string)$attributes['maxOccurs'];
+    }
 
-        return $v->visitTypeAttributeLeave($this);
+    public function getName() {
+        return $this->name;
+    }
 
+    public function getType() {
+        return $this->type;
+    }
+
+    public function getMinOccurs() {
+        return $this->minOccurs;
+    }
+
+    public function getMaxOccurs() {
+        return $this->maxOccurs;
+    }
+
+    public function accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
+        $v->visitAttributeNode($this);
+
+        foreach ($this->children as $child) {
+            $child->accept($v);
+        }
     }
 }

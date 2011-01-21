@@ -47,7 +47,7 @@ class PiBX_CodeGen_SchemaParserTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($parser instanceof PiBX_CodeGen_SchemaParser);
     }
 
-    public function testComplexTypeWithUnboundedSequence() {
+    public function _testComplexTypeWithUnboundedSequence() {
         $data = <<<XML
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -126,7 +126,7 @@ XML;
         $this->assertEquals($expectedTree, $parsedTree);
     }
 
-    public function testSimpleTypeWithEnum() {
+    public function _testSimpleTypeWithEnum() {
         $data = <<<XML
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -183,7 +183,7 @@ XML;
         $this->assertEquals($expectedTree, $parsedTree);
     }
 
-    public function testElementWithChoice() {
+    public function _testElementWithChoice() {
         $data = <<<XML
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -237,5 +237,15 @@ XML;
         $this->assertTrue($expectedTree instanceof PiBX_ParseTree_Tree);
 
         $this->assertEquals($expectedTree, $parsedTree);
+    }
+
+    public function testScenarioBooksSchema() {
+        $filepath = dirname(__FILE__) . '/../_files/Books/';
+        $xml = simplexml_load_file($filepath . '/books.xsd');
+
+        $parser = new PiBX_CodeGen_SchemaParser();
+        $parser->setSchema($xml);
+
+        $parsedTree = $parser->parse();
     }
 }

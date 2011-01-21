@@ -36,6 +36,7 @@ require_once 'PiBX/ParseTree/RestrictionNode.php';
 require_once 'PiBX/ParseTree/RootNode.php';
 require_once 'PiBX/ParseTree/SequenceNode.php';
 require_once 'PiBX/ParseTree/SimpleTypeNode.php';
+require_once 'PiBX/ParseTree/AttributeNode.php';
 /**
  * The SchemaParser parses a given XML-Schema file.
  * While parsing, it creates the parse-tree.
@@ -140,6 +141,8 @@ class PiBX_CodeGen_SchemaParser {
                 $newPart = new PiBX_ParseTree_RestrictionNode($child, $level);
             } elseif ($name == 'enumeration') {
                 $newPart = new PiBX_ParseTree_EnumerationNode($child, $level);
+            } elseif ($name == 'attribute') {
+                $newPart = new PiBX_ParseTree_AttributeNode($child, $level);
             }
 
             $this->parseSchemaNodes($child, $newPart, $level+1);

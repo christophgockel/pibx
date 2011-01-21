@@ -241,7 +241,7 @@ XML;
         $this->assertEquals($expectedType, $type);
     }
 
-    public function _testBooksExampleXSD() {
+    public function testBooksExampleXSD() {
         $data = <<<XML
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -294,7 +294,7 @@ XML;
         </xs:simpleType>
      </xs:element>
   </xs:sequence>
-  <!--<xs:attribute name="itemId" type="xs:string" />-->
+  <xs:attribute name="itemId" type="xs:string" />
 </xs:complexType>
 
 
@@ -317,7 +317,7 @@ XML;
         $ta = new PiBX_AST_TypeAttribute('books');
         $c = new PiBX_AST_Collection();
         $ci = new PiBX_AST_CollectionItem('book');
-        $ci->setXsdType('bookType');
+        $ci->setType('bookType');
         $expectedType1->add($ta);
         $ta->add($c);
         $c->add($ci);
@@ -326,37 +326,43 @@ XML;
 
         $expectedType2 = new PiBX_AST_Type('bookType');
         $expectedType2->setAttributeCount(8);
-        $attr = new PiBX_AST_TypeAttribute('name');
-        $attr->setType('string');
-        $expectedType2->add($attr);
-        $attr = new PiBX_AST_TypeAttribute('ISBN');
-        $attr->setType('long');
-        $expectedType2->add($attr);
-        $attr = new PiBX_AST_TypeAttribute('price');
-        $attr->setType('string');
-        $expectedType2->add($attr);
+        
+        $expectedType2->add(new PiBX_AST_TypeAttribute('name', 'string'));
+        $expectedType2->add(new PiBX_AST_TypeAttribute('ISBN', 'long'));
+        $expectedType2->add(new PiBX_AST_TypeAttribute('price', 'string'));
+
         $ta = new PiBX_AST_TypeAttribute('authors');
-        $c = new PiBX_AST_Collection();
-        $ci = new PiBX_AST_CollectionItem('authorName');
-        $c->add($ci);
-        $ta->add($c);
+            $c = new PiBX_AST_Collection();
+            $ci = new PiBX_AST_CollectionItem('authorName', 'string');
+            $c->add($ci);
+            $ta->add($c);
         $expectedType2->add($ta);
-        $expectedType2->add(new PiBX_AST_TypeAttribute('description'));
-        //TODO: complextype with choice
+        
+        $expectedType2->add(new PiBX_AST_TypeAttribute('description', 'string'));
 
         $ta = new PiBX_AST_TypeAttribute('promotion');
-        $s = new PiBX_AST_Structure();
-        $s->setType(PiBX_AST_StructureType::CHOICE());
-        
-        $expectedType2->add(new PiBX_AST_TypeAttribute('publicationDate'));
-        $ta = new PiBX_AST_TypeAttribute('bookCategory');
-        $e = new PiBX_AST_Enumeration();
-        $e->add(new PiBX_AST_EnumerationValue('magazine'));
-        $e->add($ev = new PiBX_AST_EnumerationValue('novel'));
-        $e->add($ev = new PiBX_AST_EnumerationValue('fiction'));
-        $e->add($ev = new PiBX_AST_EnumerationValue('other'));
-        $ta->add($e);
+            $s = new PiBX_AST_Structure();
+            $s->setStructureType(PiBX_AST_StructureType::CHOICE());
+            $s->add(new PiBX_AST_StructureElement('Discount'));
+            $s->add(new PiBX_AST_StructureElement('None'));
+            $ta->add($s);
         $expectedType2->add($ta);
+        
+        $expectedType2->add(new PiBX_AST_TypeAttribute('publicationDate', 'date'));
+        
+        $ta = new PiBX_AST_TypeAttribute('bookCategory');
+            $e = new PiBX_AST_Enumeration();
+            $e->add(new PiBX_AST_EnumerationValue('magazine'));
+            $e->add($ev = new PiBX_AST_EnumerationValue('novel'));
+            $e->add($ev = new PiBX_AST_EnumerationValue('fiction'));
+            $e->add($ev = new PiBX_AST_EnumerationValue('other'));
+            $ta->add($e);
+        $expectedType2->add($ta);
+
+        $ta = new PiBX_AST_TypeAttribute('itemId', 'string');
+            $ta->setStyle('attribute');
+        $expectedType2->add($ta);
+        
         $expectedTypeList[] = $expectedType2;
 
         $enumeration = new PiBX_AST_Enumeration();
@@ -364,10 +370,10 @@ XML;
         $enumeration->add(new PiBX_AST_EnumerationValue('novel'));
         $enumeration->add(new PiBX_AST_EnumerationValue('fiction'));
         $enumeration->add(new PiBX_AST_EnumerationValue('other'));
-        $expectedType = new PiBX_AST_Type('bookCategoryType');
-        $expectedType->add($enumeration);
+        $expectedType3 = new PiBX_AST_Type('bookCategoryType');
+        $expectedType3->add($enumeration);
 
-        $expectedTypeList[] = $expectedType;
+        $expectedTypeList[] = $expectedType3;
 
         $schema = simplexml_load_string($data);
 
@@ -383,6 +389,6 @@ XML;
 
         $this->assertEquals($expectedType1, $typeList[0]);
         $this->assertEquals($expectedType2, $typeList[1]);
-        $this->assertEquals($expectedType, $typeList[2]);
+        $this->assertEquals($expectedType3, $typeList[2]);
     }
 }

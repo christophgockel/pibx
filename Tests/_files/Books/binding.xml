@@ -21,5 +21,6 @@
     </structure>
     <value style="element" name="publicationDate" get-method="getPublicationDate" set-method="setPublicationDate"/>
     <value style="element" name="bookCategory" get-method="getBookCategory" set-method="setBookCategory"/>
+    <value style="attribute" name="itemId" get-method="getItemId" set-method="setItemId"/>
   </mapping>
 </binding>

@@ -33,6 +33,7 @@ require_once 'PiBX/ParseTree/Tree.php';
  * @author Christoph Gockel
  */
 interface PiBX_ParseTree_Visitor_VisitorAbstract {
+    public function visitAttributeNode(PiBX_ParseTree_Tree $tree);
     public function visitElementNode(PiBX_ParseTree_Tree $tree);
     public function visitSimpleTypeNode(PiBX_ParseTree_Tree $tree);
     public function visitComplexTypeNode(PiBX_ParseTree_Tree $tree);

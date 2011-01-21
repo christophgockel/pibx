@@ -12,6 +12,7 @@ class BookType {
 	private $promotionNone;
 	private $publicationdate;
 	private $bookcategory;
+	private $itemid;
 
 	public function setName($name) {
 		$this->name = $name;
@@ -19,10 +20,10 @@ class BookType {
 	public function getName() {
 		return $this->name;
 	}
-	public function setIsbn($isbn) {
+	public function setISBN($isbn) {
 		$this->isbn = $isbn;
 	}
-	public function getIsbn() {
+	public function getISBN() {
 		return $this->isbn;
 	}
 	public function setPrice($price) {
@@ -73,10 +74,10 @@ class BookType {
 	public function getPromotionNone() {
 		return $this->promotionNone;
 	}
-	public function setPublicationdate($publicationdate) {
+	public function setPublicationDate($publicationdate) {
 		$this->publicationdate = $publicationdate;
 	}
-	public function getPublicationdate() {
+	public function getPublicationDate() {
 		return $this->publicationdate;
 	}
 	public function setBookcategory($bookcategory) {
@@ -84,5 +85,11 @@ class BookType {
 	}
 	public function getBookcategory() {
 		return $this->bookcategory;
+	}
+	public function setItemId($itemid) {
+		$this->itemid = $itemid;
+	}
+	public function getItemId() {
+		return $this->itemid;
 	}
 }

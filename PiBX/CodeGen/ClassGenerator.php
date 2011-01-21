@@ -261,7 +261,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         if ($tree->countChildren() == 0) {
             // base type attribute
             $attributeName = strtolower($tree->getName());
-            $methodName = ucfirst(strtolower($tree->getName()));
+            $methodName = ucfirst(/*strtolower*/($tree->getName()));
             
             $this->currentClassAttributes .= "\tprivate \$".$attributeName.";\n";
             $methods = "\tpublic function set".$methodName."(\$".$attributeName.") {\n"

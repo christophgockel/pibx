@@ -181,7 +181,8 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
     public function visitTypeAttributeEnter(PiBX_AST_Tree $tree) {
         if ($tree->countChildren() == 0) {
             // base type attribute
-            $this->xml .= '<value style="element" name="'.$tree->getName().'"';
+            $this->xml .= '<value style="'.$tree->getStyle().'"';
+            $this->xml .= ' name="'.$tree->getName().'"';
             
             $getter = PiBX_Binding_Names::createGetterNameFor($tree);
             $setter = PiBX_Binding_Names::createSetterNameFor($tree);

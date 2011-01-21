@@ -133,6 +133,13 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
 
         $expectedAst2->add($value8);
 
+        $value9 = new PiBX_AST_TypeAttribute('itemId');
+        $value9->setStyle('attribute');
+        $value9->setGetMethod('getItemId');
+        $value9->setSetMethod('setItemId');
+
+        $expectedAst2->add($value9);
+
         $this->assertEquals($expectedAst2, $asts[1]);
     }
 }

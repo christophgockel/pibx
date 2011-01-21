@@ -72,7 +72,7 @@ class PiBX_Runtime_Marshaller {
         if (!is_object($object)) {
             throw new InvalidArgumentException('Cannot marshal a non-object');
         }
-        
+
         $classToMarshal = get_class($object);
         $ast = $this->binding->getASTForClass($classToMarshal);
         $xml = $this->marshalObject($object, $ast);
@@ -191,10 +191,19 @@ class PiBX_Runtime_Marshaller {
     }
 
     private function marshalTypeAttribute($object, PiBX_AST_TypeAttribute $ast) {
-        $getter = $ast->getGetMethod();
-        $value = $object->$getter();
-        
-        return $value;
+        if ($ast->getStyle() == 'element') {
+            $getter = $ast->getGetMethod();
+            $value = $object->$getter();
+
+            return $value;
+        } elseif ($ast->getStyle() == 'attribute') {
+            $getter = $ast->getGetMethod();
+            $value = $object->$getter();
+
+            return $value;
+        } else {
+            throw new RuntimeException('Invalid TypeAttribute style "'.$ast->getStyle().'"');
+        }
     }
 
     private function marshalStructureElement($object, PiBX_AST_StructureElement $ast) {
