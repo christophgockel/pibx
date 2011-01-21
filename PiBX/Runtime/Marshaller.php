@@ -74,7 +74,7 @@ class PiBX_Runtime_Marshaller {
         }
         
         $classToMarshal = get_class($object);
-        $ast = $this->getASTForClass($classToMarshal);
+        $ast = $this->binding->getASTForClass($classToMarshal);
         $xml = $this->marshalObject($object, $ast);
         
         return $this->prettyPrint($xml);
@@ -109,7 +109,7 @@ class PiBX_Runtime_Marshaller {
                         if (is_object($item)) {
                             // TODO is abstract mapping collection?
                             $classToMarshal = get_class($item);
-                            $classAst = $this->getASTForClass($classToMarshal);
+                            $classAst = $this->binding->getASTForClass($classToMarshal);
                             $structureName = $child->getName();
                             $classAst->setName($structureName);
 
@@ -160,29 +160,6 @@ class PiBX_Runtime_Marshaller {
         }
         
         return $xml;
-    }
-
-    /**
-     * Returns the corresponding AST for a given classname.
-     * 
-     * @param $classname string The classname
-     * @return PiBX_AST_Tree
-     * @throws RuntimeException When no AST can be found for the given classname
-     */
-    private function getASTForClass($classname) {
-        if (count($this->asts) == 0) {
-            $this->asts = $this->binding->parse();
-        }
-        
-        foreach ($this->asts as &$ast) {
-            $name = $ast->getType();//--$ast->getClassName();
-
-            if ($name == $classname) {
-                return $ast;
-            }
-        }
-
-        throw new RuntimeException('Couldn\'t find AST for class "' . $classname . '"');
     }
 
     /**

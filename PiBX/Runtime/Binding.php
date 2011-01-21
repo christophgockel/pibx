@@ -250,6 +250,12 @@ class PiBX_Runtime_Binding {
         return $classname;
     }
 
+    /**
+     * Returns the AST for a given elementname.
+     * 
+     * @param string $elementname
+     * @return PiBX_AST_Tree
+     */
     public function getASTForName($elementname) {
         if (count($this->elementAsts) == 0) {
             $this->asts = $this->parse();
@@ -260,5 +266,28 @@ class PiBX_Runtime_Binding {
         }
         
         throw new RuntimeException('Couldn\'t find AST for element "'.$elementname.'".');
+    }
+
+    /**
+     * Returns the corresponding AST for a given classname.
+     *
+     * @param $classname string The classname
+     * @return PiBX_AST_Tree
+     * @throws RuntimeException When no AST can be found for the given classname
+     */
+    public function getASTForClass($classname) {
+        if (count($this->asts) == 0) {
+            $this->asts = $this->parse();
+        }
+
+        foreach ($this->asts as &$ast) {
+            $name = $ast->getType();//--$ast->getClassName();
+
+            if ($name == $classname) {
+                return $ast;
+            }
+        }
+
+        throw new RuntimeException('Couldn\'t find AST for class "' . $classname . '"');
     }
 }
