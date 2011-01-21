@@ -43,7 +43,7 @@ class PiBX_Runtime_Suite extends PHPUnit_Framework_TestSuite {
         
         $suite->addTestSuite('PiBX_Runtime_BindingTest');
         $suite->addTestSuite('PiBX_Runtime_MarshallerTest');
-        //$suite->addTestSuite('PiBX_Runtime_UnmarshallerTest');
+        $suite->addTestSuite('PiBX_Runtime_UnmarshallerTest');
 
         return $suite;
     }

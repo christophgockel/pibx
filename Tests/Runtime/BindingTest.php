@@ -101,26 +101,18 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
         $expectedAst2->add($value5);
 
         $value6 = new PiBX_AST_Structure('promotion');
-        $value6->setType(PiBX_AST_StructureType::CHOICE());
-        $value6Item1 = new PiBX_AST_StructureElement('');
+        $value6->setStructureType(PiBX_AST_StructureType::CHOICE());
+        $value6Item1 = new PiBX_AST_StructureElement('Discount');
         $value6Item1->setTestMethod('ifPromotionDiscount');
         $value6Item1->setGetMethod('getPromotionDiscount');
         $value6Item1->setSetMethod('setPromotionDiscount');
-        $value6Item1Value = new PiBX_AST_TypeAttribute('Discount');
-        $value6Item1Value->setStyle('element');
-        $value6Item1Value->setGetMethod('getPromotionDiscount');
-        $value6Item1Value->setSetMethod('setPromotionDiscount');
-        $value6Item1->add($value6Item1Value);
+        $value6Item1->setStyle('element');
 
-        $value6Item2 = new PiBX_AST_StructureElement('');
+        $value6Item2 = new PiBX_AST_StructureElement('None');
         $value6Item2->setTestMethod('ifPromotionNone');
         $value6Item2->setGetMethod('getPromotionNone');
         $value6Item2->setSetMethod('setPromotionNone');
-        $value6Item2Value = new PiBX_AST_TypeAttribute('None');
-        $value6Item2Value->setStyle('element');
-        $value6Item2Value->setGetMethod('getPromotionNone');
-        $value6Item2Value->setSetMethod('setPromotionNone');
-        $value6Item2->add($value6Item2Value);
+        $value6Item2->setStyle('element');
 
         $value6->add($value6Item1);
         $value6->add($value6Item2);

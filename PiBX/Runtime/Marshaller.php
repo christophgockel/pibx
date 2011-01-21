@@ -122,7 +122,7 @@ class PiBX_Runtime_Marshaller {
                 }
             }
         } elseif ($ast instanceof PiBX_AST_Structure) {
-            if ($ast->getType() === PiBX_AST_StructureType::CHOICE()) {
+            if ($ast->getStructureType() === PiBX_AST_StructureType::CHOICE()) {
                 if ($ast->hasChildren()) {
                     $childrenCount = $ast->countChildren();
                     $currentChoice = null;
@@ -146,12 +146,9 @@ class PiBX_Runtime_Marshaller {
             $value = $object->$getter();
             $xml .= $value;
         } elseif ($ast instanceof PiBX_AST_StructureElement) {
-            // currently only one choice is supported.
-            $child = $ast->get(0);
-
-            $getter = $child->getGetMethod();
+            $getter = $ast->getGetMethod();
             $value = $object->$getter();
-            $xml .= $this->marshalObject($object, $child);
+            $xml .= $value;
         } elseif (is_string($object) || ($ast instanceof PiBX_AST_CollectionItem)) {
             $xml .= $object;
         } else {

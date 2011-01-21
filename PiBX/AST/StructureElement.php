@@ -37,6 +37,7 @@ class PiBX_AST_StructureElement extends PiBX_AST_Tree {
     protected $testMethod;
     protected $getMethod;
     protected $setMethod;
+    protected $style;
 
     public function  __construct($name = '', $type = '') {
         parent::__construct($name, $type);
@@ -62,6 +63,14 @@ class PiBX_AST_StructureElement extends PiBX_AST_Tree {
     public function getSetMethod() {
         return $this->setMethod;
     }
+
+    public function setStyle($style) {
+        $this->style = $style;
+    }
+    public function getStyle() {
+        return $this->style;
+    }
+
 
     public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {
         if ($v->visitStructureElementEnter($this)) {

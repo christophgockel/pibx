@@ -50,7 +50,7 @@ class PiBX_Runtime_Binding {
      * @var SimpleXMLEement 
      */
     private $xml;
-    
+
     /**
      * @var PiBX_AST_Tree[]
      */
@@ -60,6 +60,11 @@ class PiBX_Runtime_Binding {
      * @var array Hashmap XSD-type => PHP-classname
      */
     private $classMap;
+
+    /**
+     * @var array Hashmap element-name => AST, for faster lookup of ASTs
+     */
+    private $elementAsts;
 
     public function  __construct($bindingFile) {
         if ( !$this->isValidFile($bindingFile) ) {
@@ -93,7 +98,6 @@ class PiBX_Runtime_Binding {
             if ($name == '') {
                 // abstract type?
                 $name = (string)$attributes['type-name'];
-                //$name = $this->getClassnameForName($abstractName);
             }
             $class = (string)$attributes['class'];
             
@@ -109,6 +113,7 @@ class PiBX_Runtime_Binding {
             $this->parseMapping($mapping, $ast);
             
             $this->asts[] = $ast;
+            $this->elementAsts[$name] = $ast;
         }
     }
 
@@ -130,6 +135,7 @@ class PiBX_Runtime_Binding {
 
                 $class = (string)$attributes['class'];
                 $this->classMap[$name] = $class;
+                $this->elementAsts[$name] = $newPart;
                 
                 $this->parseMapping($child, $newPart);
             } elseif ($name == 'structure') {
@@ -150,9 +156,9 @@ class PiBX_Runtime_Binding {
                     $choice = strtolower($choice);
 
                     if ($ordered == 'true' && $choice == 'false') {
-                        $part->setType(PiBX_AST_StructureType::ORDERED());
+                        $part->setStructureType(PiBX_AST_StructureType::ORDERED());
                     } elseif ($ordered == 'false' && $choice == 'true') {
-                        $part->setType(PiBX_AST_StructureType::CHOICE());
+                        $part->setStructureType(PiBX_AST_StructureType::CHOICE());
                     } else {
                         throw new RuntimeException('Invalid structure state!');
                     }
@@ -170,28 +176,25 @@ class PiBX_Runtime_Binding {
                         $attributes = $struct->attributes();
                         $nameAttribute = (string)$attributes['name'];
 
-                        $newPart = new PiBX_AST_StructureElement($name);
-                        $newValue = new PiBX_AST_TypeAttribute($nameAttribute);
+                        $newPart = new PiBX_AST_StructureElement($nameAttribute);
 
                         $style = (string)$attributes['style'];
                         $testMethod = (string)$attributes['test-method'];
                         $getMethod = (string)$attributes['get-method'];
                         $setMethod = (string)$attributes['set-method'];
-
-                        $newValue->setStyle($style);
+                        
+                        $newPart->setStyle($style);
                         $newPart->setTestMethod($testMethod);
                         $newPart->setGetMethod($getMethod);
                         $newPart->setSetMethod($setMethod);
-                        $newValue->setGetMethod($getMethod);
-                        $newValue->setSetMethod($setMethod);
-
-                        $newPart->add($newValue);
                         $part->add($newPart);
+                        $this->elementAsts[$nameAttribute] = $newPart;
                     }
                     // no further processing needed
                     // all structure values have been added
                     break;
                 }
+                $this->elementAsts[$name] = $newPart;
                 
                 $this->parseMapping($child, $newPart);
             } elseif ($name == 'value') {
@@ -207,6 +210,7 @@ class PiBX_Runtime_Binding {
                     $newPart->setSetMethod($setMethod);
                     $newPart->setGetMethod($getMethod);
                 }
+                $this->elementAsts[$name] = $newPart;
             } else {
                 throw new InvalidArgumentException('Unexpected binding element "' . $name . '"');
             }
@@ -244,5 +248,17 @@ class PiBX_Runtime_Binding {
         $classname = (string)$attributes['class'];
 
         return $classname;
+    }
+
+    public function getASTForName($elementname) {
+        if (count($this->elementAsts) == 0) {
+            $this->asts = $this->parse();
+        }
+
+        if (array_key_exists($elementname, $this->elementAsts)) {
+            return $this->elementAsts[$elementname];
+        }
+        
+        throw new RuntimeException('Couldn\'t find AST for element "'.$elementname.'".');
     }
 }
