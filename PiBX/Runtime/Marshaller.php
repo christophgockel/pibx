@@ -52,13 +52,22 @@ class PiBX_Runtime_Marshaller {
     private $binding;
 
     /**
-     * @var string
+     * @var DomDocument The XML document/fragment that is being generated.
      */
-    private $xml;
+    private $dom;
+
+    /**
+     * @var DomElement The current node that has been, or is to be added, to the DomDocument.
+     */
+    private $currentDomNode;
+
+    /**
+     * @var DomElement The currents node parent.
+     */
+    private $parentDomNode;
 
     public function __construct(PiBX_Runtime_Binding $binding) {
         $this->binding = $binding;
-        $this->xml = '';
     }
 
     /**
@@ -73,11 +82,17 @@ class PiBX_Runtime_Marshaller {
             throw new InvalidArgumentException('Cannot marshal a non-object');
         }
 
+        $this->dom = new DomDocument('1.0');
+        $this->dom->preserveWhiteSpace = false;
+        $this->dom->formatOutput = true;
+
+        $this->currentDomNode = $this->parentDomNode = $this->dom;
+
         $classToMarshal = get_class($object);
         $ast = $this->binding->getASTForClass($classToMarshal);
         $xml = $this->marshalObject($object, $ast);
-        
-        return $this->prettyPrint($xml);
+
+        return trim($this->dom->saveXML());
     }
 
     /**
@@ -86,58 +101,52 @@ class PiBX_Runtime_Marshaller {
      * 
      * @param object $object The object to marshal
      * @param PiBX_AST_Tree $ast object's AST
-     * @return string
+     * @return void
      */
     private function marshalObject($object, PiBX_AST_Tree $ast) {
         $astName = $ast->getName();
-        $xml = '';
         
-        if ($astName != '') {
-            $xml .= '<' . $astName . '>';
-        }
+        $lastNode = $this->currentDomNode;
+        $this->currentDomNode = $this->dom->createElement($astName);
+        $this->parentDomNode->appendChild($this->currentDomNode);
 
-        if ( $ast instanceof PiBX_AST_Type ) {
-            $xml .= $this->marshalType($object, $ast);
+        if ($ast instanceof PiBX_AST_Type ) {
+            $this->marshalType($object, $ast);
         } elseif ($ast instanceof PiBX_AST_Collection) {
-            $xml .= $this->marshalCollection($object, $ast);
+            $this->marshalCollection($object, $ast);
         } elseif ($ast instanceof PiBX_AST_Structure) {
-            $xml .= $this->marshalStructure($object, $ast);
+            $this->marshalStructure($object, $ast);
         } elseif ($ast instanceof PiBX_AST_TypeAttribute) {
-            $xml .= $this->marshalTypeAttribute($object, $ast);
+            $this->marshalTypeAttribute($object, $ast);
         } elseif ($ast instanceof PiBX_AST_StructureElement) {
-            $xml .= $this->marshalStructureElement($object, $ast);
+            $this->marshalStructureElement($object, $ast);
         } elseif (is_string($object) || ($ast instanceof PiBX_AST_CollectionItem)) {
-            $xml .= $object;
+            $newNode = $this->dom->createTextNode($object);
+            $this->currentDomNode->appendChild($newNode);
         } else {
-            // at the moment this is just a dummy value
-            $xml .= get_class($ast);
+            throw new RuntimeException('Currently not supported: ' . get_class($ast));
         }
-
-        if ($astName != '') {
-            $xml .= '</' . $astName . '>';
-        }
-        
-        return $xml;
     }
 
     private function marshalType($object, PiBX_AST_Type $ast) {
-        $xml = '';
+        $lastNode = $this->parentDomNode;
+        $this->parentDomNode = $this->currentDomNode;
         
         if ($ast->hasChildren()) {
             $childrenCount = $ast->countChildren();
             for ($i = 0; $i < $childrenCount; $i++) {
                 $child = $ast->get($i);
-                $xml .= $this->marshalObject($object, $child);
+                $this->marshalObject($object, $child);
             }
         }
-
-        return $xml;
+        $this->parentDomNode = $lastNode;
     }
-
+    
     private function marshalCollection($object, PiBX_AST_Collection $ast) {
         $getter = $ast->getGetMethod();
         $collectionItems = $object->$getter();
-        $xml = '';
+        $lastNode = $this->parentDomNode;
+        $this->parentDomNode = $this->currentDomNode;
 
         foreach ($collectionItems as &$item) {
             if ($ast->hasChildren()) {
@@ -152,21 +161,22 @@ class PiBX_Runtime_Marshaller {
                         $structureName = $child->getName();
                         $classAst->setName($structureName);
 
-                        $xml .= $this->marshalObject($item, $classAst);
+                        $this->marshalObject($item, $classAst);
                     } else {
                         // this collection is just a list of (scalar) values
-                        $xml .= $this->marshalObject($item, $child);
+                        $this->marshalObject($item, $child);
                     }
                 }
             }
         }
 
-        return $xml;
+        $this->parentDomNode = $lastNode;
     }
 
     private function marshalStructure($object, PiBX_AST_Structure $ast) {
-        $xml = '';
-        
+        $lastNode = $this->parentDomNode;
+        $this->parentDomNode = $this->currentDomNode;
+
         if ($ast->getStructureType() === PiBX_AST_StructureType::CHOICE()) {
             if ($ast->hasChildren()) {
                 $childrenCount = $ast->countChildren();
@@ -183,11 +193,11 @@ class PiBX_Runtime_Marshaller {
                     }
                 }
 
-                $xml .= $this->marshalObject($object, $currentChoice);
+                $this->marshalObject($object, $currentChoice);
             }
         }
-
-        return $xml;
+        
+        $this->parentDomNode = $lastNode;
     }
 
     private function marshalTypeAttribute($object, PiBX_AST_TypeAttribute $ast) {
@@ -195,12 +205,18 @@ class PiBX_Runtime_Marshaller {
             $getter = $ast->getGetMethod();
             $value = $object->$getter();
 
-            return $value;
+            $newNode = $this->dom->createTextNode($value);
+            $this->currentDomNode->appendChild($newNode);
         } elseif ($ast->getStyle() == 'attribute') {
             $getter = $ast->getGetMethod();
+            $name = $ast->getName();
             $value = $object->$getter();
-
-            return $value;
+            
+            $this->parentDomNode->setAttribute($name, $value);
+            // in marshalObject() a child is added everytime.
+            // no matter what type it is ("attribute" or "element"),
+            // so we can just remove it here
+            $this->parentDomNode->removeChild($this->currentDomNode);
         } else {
             throw new RuntimeException('Invalid TypeAttribute style "'.$ast->getStyle().'"');
         }
@@ -209,23 +225,10 @@ class PiBX_Runtime_Marshaller {
     private function marshalStructureElement($object, PiBX_AST_StructureElement $ast) {
         $getter = $ast->getGetMethod();
         $value = $object->$getter();
-
+        
+        $newNode = $this->dom->createTextNode($value);
+        $this->currentDomNode->appendChild($newNode);
+        
         return $value;
-    }
-
-    /**
-     * Creates a pretty printed XML string.
-     * 
-     * @param $xml string
-     * @return string
-     */
-    private function prettyPrint($xml) {
-        $x = new SimpleXMLElement($xml);
-        $dom = new DOMDocument('1.0');
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-        $dom->loadXML($x->asXML());
-
-        return trim($dom->saveXML());
     }
 }

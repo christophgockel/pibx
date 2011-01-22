@@ -100,7 +100,7 @@ XML;
         $book2->setPromotionNone('Regular price');
         $book2->setPublicationdate('2010-06-01');
         $book2->setBookcategory('novel');
-        $book1->setItemId('0002');
+        $book2->setItemId('0002');
 
         $list = array($book1, $book2);
 
