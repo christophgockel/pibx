@@ -56,7 +56,6 @@ class PiBX_CodeGen {
         $parsedTree->accept($creator);
         
         $typeList = $creator->getTypeList();
-        //print_r($typeList);
         
         // phase 3
         print "Optimizing abstract syntax tree\n";

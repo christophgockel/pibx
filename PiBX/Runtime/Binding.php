@@ -303,7 +303,7 @@ class PiBX_Runtime_Binding {
         }
 
         foreach ($this->asts as &$ast) {
-            $name = $ast->getType();//--$ast->getClassName();
+            $name = $ast->getType();
 
             if ($name == $classname) {
                 return $ast;
