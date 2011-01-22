@@ -74,6 +74,7 @@ class PiBX_Runtime_Unmarshaller {
         $object = new $class();
 
         $this->parseXml($rootNode, $ast, $object);
+        $this->parseAttributes($rootNode, $ast, $object);
         
         return $object;
     }
@@ -110,7 +111,6 @@ class PiBX_Runtime_Unmarshaller {
                 if ($ast->getStructureType() === PiBX_AST_StructureType::CHOICE()) {
                     // in a structure we can just recurse down
                     $parentObject = $this->parseXml($node, $ast, $parentObject);
-                    
                 } else {
                     throw new RuntimeException("Currently only choice elements are supported.");
                 }
@@ -119,6 +119,28 @@ class PiBX_Runtime_Unmarshaller {
             }
         }
         
+        return $parentObject;
+    }
+
+    /**
+     * Parses attributes of XML nodes.
+     *
+     * @param SimpleXMLElement $xml
+     * @param PiBX_AST_Tree $ast
+     * @param object $parentObject
+     */
+    private function parseAttributes(SimpleXMLElement $xml, PiBX_AST_Tree $ast, $parentObject) {
+        $attributes = $xml->attributes();
+
+        if (count($attributes) == 0) {
+            return $parentObject;
+        }
+
+        foreach ($attributes as $key => $val) {
+            $attributeAst = $this->binding->getASTForName($key);
+            $parentObject = $this->parseXmlOfTypeAttribute($attributes[$key], $attributeAst, $parentObject);
+        }
+
         return $parentObject;
     }
 
@@ -140,15 +162,22 @@ class PiBX_Runtime_Unmarshaller {
             $childAst = $this->binding->getASTForName($childName);
 
             $typename = $childAst->getType();
-            $class = $this->binding->getClassnameForName($typename);
 
-            if ($class != '') {
-                $newObject = new $class();
+            if ($this->binding->isValidType($typename)) {
+                $newObject = new $typename();
             } else {
-                $newObject = $parentObject;
+                $class = $this->binding->getClassnameForName($typename);
+
+                if ($class != '') {
+                    $newObject = new $class();
+                } else {
+                    $newObject = $parentObject;
+                }
             }
             
+            $item = $this->parseAttributes($childNode, $ast, $newObject);
             $item = $this->parseXml($childNode, $ast, $newObject);
+
             $collectionItems[] = $item;
         }
         
@@ -164,7 +193,6 @@ class PiBX_Runtime_Unmarshaller {
      * @param object $parentObject
      * @return mixed
      */
-
     private function parseXmlOfTypeAttribute(SimpleXMLElement $xml, PiBX_AST_TypeAttribute $ast, $parentObject) {
         $setter = $ast->getSetMethod();
         $value = $this->parseXml($xml, $ast, $parentObject);

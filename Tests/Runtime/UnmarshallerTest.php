@@ -40,7 +40,7 @@ class PiBX_Runtime_UnmarshallerTest extends PHPUnit_Framework_TestCase {
 <?xml version="1.0"?>
 <Collection>
   <books>
-    <book>
+    <book itemId="0001">
       <name>Book #1 Name</name>
       <ISBN>123456789</ISBN>
       <price>$ 1.23</price>
@@ -56,7 +56,7 @@ class PiBX_Runtime_UnmarshallerTest extends PHPUnit_Framework_TestCase {
       <publicationDate>2010-12-29</publicationDate>
       <bookCategory>fiction</bookCategory>
     </book>
-    <book>
+    <book itemId="0002">
       <name>Book #2 Name</name>
       <ISBN>987654321</ISBN>
       <price>$ 4.56</price>
@@ -89,6 +89,7 @@ XML;
         $book1->setPromotionDiscount('7%');
         $book1->setPublicationdate('2010-12-29');
         $book1->setBookcategory('fiction');
+        $book1->setItemId('0001');
 
         $book2 = new BookType();
         $book2->setName('Book #2 Name');
@@ -99,6 +100,7 @@ XML;
         $book2->setPromotionNone('Regular price');
         $book2->setPublicationdate('2010-06-01');
         $book2->setBookcategory('novel');
+        $book2->setItemId('0002');
 
         $list = array($book1, $book2);
 
@@ -112,7 +114,7 @@ XML;
     public function testOneBook() {
         $bookXml = <<<XML
 <?xml version="1.0"?>
-<book>
+<book itemId="0815">
     <name>Book #1 Name</name>
     <ISBN>123456789</ISBN>
     <price>$ 1.23</price>
@@ -142,6 +144,7 @@ XML;
         $book->setPromotionDiscount('7%');
         $book->setPublicationdate('2010-12-29');
         $book->setBookcategory('fiction');
+        $book->setItemId('0815');
 
         $object = $unmarshaller->unmarshal($bookXml);
 

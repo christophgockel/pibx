@@ -50,7 +50,7 @@ class PiBX_Runtime_BindingTest extends PHPUnit_Framework_TestCase {
         $collection->setGetMethod('getBooks');
         $collection->setSetMethod('setBooks');
         $structure = new PiBX_AST_Structure('book');
-        $structure->setType('bookType');
+        $structure->setType('BookType');
 
         $expectedAst1->add(
             $collection->add(

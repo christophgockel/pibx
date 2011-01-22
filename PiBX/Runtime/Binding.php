@@ -144,8 +144,9 @@ class PiBX_Runtime_Binding {
                 if ($part instanceof PiBX_AST_Collection) {
                     // a structure in a collection is a reference to the actual structure
                     $referencedType = (string)$attributes['map-as'];
+                    $type = $this->getClassnameForName($referencedType);
                     $newPart = new PiBX_AST_Structure($name);
-                    $newPart->setType($referencedType);
+                    $newPart->setType($type);
                 } elseif ($part instanceof PiBX_AST_Type) {
                     // a structure in a type is the structure "container"
                     $newPart = new PiBX_AST_Structure($name);
@@ -248,6 +249,27 @@ class PiBX_Runtime_Binding {
         $classname = (string)$attributes['class'];
 
         return $classname;
+    }
+
+    /**
+     * Tests if a given typename/classname is valid in the current binding-context.
+     *
+     * @param string $typename
+     * @return boolean
+     */
+    public function isValidType($typename) {
+        if (trim($typename) == '') {
+            return false;
+        }
+
+        // first lookup in global types
+        $typeNodes = $this->xml->xpath('/binding/mapping[@class="'.$typename.'"]');
+
+        if (count($typeNodes) == 0) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
