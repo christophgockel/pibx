@@ -34,4 +34,14 @@ require_once './PiBX/PiBX_CodeGen.php';
  */
 print "PiBX - CodeGen\n";
 
-$c = new PiBX_CodeGen($argv[1]);
+$options = array();
+
+for ($i = 2; $i < $argc; $i++) {
+    $value = $argv[$i];
+    
+    if ($value == '--typechecks') {
+        $options['typechecks'] = true;
+    }
+}
+
+$c = new PiBX_CodeGen($argv[1], $options);

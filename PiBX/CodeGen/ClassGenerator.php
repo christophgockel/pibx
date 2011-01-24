@@ -38,6 +38,7 @@ require_once 'PiBX/AST/Type.php';
 require_once 'PiBX/AST/TypeAttribute.php';
 require_once 'PiBX/AST/Visitor/VisitorAbstract.php';
 require_once 'PiBX/Binding/Names.php';
+require_once 'PiBX/CodeGen/TypeCheckGenerator.php';
 /**
  * Generating the PHP-code of the classes is done here, with a Hierarchical Visitor
  * of the AST.
@@ -63,6 +64,14 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
      * @var string Used for additional class-code. Content will be added after the closing "}".
      */
     private $classAppendix;
+    /**
+     * @var PiBX_CodeGen_TypeCheckGenerator
+     */
+    private $typeChecks;
+    /**
+     * @var boolean Flag if type-check code should be included in the generated methods.
+     */
+    private $doTypeChecks;
     
     public function  __construct() {
         $this->classes = array();
@@ -72,6 +81,8 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $this->currentClassAttributes = '';
         $this->currentClassMethods = '';
         $this->classAppendix = '';
+
+        $this->typeChecks = new PiBX_CodeGen_TypeCheckGenerator();
     }
 
     /**
@@ -82,6 +93,21 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         return $this->classes;
     }
 
+    /**
+     * Enables type-checks in generated set-methods.
+     * This enforces valid formats/values as parameters.
+     */
+    public function enableTypeChecks() {
+        $this->doTypeChecks = true;
+    }
+
+    /**
+     * disables type-checks in generated set-methods.
+     * The generated set-methods are plain setters.
+     */
+    public function disableTypeChecks() {
+        $this->doTypeChecks = false;
+    }
 
     public function visitCollectionEnter(PiBX_AST_Tree $tree) {
         $name = $tree->getParent()->getName();
@@ -91,8 +117,11 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $setter = PiBX_Binding_Names::createSetterNameFor($tree);
         $getter = PiBX_Binding_Names::createGetterNameFor($tree);
         
-        $this->currentClassMethods .= "\tpublic function " . $setter . "(\$a) {\n"
-                                    . "\t\t\$this->" . $name . " = \$a;\n"
+        $this->currentClassMethods .= "\tpublic function " . $setter . "(\$" . $name . ") {\n";
+        if ($this->doTypeChecks) {
+            $this->currentClassMethods .= $this->typeChecks->getListTypeCheckFor($tree, $name);
+        }
+        $this->currentClassMethods .= "\t\t\$this->" . $name . " = \$" . $name . ";\n"
                                     . "\t}\n"
                                     . "\tpublic function " . $getter . "() {\n"
                                     . "\t\treturn \$this->" . $name . ";\n"
@@ -218,8 +247,13 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
                 . "\t\treturn \$this->{$parentName}Select == \$this->$choiceConstant;\n"
                 . "\t}\n";
         $methods .= "\tpublic function {$setter}(\${$attributeName}) {\n"
-                  . "\t\t\$this->set{$selectName}(\$this->{$choiceConstant});\n"
-                  . "\t\t\$this->{$attributeName} = \${$attributeName};\n"
+                  . "\t\t\$this->set{$selectName}(\$this->{$choiceConstant});\n";
+        
+        if ($this->doTypeChecks) {
+            $methods .= $this->typeChecks->getTypeCheckFor($tree->getType(), $attributeName);
+        }
+        
+        $methods .= "\t\t\$this->{$attributeName} = \${$attributeName};\n"
                   . "\t}\n";
         $methods .= "\tpublic function {$getter}() {\n"
                   . "\t\treturn \$this->{$attributeName};\n"
@@ -264,8 +298,13 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
             $methodName = ucfirst(/*strtolower*/($tree->getName()));
             
             $this->currentClassAttributes .= "\tprivate \$".$attributeName.";\n";
-            $methods = "\tpublic function set".$methodName."(\$".$attributeName.") {\n"
-                     . "\t\t\$this->".  strtolower($tree->getName())." = \$".$attributeName.";\n"
+            $methods = "\tpublic function set".$methodName."(\$".$attributeName.") {\n";
+            
+            if ($this->doTypeChecks) {
+                $methods .= $this->typeChecks->getTypeCheckFor($tree->getType(), $attributeName);
+            }
+            
+            $methods .= "\t\t\$this->".  strtolower($tree->getName())." = \$".$attributeName.";\n"
                      . "\t}\n"
                      . "\tpublic function get".$methodName."() {\n"
                      . "\t\treturn \$this->".  strtolower($tree->getName()).";\n"

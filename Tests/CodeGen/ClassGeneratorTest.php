@@ -87,4 +87,54 @@ class PiBX_CodeGen_ClassGeneratorTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(file_get_contents($collectionFile), "<?php\n" . $classes['Collection']);
         $this->assertEquals(file_get_contents($bookTypeFile), "<?php\n" . $classes['BookType']);
     }
+    
+    public function testScenarioBooksClassesWithTypeChecks() {
+        $filepath = dirname(__FILE__) . '/../_files/Books';
+        $schemaFile = $filepath . '/books.xsd';
+        $bindingFile = $filepath . '/binding.xml';
+        $collectionFile = $filepath . '/Collection_TypeChecked.php';
+        $bookTypeFile = $filepath . '/BookType_TypeChecked.php';
+
+        $typeUsage = new PiBX_CodeGen_TypeUsage();
+
+        // most of this test-case follows the flow of PiBX_CodeGen
+        // phase 1
+        $parser = new PiBX_CodeGen_SchemaParser($schemaFile, $typeUsage);
+        $parsedTree = $parser->parse();
+
+        // phase 2
+        $creator = new PiBX_CodeGen_ASTCreator($typeUsage);
+        $parsedTree->accept($creator);
+
+        $typeList = $creator->getTypeList();
+
+        // phase 3
+        $usages = $typeUsage->getTypeUsages();
+
+        $optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
+        $typeList = $optimizer->optimize();
+
+        // phase 4
+        $b = new PiBX_Binding_Creator();
+
+        foreach ($typeList as &$type) {
+            $type->accept($b);
+        }
+
+        $this->assertEquals(file_get_contents($bindingFile), $b->getXml());
+
+        // phase 5
+        $generator = new PiBX_CodeGen_ClassGenerator();
+        $generator->enableTypeChecks();
+        
+        foreach ($typeList as &$type) {
+            $type->accept($generator);
+        }
+
+        $classes = $generator->getClasses();
+
+        $this->assertEquals(2, count($classes));
+        $this->assertEquals(file_get_contents($collectionFile), "<?php\n" . $classes['Collection']);
+        $this->assertEquals(file_get_contents($bookTypeFile), "<?php\n" . $classes['BookType']);
+    }
 }
