@@ -2,10 +2,7 @@
 class Collection {
 	private $books;
 
-	public function setBooks($books) {
-		if (!is_array($books)) {
-			throw new InvalidArgumentException('Not a valid list');
-		}
+	public function setBooks(array $books) {
 		$this->books = $books;
 	}
 	public function getBooks() {

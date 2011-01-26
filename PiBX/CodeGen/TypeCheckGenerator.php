@@ -80,9 +80,8 @@ class PiBX_CodeGen_TypeCheckGenerator {
      * @return string 
      */
     public function getListTypeCheckFor(PiBX_AST_Collection $ast, $attributeName) {
-        $code = "\t\tif (!is_array(\$" . $attributeName. ")) {\n"
-              . "\t\t\tthrow new InvalidArgumentException('Not a valid list');\n"
-		      . "\t\t}\n";
+        // TODO get real type from AST and compare it with all list-elements
+        $code = "";
         
         return $code;
     }

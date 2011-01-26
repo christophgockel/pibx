@@ -117,7 +117,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $setter = PiBX_Binding_Names::createSetterNameFor($tree);
         $getter = PiBX_Binding_Names::createGetterNameFor($tree);
         
-        $this->currentClassMethods .= "\tpublic function " . $setter . "(\$" . $name . ") {\n";
+        $this->currentClassMethods .= "\tpublic function " . $setter . "(array \$" . $name . ") {\n";
         if ($this->doTypeChecks) {
             $this->currentClassMethods .= $this->typeChecks->getListTypeCheckFor($tree, $name);
         }

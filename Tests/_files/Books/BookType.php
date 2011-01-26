@@ -32,7 +32,7 @@ class BookType {
 	public function getPrice() {
 		return $this->price;
 	}
-	public function setAuthorNames($authors) {
+	public function setAuthorNames(array $authors) {
 		$this->authors = $authors;
 	}
 	public function getAuthorNames() {

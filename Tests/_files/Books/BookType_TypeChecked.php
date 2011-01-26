@@ -41,10 +41,7 @@ class BookType {
 	public function getPrice() {
 		return $this->price;
 	}
-	public function setAuthorNames($authors) {
-		if (!is_array($authors)) {
-			throw new InvalidArgumentException('Not a valid list');
-		}
+	public function setAuthorNames(array $authors) {
 		$this->authors = $authors;
 	}
 	public function getAuthorNames() {
