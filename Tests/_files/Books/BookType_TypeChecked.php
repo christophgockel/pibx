@@ -42,6 +42,11 @@ class BookType {
 		return $this->price;
 	}
 	public function setAuthorNames(array $authors) {
+		foreach ($authors as &$a) {
+			if (!is_string($a)) {
+				throw new InvalidArgumentException('Invalid list. All containing elements have to be of type "string".');
+			}
+		}
 		$this->authors = $authors;
 	}
 	public function getAuthorNames() {

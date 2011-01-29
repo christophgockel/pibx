@@ -27,6 +27,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 require_once 'PiBX/AST/Collection.php';
+require_once 'PiBX/Binding/Names.php';
 /**
  * When generating class-code, it is possible to add extended type checks
  * into the methods.
@@ -80,8 +81,29 @@ class PiBX_CodeGen_TypeCheckGenerator {
      * @return string 
      */
     public function getListTypeCheckFor(PiBX_AST_Collection $ast, $attributeName) {
-        // TODO get real type from AST and compare it with all list-elements
-        $code = "";
+        $iterationVar = strtolower(substr($attributeName, 0, 1));
+        $expectedType = $ast->getType();
+        
+        if ($ast->countChildren() == 1) {
+            $childAst = $ast->get(0);
+            $expectedType = $childAst->getType();
+        } else {
+            throw new RuntimeException('Currently not supported.');
+        }
+        
+        $code = "\t\tforeach (\$" . $attributeName . " as &\$" . $iterationVar . ") {\n";
+        
+        if ( in_array($expectedType, $this->xsdBaseTypes) ) {
+            $code .= "\t\t\tif (!is_" . $expectedType . "(\$" . $iterationVar . ")) {\n";
+        } else {
+            $expectedType = PiBX_Binding_Names::createClassnameFor($expectedType);
+            $code .= "\t\t\tif (get_class(\$" . $iterationVar . ") !== '" . $expectedType . "') {\n";
+        }
+        
+        $code .= "\t\t\t\tthrow new InvalidArgumentException('Invalid list. "
+               . "All containing elements have to be of type \"" . $expectedType . "\".');\n"
+               . "\t\t\t}\n"
+               . "\t\t}\n";
         
         return $code;
     }
