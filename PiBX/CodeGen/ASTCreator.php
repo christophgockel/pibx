@@ -208,7 +208,7 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
                 $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $ci);
                 array_push($this->stack, $sf);
             } elseif ($this->currentType() instanceof PiBX_AST_Structure) {
-                $se = new PiBX_AST_StructureElement($tree->getName());
+                $se = new PiBX_AST_StructureElement($tree->getName(), $tree->getType());
                 $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $se);
                 array_push($this->stack, $sf);
             }

@@ -112,8 +112,24 @@ class PiBX_Binding_Names {
         return '';
     }
 
-    public static function createClassnameFor(PiBX_AST_Tree $tree) {
-        return ucfirst($tree->getName());
+    /**
+     * Returns a valid classname for a given string *or* instance of PiBX_AST_Tree.
+     * 
+     * @param mixed $treeOrString string or PiBX_AST_Tree
+     * @return string
+     */
+    public static function createClassnameFor($treeOrString) {
+        $name = '';
+        
+        if (is_string($treeOrString)) {
+            $name = $treeOrString;
+        } elseif (is_object($treeOrString) && ($treeOrString instanceof PiBX_AST_Tree)) {
+            $name = $treeOrString->getName();
+        } else {
+            throw new RuntimeException("Cannot create classname for " . print_r($treeOrString, true));
+        }
+        
+        return ucfirst($name);
     }
     
     /**
