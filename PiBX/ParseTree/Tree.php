@@ -45,6 +45,11 @@ abstract class PiBX_ParseTree_Tree {
     protected $children = array();
 
     /**
+     * @var PiBX_ParseTree_Tree The current's node parent node.
+     */
+    protected $parent;
+
+    /**
      * @var array List of registered namespaces of the current XML fragment
      */
     protected $namespaces;
@@ -54,12 +59,21 @@ abstract class PiBX_ParseTree_Tree {
         $this->namespaces = $xml->getDocNamespaces();
     }
 
+    public function setParent(PiBX_ParseTree_Tree $tree) {
+        $this->parent = $tree;
+    }
+
+    public function getParent() {
+        return $this->parent;
+    }
+
     public function getLevel() {
         return $this->level;
     }
 
     public function add(PiBX_ParseTree_Tree $tree) {
         $this->children[] = $tree;
+        $tree->setParent($this);
         return $this;
     }
 

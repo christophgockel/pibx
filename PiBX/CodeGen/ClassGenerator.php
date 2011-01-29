@@ -160,12 +160,31 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $methodName = ucfirst(strtolower($tree->getName()));
 
         $this->currentClassAttributes .= "\tprivate \$".$attributeName.";\n";
-        $methods = "\tpublic function set".$methodName."(\$".$attributeName.") {\n"
-                 . "\t\t\$this->".  strtolower($tree->getName())." = \$".$attributeName.";\n"
-                 . "\t}\n"
-                 . "\tpublic function get".$methodName."() {\n"
-                 . "\t\treturn \$this->".  strtolower($tree->getName()).";\n"
-                 . "\t}\n";
+        $methods = "\tpublic function set".$methodName."(\$".$attributeName.") {\n";
+        if ($this->doTypeChecks) {
+            // to do a type check for enums
+            // all possible values have to be fetched
+            $valueCount = $tree->countChildren();
+            $conditionValues = array();
+            
+            for ($i = 0; $i < $valueCount; $i++) {
+                $valueAst = $tree->get($i);
+                $conditionValues[] = $valueAst->getName();
+            }
+            
+            $ifConditions = "(\$" . $attributeName . " != '".implode("') || (\$".$attributeName." != '", $conditionValues) . "')";
+            $listOfValues = '"' . implode('", "', $conditionValues) . '"';
+            
+            $methods .= "\t\tif (";
+            $methods .= $ifConditions . ") {\n"
+                      . "\t\t\tthrow new InvalidArgumentException('Unexpected value \"' . \$" . $attributeName . " . '\". Expected is one of the following: " . $listOfValues . ".');\n"
+                      . "\t\t}\n";
+        }
+        $methods .= "\t\t\$this->".  strtolower($tree->getName())." = \$".$attributeName.";\n"
+                  . "\t}\n"
+                  . "\tpublic function get".$methodName."() {\n"
+                  . "\t\treturn \$this->".  strtolower($tree->getName()).";\n"
+                  . "\t}\n";
 
         $this->currentClassMethods .= $methods;
 

@@ -54,13 +54,13 @@ XML;
         $expectedType = new PiBX_AST_Type('bookCategoryType');
         $expectedType->setAsRoot();
         $enumeration = new PiBX_AST_Enumeration();
-        $enum = new PiBX_AST_EnumerationValue('magazine');
+        $enum = new PiBX_AST_EnumerationValue('magazine', 'string');
         $enumeration->add($enum);
-        $enum = new PiBX_AST_EnumerationValue('novel');
+        $enum = new PiBX_AST_EnumerationValue('novel', 'string');
         $enumeration->add($enum);
-        $enum = new PiBX_AST_EnumerationValue('fiction');
+        $enum = new PiBX_AST_EnumerationValue('fiction', 'string');
         $enumeration->add($enum);
-        $enum = new PiBX_AST_EnumerationValue('other');
+        $enum = new PiBX_AST_EnumerationValue('other', 'string');
         $enumeration->add($enum);
         $expectedType->add($enumeration);
 
@@ -352,10 +352,10 @@ XML;
         
         $ta = new PiBX_AST_TypeAttribute('bookCategory');
             $e = new PiBX_AST_Enumeration();
-            $e->add(new PiBX_AST_EnumerationValue('magazine'));
-            $e->add($ev = new PiBX_AST_EnumerationValue('novel'));
-            $e->add($ev = new PiBX_AST_EnumerationValue('fiction'));
-            $e->add($ev = new PiBX_AST_EnumerationValue('other'));
+            $e->add(new PiBX_AST_EnumerationValue('magazine', 'string'));
+            $e->add($ev = new PiBX_AST_EnumerationValue('novel', 'string'));
+            $e->add($ev = new PiBX_AST_EnumerationValue('fiction', 'string'));
+            $e->add($ev = new PiBX_AST_EnumerationValue('other', 'string'));
             $ta->add($e);
         $expectedType2->add($ta);
 
@@ -366,10 +366,10 @@ XML;
         $expectedTypeList[] = $expectedType2;
 
         $enumeration = new PiBX_AST_Enumeration();
-        $enumeration->add(new PiBX_AST_EnumerationValue('magazine'));
-        $enumeration->add(new PiBX_AST_EnumerationValue('novel'));
-        $enumeration->add(new PiBX_AST_EnumerationValue('fiction'));
-        $enumeration->add(new PiBX_AST_EnumerationValue('other'));
+        $enumeration->add(new PiBX_AST_EnumerationValue('magazine', 'string'));
+        $enumeration->add(new PiBX_AST_EnumerationValue('novel', 'string'));
+        $enumeration->add(new PiBX_AST_EnumerationValue('fiction', 'string'));
+        $enumeration->add(new PiBX_AST_EnumerationValue('other', 'string'));
         $expectedType3 = new PiBX_AST_Type('bookCategoryType');
         $expectedType3->add($enumeration);
 
