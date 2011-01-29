@@ -343,8 +343,8 @@ XML;
         $ta = new PiBX_AST_TypeAttribute('promotion');
             $s = new PiBX_AST_Structure();
             $s->setStructureType(PiBX_AST_StructureType::CHOICE());
-            $s->add(new PiBX_AST_StructureElement('Discount'));
-            $s->add(new PiBX_AST_StructureElement('None'));
+            $s->add(new PiBX_AST_StructureElement('Discount', 'string'));
+            $s->add(new PiBX_AST_StructureElement('None', 'string'));
             $ta->add($s);
         $expectedType2->add($ta);
         

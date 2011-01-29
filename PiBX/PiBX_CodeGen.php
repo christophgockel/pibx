@@ -42,7 +42,20 @@ require_once 'PiBX/Binding/Creator.php';
  * @author Christoph Gockel
  */
 class PiBX_CodeGen {
-    public function  __construct($schemaFile) {
+    /**
+     * Creating an object of PiBX_CodeGen starts the code generation.
+     *
+     * A valid schema-file has to be passed.
+     * Options can be passed as an associative array with a value of a boolean "true".
+     * This way the code generation can be customized.
+     * 
+     * Possible option-values are (keys of "$options"):
+     *     - "typechecks" enables the generation of type-check code into setter methods.
+     * 
+     * @param string $schemaFile
+     * @param array $options
+     */
+    public function  __construct($schemaFile, $options) {
         $typeUsage = new PiBX_CodeGen_TypeUsage();
         
         // phase 1
@@ -79,6 +92,11 @@ class PiBX_CodeGen {
         // phase 5
         print "Generating classes to: ./output\n";
         $generator = new PiBX_CodeGen_ClassGenerator();
+
+        if ($options['typechecks'] === true) {
+            $generator->enableTypeChecks();
+        }
+        
         foreach ($typeList as &$type) {
             $type->accept($generator);
         }
