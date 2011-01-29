@@ -364,12 +364,31 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
         }
 
         if ($this->currentType() instanceof PiBX_AST_Enumeration) {
-            $enum = new PiBX_AST_EnumerationValue($tree->getValue());
+            $enumType = $tree->getParent()->getBase();
+            $enumType = $this->getCorrespondingType($enumType);
+            $enum = new PiBX_AST_EnumerationValue($tree->getValue(), $enumType);
             $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $enum);
             array_push($this->stack, $sf);
         }
 
         $this->lastLevel = $tree->getLevel();
+    }
+
+    /**
+     * XSD Types cannot be put 1:1 into the AST. The XSD definition has different
+     * identifiers for the same semantical type, e.g. "NCName" is a string.
+     * 
+     * @param string $xsdType
+     * @return string
+     */
+    private function getCorrespondingType($xsdType) {
+        if ($xsdType == 'NCName') {
+            //TODO maybe it will get necessary to do a pattern check afterwards
+            //     in the ClassGenerator. But at the moment "string" is sufficient.
+            return 'string';
+        }
+
+        return 'string';
     }
 
     private function log($message) {
