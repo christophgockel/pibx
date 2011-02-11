@@ -51,24 +51,29 @@ class PiBX_Binding_Names {
         if ($tree instanceof PiBX_AST_Collection) {
             if ($tree->countChildren() == 1) {
                 $child = $tree->get(0);
-                $name = ucfirst( $child->getName() );
-                // append a plural "s" for collection items if applicable
-                if (strtolower(substr($name, -1)) != 's') {
-                    $name .= 's';
-                }
-                return 'get' . $name;
+                $name = self::getCamelCasedName( $child->getName() );
+                
+                return 'get' . self::getCollectionName($name);
+            }
+        } elseif ($tree instanceof PiBX_AST_CollectionItem) {
+            // a CollectionItem in a TypeAttribute is a list of the CollectionItems
+            // without a parenting Collection-node
+            if ($tree->getParent() instanceof PiBX_AST_TypeAttribute) {
+                $name = self::getCamelCasedName( $tree->getName() );
+                
+                return 'get' . self::getCollectionName($name);
             }
         } elseif ($tree instanceof PiBX_AST_TypeAttribute) {
-            $name = ucfirst( $tree->getName() );
+            $name = self::getCamelCasedName( $tree->getName() );
             return 'get' . $name;
         } elseif ($tree instanceof PiBX_AST_StructureElement) {
             $structureAst = $tree->getParent();
-            $structureName = ucfirst($structureAst->getName());
-            $elementName = ucfirst($tree->getName());
+            $structureName = self::getCamelCasedName($structureAst->getName());
+            $elementName = self::getCamelCasedName($tree->getName());
 
             return 'get' . $structureName . $elementName;
         } elseif ($tree instanceof PiBX_AST_Enumeration) {
-            $name = ucfirst($tree->getName());
+            $name = self::getCamelCasedName($tree->getName());
             return 'get' . $name;
         }
         return '';
@@ -78,24 +83,32 @@ class PiBX_Binding_Names {
         if ($tree instanceof PiBX_AST_Collection) {
             if ($tree->countChildren() == 1) {
                 $child = $tree->get(0);
-                $name = ucfirst( $child->getName() );
+                $name = self::getCamelCasedName( $child->getName() );
                 // append a plural "s" for collection items if applicable
                 if (strtolower(substr($name, -1)) != 's') {
                     $name .= 's';
                 }
                 return 'set' . $name;
             }
+        } elseif ($tree instanceof PiBX_AST_CollectionItem) {
+            // a CollectionItem in a TypeAttribute is a list of the CollectionItems
+            // without a parenting Collection-node
+            if ($tree->getParent() instanceof PiBX_AST_TypeAttribute) {
+                $name = self::getCamelCasedName( $tree->getName() );
+
+                return 'set' . self::getCollectionName($name);
+            }
         } elseif ($tree instanceof PiBX_AST_TypeAttribute) {
-            $name = ucfirst( $tree->getName() );
+            $name = self::getCamelCasedName( $tree->getName() );
             return 'set' . $name;
         } elseif ($tree instanceof PiBX_AST_StructureElement) {
             $structureAst = $tree->getParent();
-            $structureName = ucfirst($structureAst->getName());
-            $elementName = ucfirst($tree->getName());
+            $structureName = self::getCamelCasedName($structureAst->getName());
+            $elementName = self::getCamelCasedName($tree->getName());
 
             return 'set' . $structureName . $elementName;
         } elseif ($tree instanceof PiBX_AST_Enumeration) {
-            $name = ucfirst($tree->getName());
+            $name = self::getCamelCasedName($tree->getName());
             return 'set' . $name;
         }
         return '';
@@ -104,8 +117,8 @@ class PiBX_Binding_Names {
     public static function createTestFunctionFor(PiBX_AST_Tree $tree) {
         if ($tree instanceof PiBX_AST_StructureElement) {
             $structureAst = $tree->getParent();
-            $structureName = ucfirst($structureAst->getName());
-            $elementName = ucfirst($tree->getName());
+            $structureName = self::getCamelCasedName($structureAst->getName());
+            $elementName = self::getCamelCasedName($tree->getName());
 
             return 'if' . $structureName . $elementName;
         }
@@ -129,7 +142,7 @@ class PiBX_Binding_Names {
             throw new RuntimeException("Cannot create classname for " . print_r($treeOrString, true));
         }
         
-        return ucfirst($name);
+        return self::getCamelCasedName($name);
     }
     
     /**
@@ -151,5 +164,50 @@ class PiBX_Binding_Names {
         }
 
         return $names;
+    }
+
+    /**
+     * Returns a camel cased version of the given string.
+     * 
+     * @param string $name
+     * @return string
+     */
+    public static function getCamelCasedName($name) {
+        $name = str_replace('_', '-', $name);
+        $parts = explode('-', $name);
+
+        foreach ($parts as &$part) {
+            $part = ucfirst($part);
+        }
+        
+        return implode('', $parts);
+    }
+
+    /**
+     * Strips off "-" and "_" characters in a name to create a valid attribute
+     * name.
+     * 
+     * @param string $name
+     * @return string
+     */
+    public static function getAttributeName($name) {
+        $name = str_replace('-', '', $name);
+        $name = str_replace('_', '', $name);
+
+        return strtolower($name);
+    }
+
+    /**
+     * Concats a plural "s" on a name if applicable, i.e. "item" gets "items" and so on.
+     * 
+     * @param string $name
+     * @return string
+     */
+    private static function getCollectionName($name) {
+        if (strtolower(substr($name, -1)) != 's') {
+            $name .= 's';
+        }
+        
+        return $name;
     }
 }

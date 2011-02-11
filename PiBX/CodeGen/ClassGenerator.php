@@ -39,6 +39,7 @@ require_once 'PiBX/AST/TypeAttribute.php';
 require_once 'PiBX/AST/Visitor/VisitorAbstract.php';
 require_once 'PiBX/Binding/Names.php';
 require_once 'PiBX/CodeGen/TypeCheckGenerator.php';
+require_once 'PiBX/ParseTree/BaseType.php';
 /**
  * Generating the PHP-code of the classes is done here, with a Hierarchical Visitor
  * of the AST.
@@ -50,7 +51,6 @@ require_once 'PiBX/CodeGen/TypeCheckGenerator.php';
  */
 class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     private $xml;
-    private $xsdBaseTypes = array('string', 'long', 'date');
 
     /**
      * @var string[] hash with generated class-code
@@ -134,16 +134,24 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     }
 
     public function visitCollectionItem(PiBX_AST_Tree $tree) {
-        if ($tree->getParent()->countChildren() == 1) {
-            if (in_array($tree->getType(), $this->xsdBaseTypes)) {
-                $this->xml .= '<value style="element" name="'.$tree->getName().'" type="'.$tree->getType().'"/>';
-            } else {
-                $this->xml .= '<structure map-as="'.$tree->getType().'" name="'.$tree->getName().'"/>';
-            }
-        } else {
-            throw new RuntimeException('Collections with > 1 children are currently not supported');
+        if ($tree->getParent() instanceof PiBX_AST_TypeAttribute) {
+        $name = PiBX_Binding_Names::getAttributeName($tree->getName()) . 'list';
+
+        $this->currentClassAttributes .= "\tprivate \$" . $name . ";\n";
+
+        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+
+        $this->currentClassMethods .= "\tpublic function " . $setter . "(array \$" . $name . ") {\n";
+        if ($this->doTypeChecks) {
+            $this->currentClassMethods .= $this->typeChecks->getListTypeCheckFor($tree, $name);
         }
-        
+        $this->currentClassMethods .= "\t\t\$this->" . $name . " = \$" . $name . ";\n"
+                                    . "\t}\n"
+                                    . "\tpublic function " . $getter . "() {\n"
+                                    . "\t\treturn \$this->" . $name . ";\n"
+                                    . "\t}\n";
+        }
         return true;
     }
     
@@ -156,8 +164,8 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
             return false;
         }
 
-        $attributeName = strtolower($tree->getName());
-        $methodName = ucfirst(strtolower($tree->getName()));
+        $attributeName = PiBX_Binding_Names::getAttributeName($tree->getName());
+        $methodName = PiBX_Binding_Names::getCamelCasedName($tree->getName());
 
         $this->currentClassAttributes .= "\tprivate \$".$attributeName.";\n";
         $methods = "\tpublic function set".$methodName."(\$".$attributeName.") {\n";
@@ -180,10 +188,10 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
                       . "\t\t\tthrow new InvalidArgumentException('Unexpected value \"' . \$" . $attributeName . " . '\". Expected is one of the following: " . $listOfValues . ".');\n"
                       . "\t\t}\n";
         }
-        $methods .= "\t\t\$this->".  strtolower($tree->getName())." = \$".$attributeName.";\n"
+        $methods .= "\t\t\$this->".  $attributeName . " = \$".$attributeName.";\n"
                   . "\t}\n"
                   . "\tpublic function get".$methodName."() {\n"
-                  . "\t\treturn \$this->".  strtolower($tree->getName()).";\n"
+                  . "\t\treturn \$this->" . $attributeName . ";\n"
                   . "\t}\n";
 
         $this->currentClassMethods .= $methods;
@@ -313,20 +321,29 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     public function visitTypeAttributeEnter(PiBX_AST_Tree $tree) {
         if ($tree->countChildren() == 0) {
             // base type attribute
-            $attributeName = strtolower($tree->getName());
-            $methodName = ucfirst(/*strtolower*/($tree->getName()));
+            $attributeName = PiBX_Binding_Names::getAttributeName($tree->getName());
+            $methodName = PiBX_Binding_Names::getCamelCasedName($tree->getName());
             
             $this->currentClassAttributes .= "\tprivate \$".$attributeName.";\n";
-            $methods = "\tpublic function set".$methodName."(\$".$attributeName.") {\n";
+            $type = $tree->getType();
+
+            $methods = "\tpublic function set".$methodName."(";
+            if (!PiBX_ParseTree_BaseType::isBaseType($type)) {
+                // complexTypes (i.e. classes) have to be type-hinted
+                // in the method signature.
+                $expectedType = PiBX_Binding_Names::createClassnameFor($type);
+                $methods .= $expectedType . ' ';
+            }
+            $methods .= "\$".$attributeName.") {\n";
             
             if ($this->doTypeChecks) {
                 $methods .= $this->typeChecks->getTypeCheckFor($tree->getType(), $attributeName);
             }
             
-            $methods .= "\t\t\$this->".  strtolower($tree->getName())." = \$".$attributeName.";\n"
+            $methods .= "\t\t\$this->". $attributeName . " = \$".$attributeName.";\n"
                      . "\t}\n"
                      . "\tpublic function get".$methodName."() {\n"
-                     . "\t\treturn \$this->".  strtolower($tree->getName()).";\n"
+                     . "\t\treturn \$this->". $attributeName . ";\n"
                      . "\t}\n";
 
             $this->currentClassMethods .= $methods;

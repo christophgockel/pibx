@@ -106,13 +106,13 @@ class BookType {
 	public function getPublicationDate() {
 		return $this->publicationdate;
 	}
-	public function setBookcategory($bookcategory) {
+	public function setBookCategory($bookcategory) {
 		if (($bookcategory != 'magazine') || ($bookcategory != 'novel') || ($bookcategory != 'fiction') || ($bookcategory != 'other')) {
 			throw new InvalidArgumentException('Unexpected value "' . $bookcategory . '". Expected is one of the following: "magazine", "novel", "fiction", "other".');
 		}
 		$this->bookcategory = $bookcategory;
 	}
-	public function getBookcategory() {
+	public function getBookCategory() {
 		return $this->bookcategory;
 	}
 	public function setItemId($itemid) {

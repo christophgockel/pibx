@@ -71,6 +71,16 @@ abstract class PiBX_ParseTree_Tree {
         return $this->level;
     }
 
+    /**
+     * Returns used/defined namespaces in the current tree element as an
+     * associative array: prefix => URI
+     * 
+     * @return array
+     */
+    public function getNamespaces() {
+       return $this->namespaces;
+    }
+
     public function add(PiBX_ParseTree_Tree $tree) {
         $this->children[] = $tree;
         $tree->setParent($this);

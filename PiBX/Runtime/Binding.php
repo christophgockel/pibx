@@ -66,6 +66,11 @@ class PiBX_Runtime_Binding {
      */
     private $elementAsts;
 
+    /**
+     * @var array Hashmap Element-name => structure-name. Needed for temporary use while parsing the binding-mapping.
+     */
+    private $structuralReferences;
+
     public function  __construct($bindingFile) {
         if ( !$this->isValidFile($bindingFile) ) {
             throw new InvalidArgumentException('"' . $bindingFile . '" is not a valid binding file.');
@@ -89,7 +94,7 @@ class PiBX_Runtime_Binding {
     }
 
     private function parseBinding(SimpleXMLElement $xml) {
-        $nodes = $xml->xpath('/binding/*');
+        $nodes = $xml->xpath('/binding/mapping');
 
         foreach ($nodes as $mapping) {
             $attributes = $mapping->attributes();
@@ -106,6 +111,7 @@ class PiBX_Runtime_Binding {
             $abstract = (string)$attributes['abstract'];
             if ($abstract !== 'true') {
                 $ast->setAsRoot();
+                $ast->setTargetNamespace($this->getTargetNamespace());
             }
             
             $ast->setType($class);
@@ -113,8 +119,30 @@ class PiBX_Runtime_Binding {
             $this->parseMapping($mapping, $ast);
             
             $this->asts[] = $ast;
-            $this->elementAsts[$name] = $ast;
+            // update the ASTs if the current mapping is a referenced mapping.
+            // i.e. an abstract mapping
+            if (key_exists($name, $this->structuralReferences)) {
+                $referencedName = $this->structuralReferences[$name];
+                $this->elementAsts[$referencedName] = $ast;
+            } else {
+                $this->elementAsts[$name] = $ast;
+            }
         }
+    }
+
+    private function getTargetNamespace() {
+        $nodes = $this->xml->xpath('/binding/namespace');
+        
+        if (count($nodes) > 0) {
+            // at the moment only one namespace is supported
+            list($node) = $nodes;
+            $attributes = $node->attributes();
+            $ns = (string)$attributes['uri'];
+            
+            return $ns;
+        }
+
+        return '';
     }
 
     private function parseMapping(SimpleXMLElement $xml, PiBX_AST_Tree $part) {
@@ -147,9 +175,18 @@ class PiBX_Runtime_Binding {
                     $type = $this->getClassnameForName($referencedType);
                     $newPart = new PiBX_AST_Structure($name);
                     $newPart->setType($type);
+                    $this->structuralReferences[$referencedType] = $name;
                 } elseif ($part instanceof PiBX_AST_Type) {
+                    $referencedType = (string)$attributes['map-as'];
+                    $type = $this->getClassnameForName($referencedType);
+
                     // a structure in a type is the structure "container"
-                    $newPart = new PiBX_AST_Structure($name);
+                    $newPart = new PiBX_AST_Structure($name, $type);
+                    $getMethod = (string)$attributes['get-method'];
+                    $setMethod = (string)$attributes['set-method'];
+
+                    $newPart->setGetMethod($getMethod);
+                    $newPart->setSetMethod($setMethod);
                 } elseif ($part instanceof PiBX_AST_Structure) {
                     $ordered = (string)$attributes['ordered'];
                     $ordered = strtolower($ordered);

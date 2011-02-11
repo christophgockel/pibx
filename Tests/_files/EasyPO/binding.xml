@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://openuri.org/easypo" default="elements" prefix="po"/>
+  <mapping class="PurchaseOrder" name="purchase-order">
+    <structure map-as="customer" get-method="getCustomer" set-method="setCustomer" name="customer"/>
+    <value style="element" name="date" get-method="getDate" set-method="setDate"/>
+    <collection get-method="getLineItems" set-method="setLineItems">
+      <structure map-as="line-item" name="line-item"/>
+    </collection>
+    <structure map-as="shipper" get-method="getShipper" set-method="setShipper" name="shipper"/>
+  </mapping>
+  <mapping class="Customer" abstract="true" type-name="customer">
+    <value style="element" name="name" get-method="getName" set-method="setName"/>
+    <value style="element" name="address" get-method="getAddress" set-method="setAddress"/>
+    <value style="attribute" name="age" get-method="getAge" set-method="setAge"/>
+    <value style="attribute" name="moo" get-method="getMoo" set-method="setMoo"/>
+    <value style="attribute" name="poo" get-method="getPoo" set-method="setPoo"/>
+  </mapping>
+  <mapping class="LineItem" abstract="true" type-name="line-item">
+    <value style="element" name="description" get-method="getDescription" set-method="setDescription"/>
+    <value style="element" name="per-unit-ounces" get-method="getPerUnitOunces" set-method="setPerUnitOunces"/>
+    <value style="element" name="price" get-method="getPrice" set-method="setPrice"/>
+    <value style="element" name="quantity" get-method="getQuantity" set-method="setQuantity"/>
+  </mapping>
+  <mapping class="Shipper" abstract="true" type-name="shipper">
+    <value style="element" name="name" get-method="getName" set-method="setName"/>
+    <value style="element" name="per-ounce-rate" get-method="getPerOunceRate" set-method="setPerOunceRate"/>
+  </mapping>
+</binding>

@@ -28,6 +28,7 @@
  */
 require_once 'PiBX/AST/Collection.php';
 require_once 'PiBX/Binding/Names.php';
+require_once 'PiBX/ParseTree/BaseType.php';
 /**
  * When generating class-code, it is possible to add extended type checks
  * into the methods.
@@ -38,11 +39,6 @@ require_once 'PiBX/Binding/Names.php';
  * @author Christoph Gockel
  */
 class PiBX_CodeGen_TypeCheckGenerator {
-    /**
-     * @var array Array of base XSD-types.
-     */
-    private $xsdBaseTypes = array('string', 'long', 'date');
-
     public function __construct() {
         
     }
@@ -61,14 +57,14 @@ class PiBX_CodeGen_TypeCheckGenerator {
      * @return string The PHP code used for the check.
      */
     public function getTypeCheckFor($type, $attributeName) {
-        if (in_array($type, $this->xsdBaseTypes)) {
-            if ($type == 'date') {
-                return $this->getDateCheck($attributeName);
-            } elseif ($type == 'string') {
-                return $this->getStringCheck($attributeName);
-            } elseif ($type == 'long') {
-                return $this->getLongCheck($attributeName);
-            }
+        if ($type == 'date') {
+            return $this->getDateCheck($attributeName);
+        } elseif ($type == 'string') {
+            return $this->getStringCheck($attributeName);
+        } elseif ($type == 'int' || $type == 'integer') {
+            return $this->getIntCheck($attributeName);
+        } elseif ($type == 'long') {
+            return $this->getLongCheck($attributeName);
         }
         
         return '';
@@ -80,7 +76,15 @@ class PiBX_CodeGen_TypeCheckGenerator {
      * @param PiBX_AST_Collection $ast
      * @return string 
      */
-    public function getListTypeCheckFor(PiBX_AST_Collection $ast, $attributeName) {
+    public function getListTypeCheckFor(PiBX_AST_Tree $ast, $attributeName) {
+        if (!($ast instanceof PiBX_AST_Collection) && !($ast instanceof PiBX_AST_CollectionItem)) {
+            throw new RuntimeException('Not valid list AST given.');
+        }
+
+        if ($ast instanceof PiBX_AST_CollectionItem) {
+            $ast = $ast->getParent();
+        }
+
         $iterationVar = strtolower(substr($attributeName, 0, 1));
         $expectedType = $ast->getType();
         
@@ -93,7 +97,7 @@ class PiBX_CodeGen_TypeCheckGenerator {
         
         $code = "\t\tforeach (\$" . $attributeName . " as &\$" . $iterationVar . ") {\n";
         
-        if ( in_array($expectedType, $this->xsdBaseTypes) ) {
+        if (PiBX_ParseTree_BaseType::isBaseType($expectedType) ) {
             $code .= "\t\t\tif (!is_" . $expectedType . "(\$" . $iterationVar . ")) {\n";
         } else {
             $expectedType = PiBX_Binding_Names::createClassnameFor($expectedType);
@@ -147,6 +151,16 @@ class PiBX_CodeGen_TypeCheckGenerator {
               . "\t\t}\n";
         
         return $code;
+    }
+
+    /**
+     * Returns the PHP code for a "int" check.
+     *
+     * @param string $attributeName
+     * @return string
+     */
+    private function getIntCheck($attributeName) {
+        return $this->getSimpleTypeCheck('int', $attributeName);
     }
 
     /**

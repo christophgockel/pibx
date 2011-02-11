@@ -46,12 +46,20 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
      */
     private $isRootType;
 
+    /**
+     * @var string 
+     */
+    private $targetNamespace;
+    /**
+     * @var array Associative array of used namespaces: prefix => URI
+     */
+    private $namespaces;
+
     public function  __construct($name = '', $type = '') {
         parent::__construct($name, $type);
 
         $this->isRootType = false;
     }
-
 
     public function setAsRoot() {
         $this->isRootType = true;
@@ -61,10 +69,24 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
     }
 
     public function setAttributeCount($count) {
-        $this->attributeCount = $count;
+        //$this->attributeCount = $count;
     }
     public function getAttributeCount() {
 
+    }
+    
+    public function setTargetNamespace($targetNamespace) {
+        $this->targetNamespace = $targetNamespace;
+    }
+    public function getTargetNamespace() {
+        return $this->targetNamespace;
+    }
+
+    public function setNamespaces(array $namespaces = null) {
+        $this->namespaces = $namespaces;
+    }
+    public function getNamespaces() {
+        return $this->namespaces;
     }
 
     public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {

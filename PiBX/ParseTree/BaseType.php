@@ -35,11 +35,15 @@
 class PiBX_ParseTree_BaseType {
 
     private static $string;
+    private static $int;
     private static $integer;
     private static $float;
+    private static $long;
     private static $boolean;
     private static $date;
+    private static $dateTime;
     private static $time;
+    private static $decimal;
 
     private $value;
     private static $alreadyInitialized = false;
@@ -53,14 +57,37 @@ class PiBX_ParseTree_BaseType {
 
         if (!self::$alreadyInitialized) {
             self::$string  = new PiBX_ParseTree_BaseType('string');
+            self::$int     = new PiBX_ParseTree_BaseType('int');
             self::$integer = new PiBX_ParseTree_BaseType('integer');
             self::$float   = new PiBX_ParseTree_BaseType('float');
+            self::$long    = new PiBX_ParseTree_BaseType('long');
             self::$boolean = new PiBX_ParseTree_BaseType('boolean');
             self::$date    = new PiBX_ParseTree_BaseType('date');
+            self::$dateTime= new PiBX_ParseTree_BaseType('dateTime');
             self::$time    = new PiBX_ParseTree_BaseType('time');
+            self::$decimal = new PiBX_ParseTree_BaseType('decimal');
 
             self::$alreadyInitialized = true;
         }
+    }
+
+    public static function isBaseType($type) {
+        $r = new ReflectionClass('PiBX_ParseTree_BaseType');
+        $props = $r->getProperties(ReflectionProperty::IS_STATIC);
+        
+        foreach ($props as &$prop) {
+            $name = $prop->getName();
+            
+            if ($name == 'alreadyInitialized') {
+                continue;
+            }
+            
+            if (self::$$name == $type) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public static function STRING() {

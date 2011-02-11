@@ -26,35 +26,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once 'PiBX/ParseTree/Tree.php';
+require_once dirname(__FILE__) . '/../../bootstrap.php';
+require_once 'PHPUnit/Framework.php';
+require_once 'PiBX/CodeGen/ASTCreator.php';
+require_once 'PiBX/CodeGen/ASTOptimizer.php';
+require_once 'PiBX/CodeGen/SchemaParser.php';
+require_once 'PiBX/Binding/Creator.php';
+/**
+ * Testing the BindingCreator in scenario "EasyPO".
+ *
+ * @author Christoph Gockel
+ */
+class PiBX_Scenarios_EasyPO_BindingCreatorTest extends PHPUnit_Framework_TestCase {
+    public function testEasyPoBinding() {
+        $filepath = dirname(__FILE__) . '/../../_files/EasyPO/';
+        $schemaFile = $filepath . '/easypo.xsd';
+        $schema = simplexml_load_file($schemaFile);
+        $bindingFile = file_get_contents($filepath . '/binding.xml');
+        
+        $typeUsage = new PiBX_CodeGen_TypeUsage();
 
-class PiBX_ParseTree_RootNode extends PiBX_ParseTree_Tree {
-    /**
-     * @var string Contains the targetNamespace defined in a schema (schema-level)
-     */
-    private $targetNamespace;
-    
-    public function  __construct() {
-        // Intentionally blank
-        // This constructor does not need the parameters
-        // defined in PiBX_ParseTree_Tree
-    }
+        $parser = new PiBX_CodeGen_SchemaParser($schemaFile, $typeUsage);
+        $parsedTree = $parser->parse();
 
-    public function setTargetNamespace($targetNamespace) {
-        $this->targetNamespace = $targetNamespace;
-    }
-    public function getTargetNamespace() {
-        return $this->targetNamespace;
-    }
+        $creator = new PiBX_CodeGen_ASTCreator($typeUsage);
+        $parsedTree->accept($creator);
 
-    public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
-        /**
-         * Traverses the ParseTree with a depth-first strategy.
-         */
-        foreach ($this->children as $child) {
-            $child->accept($v);
+        $typeList = $creator->getTypeList();
+
+        $usages = $typeUsage->getTypeUsages();
+
+        $optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
+        $typeList = $optimizer->optimize();
+
+        $b = new PiBX_Binding_Creator();
+
+        foreach ($typeList as &$type) {
+            $type->accept($b);
         }
 
-        $v->plowTypesForLevel(0);
+        $this->assertEquals($bindingFile, $b->getXml());
     }
 }
