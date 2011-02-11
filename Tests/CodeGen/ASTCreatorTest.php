@@ -53,6 +53,7 @@ XML;
 
         $expectedType = new PiBX_AST_Type('bookCategoryType');
         $expectedType->setAsRoot();
+        $expectedType->setNamespaces(array('xs' => 'http://www.w3.org/2001/XMLSchema'));
         $enumeration = new PiBX_AST_Enumeration();
         $enum = new PiBX_AST_EnumerationValue('magazine', 'string');
         $enumeration->add($enum);
@@ -102,6 +103,7 @@ XML;
         $expectedType = new PiBX_AST_Type('Collection');
         $expectedType->setAsRoot();
         $expectedType->setAttributeCount(1);
+        $expectedType->setNamespaces(array('xs' => 'http://www.w3.org/2001/XMLSchema'));
         $ta = new PiBX_AST_TypeAttribute('books');
         $c = new PiBX_AST_Collection();
         $ci = new PiBX_AST_CollectionItem('book');
@@ -144,6 +146,7 @@ XML;
         $expectedType = new PiBX_AST_Type('complexTypeWithElements');
         $expectedType->setAsRoot();
         $expectedType->setAttributeCount(5);
+        $expectedType->setNamespaces(array('xs' => 'http://www.w3.org/2001/XMLSchema'));
         $attr = new PiBX_AST_TypeAttribute('element1');
         $attr->setType('string');
         $expectedType->add($attr);
@@ -201,6 +204,7 @@ XML;
         $expectedType = new PiBX_AST_Type('complexTypeWithElements');
         $expectedType->setAsRoot();
         $expectedType->setAttributeCount(6);
+        $expectedType->setNamespaces(array('xs' => 'http://www.w3.org/2001/XMLSchema'));
         $attr = new PiBX_AST_TypeAttribute('element1');
         $attr->setType('string');
         $expectedType->add($attr);
@@ -242,78 +246,13 @@ XML;
     }
 
     public function testBooksExampleXSD() {
-        $data = <<<XML
-<?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="1.0">
-
-<xs:element name="Collection">
-   <xs:complexType>
-      <xs:sequence>
-        <xs:element name ="books">
-           <xs:complexType>
-              <xs:sequence>
-                <xs:element name="book" type="bookType" minOccurs="1" maxOccurs="unbounded"/>
-              </xs:sequence>
-           </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-   </xs:complexType>
-</xs:element>
-
-<xs:complexType name="bookType">
-  <xs:sequence>
-    <xs:element name="name" type="xs:string"/>
-    <xs:element name="ISBN" type="xs:long"/>
-    <xs:element name="price" type="xs:string"/>
-    <xs:element name="authors" >
-      <xs:complexType>
-        <xs:sequence>
-           <xs:element name="authorName" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
-        </xs:sequence>
-      </xs:complexType>
-    </xs:element>
-    <xs:element name="description" type="xs:string"  minOccurs="0"/>
-    <xs:element name="promotion">
-       <xs:complexType>
-         <xs:choice>
-           <xs:element name="Discount" type="xs:string" />
-           <xs:element name="None" type="xs:string"/>
-         </xs:choice>
-       </xs:complexType>
-    </xs:element>
-    <xs:element name="publicationDate" type="xs:date"/>
-    <xs:element name="bookCategory">
-       <xs:simpleType>
-         <xs:restriction base="xs:NCName">
-           <xs:enumeration value="magazine" />
-           <xs:enumeration value="novel" />
-           <xs:enumeration value="fiction" />
-           <xs:enumeration value="other" />
-         </xs:restriction>
-        </xs:simpleType>
-     </xs:element>
-  </xs:sequence>
-  <xs:attribute name="itemId" type="xs:string" />
-</xs:complexType>
-
-
-<xs:simpleType name="bookCategoryType" >
-   <xs:restriction base="xs:string">
-      <xs:enumeration value="magazine" />
-      <xs:enumeration value="novel" />
-      <xs:enumeration value="fiction" />
-      <xs:enumeration value="other" />
-   </xs:restriction>
-</xs:simpleType>
-
-</xs:schema>
-XML;
+        $data = file_get_contents(dirname(__FILE__) . '/../_files/Books/books.xsd');
         $expectedTypeList = array();
 
         $expectedType1 = new PiBX_AST_Type('Collection');
         $expectedType1->setAsRoot();
         $expectedType1->setAttributeCount(1);
+        $expectedType1->setNamespaces(array('xs' => 'http://www.w3.org/2001/XMLSchema'));
         $ta = new PiBX_AST_TypeAttribute('books');
         $c = new PiBX_AST_Collection();
         $ci = new PiBX_AST_CollectionItem('book');
@@ -385,6 +324,7 @@ XML;
         $tree->accept($creator);
 
         $typeList = $creator->getTypeList();
+        
         $this->assertEquals(3, count($typeList));
 
         $this->assertEquals($expectedType1, $typeList[0]);

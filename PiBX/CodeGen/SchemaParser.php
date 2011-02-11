@@ -100,7 +100,11 @@ class PiBX_CodeGen_SchemaParser {
      */
     public function parse() {
         $this->parseTree = new PiBX_ParseTree_RootNode();
-
+        $schemaAttributes = $this->xml->attributes();
+        
+        if ((string)$schemaAttributes['targetNamespace'] != '') {
+            $this->parseTree->setTargetNamespace((string)$schemaAttributes['targetNamespace']);
+        }
         // starts a straight-forward schema parsing
         $this->parseSchemaNodes($this->xml, $this->parseTree);
 

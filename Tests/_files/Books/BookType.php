@@ -80,10 +80,10 @@ class BookType {
 	public function getPublicationDate() {
 		return $this->publicationdate;
 	}
-	public function setBookcategory($bookcategory) {
+	public function setBookCategory($bookcategory) {
 		$this->bookcategory = $bookcategory;
 	}
-	public function getBookcategory() {
+	public function getBookCategory() {
 		return $this->bookcategory;
 	}
 	public function setItemId($itemid) {

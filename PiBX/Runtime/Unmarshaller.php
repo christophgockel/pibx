@@ -37,6 +37,7 @@ require_once 'PiBX/AST/StructureType.php';
 require_once 'PiBX/AST/Type.php';
 require_once 'PiBX/AST/TypeAttribute.php';
 require_once 'PiBX/Runtime/Binding.php';
+require_once 'PiBX/ParseTree/BaseType.php';
 /**
  * The Marshaller is responsible to serialize a given object-structure into
  * a string representation.
@@ -62,158 +63,238 @@ class PiBX_Runtime_Unmarshaller {
 
         $xml = simplexml_load_string($string);
 
-        // TODO maybe restrict to only one element here?
-        //      since there can be only one root-element anyway
         list($rootNode) = $xml->xpath('/*');
 
         $attributes = $rootNode->attributes();
         $name = $rootNode->getName();
         $ast = $this->binding->getASTForName($name);
         $class = $ast->getType();
-        
+
         $object = new $class();
 
         $this->parseXml($rootNode, $ast, $object);
-        $this->parseAttributes($rootNode, $ast, $object);
         
         return $object;
     }
 
-    /**
-     * Parses the XML data and returns the object-structure represented by the XML.
-     *
-     * @param SimpleXMLElement $xml The current XML node
-     * @param PiBX_AST_Tree $ast The XML corresponding AST subtree
-     * @param object $parentObject The object that contains the element described by $xml and $ast
-     * @return mixed string or object, dependent on the current $xml and $ast.
-     *               If the current $xml is a leaf node <code>parseXml()</code> returns the literal
-     *               value of $xml. When it's composite node, it returns the object-structure
-     *               reflecting the $xml data.
-     */
-    private function parseXml(SimpleXMLElement $xml, PiBX_AST_Tree $ast = null, $parentObject = null) {
-        $nodes = $xml->xpath('./*');
-
-        if (count($nodes) == 0) {
-            // simple value (leaf)
-            return (string)$xml;
+    private function parseXml(SimpleXMLElement $xml, PiBX_AST_Tree $ast, $parentObject) {
+        $count = $ast->countChildren();
+        
+        if (!$xml->children()) {
+            // a leaf node in the XML documents doesn't need to be parsed any further
+            return (string) $xml;
         }
 
-        foreach ($nodes as &$node) {
-            $name = $node->getName();
-
-            $ast = $this->binding->getASTForName($name);
-            
-            if ($ast instanceof PiBX_AST_TypeAttribute) {
-                $parentObject = $this->parseXmlOfTypeAttribute($node, $ast, $parentObject);
-            } elseif ($ast instanceof PiBX_AST_Collection) {
-                $parentObject = $this->parseXmlOfCollection($node, $ast, $parentObject);
-            } elseif ($ast instanceof PiBX_AST_Structure) {
-                if ($ast->getStructureType() === PiBX_AST_StructureType::CHOICE()) {
-                    // in a structure we can just recurse down
-                    $parentObject = $this->parseXml($node, $ast, $parentObject);
-                } else {
-                    throw new RuntimeException("Currently only choice elements are supported.");
-                }
-            } elseif ($ast instanceof PiBX_AST_StructureElement) {
-                $parentObject = $this->parseXmlOfStructureElement($node, $ast, $parentObject);
+        if ($count == 0) {
+            if ($ast instanceof PiBX_AST_Structure) {
+                $newObject = $this->parseStructure($xml, $ast, $parentObject);
+            } else {
+                throw new RuntimeException('Not supported yet');
             }
+        } else {
+        
+            $newObject = $parentObject;
+        
+            for ($i = 0; $i < $count; $i++) {
+                $child = $ast->get($i);
+
+                $name = $child->getName();
+                $childXml = $xml->$name;
+                
+                if ($child instanceof PiBX_AST_Structure) {
+                    $newObject = $this->parseStructure($xml->{$name}, $child, $parentObject);
+                } elseif ($child instanceof PiBX_AST_Collection) {
+                    $name = $ast->getName();
+                    $list = $this->parseCollection($xml, $child, $parentObject);
+                    $setter = $child->getSetMethod();
+                    $parentObject->$setter( $list );
+                } elseif ($child instanceof PiBX_AST_TypeAttribute) {
+                    $newObject = $this->parseTypeAttribute($xml, $child, $parentObject);
+                } else {
+                    throw new RuntimeException('Not supported yet');
+                }
+            }
+        }
+        return $newObject;
+    }
+
+    /**
+     * 
+     * @param SimpleXMLElement $xml
+     * @param PiBX_AST_Structure $ast
+     * @param object $parentObject
+     */
+    private function parseStructure(SimpleXMLElement $xml, PiBX_AST_Structure $ast, $parentObject) {
+        $name = $ast->getName();
+        $type = $ast->getType();
+
+        if ($type == '') {
+            if ($ast->getStructureType() === PiBX_AST_StructureType::CHOICE()) {
+                return $this->parseChoiceStructure($xml, $ast, $parentObject);
+            } elseif ($ast->getStructureType() === PiBX_AST_StructureType::ORDERED()) {
+                throw new RuntimeException('Not supported yet.');
+            } else {
+                throw new RuntimeException('Invalid <structure>.');
+            }
+        } else { // a structure with a type is a reference to the type
+            if (!PiBX_ParseTree_BaseType::isBaseType($type)) {
+                
+                $structAst = $this->binding->getASTForClass($type);
+                $newObject = new $type();
+                
+                $parsedObject = $this->parseXml($xml, $structAst, $newObject);
+                $setter = $ast->getSetMethod();
+                
+                $parentObject->$setter( $parsedObject );
+            } else {
+                return $parentObject;
+            }
+        }
+
+    }
+
+    private function parseChoiceStructure(SimpleXMLElement $xml, PiBX_AST_Structure $ast, $parentObject) {
+        $choiceCount = $ast->countChildren();
+        
+        for ($i = 0; $i < $choiceCount; $i++) {
+            $child = $ast->get($i);
+            $name = $child->getName();
+            
+            if ($xml->{$name}) {// choice in XML found
+                $newObject = $this->parseXml($xml->{$name}, $child, $parentObject);
+                $setter = $child->getSetMethod();
+                
+                $parentObject->$setter( $newObject );
+                
+                break;
+            }
+            
         }
         
         return $parentObject;
     }
 
-    /**
-     * Parses attributes of XML nodes.
-     *
-     * @param SimpleXMLElement $xml
-     * @param PiBX_AST_Tree $ast
-     * @param object $parentObject
-     */
-    private function parseAttributes(SimpleXMLElement $xml, PiBX_AST_Tree $ast, $parentObject) {
-        $attributes = $xml->attributes();
+    private function parseTypeAttribute(SimpleXMLElement $xml, PiBX_AST_TypeAttribute $ast, $parentObject) {
+        $name = $ast->getName();
+        
+        if ($ast->getStyle() == 'element') {
+            $value = (string) $xml->$name;
 
-        if (count($attributes) == 0) {
-            return $parentObject;
+        } elseif ($ast->getStyle() == 'attribute') {
+            $attributes = $xml->attributes();
+            $value = (string) $attributes[$name];
         }
+        $setter = $ast->getSetMethod();
 
-        foreach ($attributes as $key => $val) {
-            $attributeAst = $this->binding->getASTForName($key);
-            $parentObject = $this->parseXmlOfTypeAttribute($attributes[$key], $attributeAst, $parentObject);
-        }
-
+        $parentObject->$setter( $value );
+        
         return $parentObject;
     }
 
     /**
-     * In a collection it is necessary to parse all containing child elements.
+     *
+     * @param SimpleXMLElement $xml
+     * @param PiBX_AST_Collection $ast
+     * @param <type> $parentObject
+     * @return mixed[] The collection entries
+     */
+    private function parseCollection(SimpleXMLElement $xml, PiBX_AST_Collection $ast, $parentObject) {
+        if ($ast->getName() == '') {
+            return $this->parseAnonymCollection($xml, $ast, $parentObject);
+        } else {
+            return $this->parseNamedCollection($xml, $ast, $parentObject);
+        }
+    }
+
+    /**
+     *
+     * @param SimpleXMLElement $xml
+     * @param PiBX_AST_Collection $ast
+     * @param <type> $parentObject
+     * @return mixed[] The collection entries
+     */
+    private function parseNamedCollection(SimpleXMLElement $xml, PiBX_AST_Collection $ast, $parentObject) {
+        $count = $ast->countChildren();
+        $list = array();
+        $collectionName = $ast->getName();
+        
+        for ($i = 0; $i < $count; $i++) {
+            $child = $ast->get($i);
+
+            if ($child instanceof PiBX_AST_Structure) {
+                $name = $child->getName();
+                $structAst = $this->binding->getASTForName($name);
+                $class = $structAst->getType();
+                
+                // somehow xpath didn't work well with node names containing a dash
+                // so fetch the nodes with "{}", e.g. "{'node-containing-a-dash'}"
+                $itemCount = count($xml->{$collectionName}->{$name});
+                
+                if ($itemCount > 0) {
+                    // collection items/nodes are directly in the current node
+                    for ($j = 0; $j < $itemCount; $j++) {
+                        $newObject = new $class();
+                        $listNode = $xml->{$collectionName}->{$name}[$j];
+                        
+                        $list[] = $this->parseXml($listNode, $structAst, $newObject);
+                    }
+                }
+            } elseif ($child instanceof PiBX_AST_CollectionItem) {
+                $name = $child->getName();
+                $itemCount = count($xml->{$collectionName}->{$name});
+
+                if ($itemCount > 0) {
+                    for ($j = 0; $j < $itemCount; $j++) {
+                        $listNode = $xml->{$collectionName}->{$name}[$j];
+
+                        $list[] = $this->parseXml($listNode, $ast, $parentObject);
+                    }
+                }
+            } else {
+                throw new RuntimeException('Invalid <collection>');
+            }
+        }
+        
+        return $list;
+    }
+
+    /**
      * 
      * @param SimpleXMLElement $xml
      * @param PiBX_AST_Collection $ast
-     * @param object $parentObject
-     * @return mixed
+     * @param <type> $parentObject
+     * @return mixed[] The collection entries
      */
-    private function parseXmlOfCollection(SimpleXMLElement $xml, PiBX_AST_Collection $ast, $parentObject) {
-        $setter = $ast->getSetMethod();
-        $collectionItems = array();
-        $childNodes = $xml->xpath('./*');
+    private function parseAnonymCollection(SimpleXMLElement $xml, PiBX_AST_Collection $ast, $parentObject) {
+        $count = $ast->countChildren();
+        $list = array();
 
-        foreach ($childNodes as &$childNode) {
-            $childName = $childNode->getName();
-            $childAst = $this->binding->getASTForName($childName);
+        for ($i = 0; $i < $count; $i++) {
+            $child = $ast->get($i);
 
-            $typename = $childAst->getType();
+            if ($child instanceof PiBX_AST_Structure) {
+                $name = $child->getName();
+                $structAst = $this->binding->getASTForName($name);
+                $class = $structAst->getType();
 
-            if ($this->binding->isValidType($typename)) {
-                $newObject = new $typename();
-            } else {
-                $class = $this->binding->getClassnameForName($typename);
-
-                if ($class != '') {
-                    $newObject = new $class();
-                } else {
-                    $newObject = $parentObject;
+                // somehow xpath didn't work well with node names containing a dash
+                // so fetch the nodes with "{}", e.g. "{'node-containing-a-dash'}"
+                $itemCount = count($xml->{$name});
+                
+                if ($itemCount > 0) {
+                    // collection items/nodes are directly in the current node
+                    for ($j = 0; $j < $itemCount; $j++) {
+                        $newObject = new $class();
+                        $listNode = $xml->{$name}[$j];
+                        
+                        $list[] = $this->parseXml($listNode, $structAst, $newObject);
+                    }
                 }
+            } else {
+                throw new RuntimeException('Invalid <collection>');
             }
-            
-            $item = $this->parseAttributes($childNode, $ast, $newObject);
-            $item = $this->parseXml($childNode, $ast, $newObject);
-
-            $collectionItems[] = $item;
         }
         
-        $parentObject->$setter($collectionItems);
-
-        return $parentObject;
-    }
-
-    /**
-     *
-     * @param SimpleXMLElement $xml
-     * @param PiBX_AST_TypeAttribute $ast
-     * @param object $parentObject
-     * @return mixed
-     */
-    private function parseXmlOfTypeAttribute(SimpleXMLElement $xml, PiBX_AST_TypeAttribute $ast, $parentObject) {
-        $setter = $ast->getSetMethod();
-        $value = $this->parseXml($xml, $ast, $parentObject);
-        $parentObject->$setter($value);
-
-        return $parentObject;
-    }
-
-    /**
-     *
-     * @param SimpleXMLElement $xml
-     * @param PiBX_AST_StructureElement $ast
-     * @param object $parentObject
-     * @return mixed
-     */
-    private function parseXmlOfStructureElement(SimpleXMLElement $xml, PiBX_AST_StructureElement $ast, $parentObject) {
-        $setter = $ast->getSetMethod();
-        $value = $this->parseXml($xml, $ast, $parentObject);
-
-        $parentObject->$setter($value);
-
-        return $parentObject;
+        return $list;
     }
 }

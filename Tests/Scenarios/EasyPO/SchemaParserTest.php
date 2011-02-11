@@ -26,35 +26,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once 'PiBX/ParseTree/Tree.php';
+require_once dirname(__FILE__) . '/../../bootstrap.php';
+require_once 'PHPUnit/Framework.php';
+require_once 'PiBX/CodeGen/SchemaParser.php';
+/**
+ * Testing the SchemaParser in scenario "EasyPO".
+ *
+ * @author Christoph Gockel
+ */
+class PiBX_Scenarios_EasyPO_SchemaParserTest extends PHPUnit_Framework_TestCase {
 
-class PiBX_ParseTree_RootNode extends PiBX_ParseTree_Tree {
-    /**
-     * @var string Contains the targetNamespace defined in a schema (schema-level)
-     */
-    private $targetNamespace;
-    
-    public function  __construct() {
-        // Intentionally blank
-        // This constructor does not need the parameters
-        // defined in PiBX_ParseTree_Tree
-    }
+    public function testScenarioOTARQSchema() {
+        $filepath = dirname(__FILE__) . '/../../_files/EasyPO/';
+        $xml = simplexml_load_file($filepath . '/easypo.xsd');
 
-    public function setTargetNamespace($targetNamespace) {
-        $this->targetNamespace = $targetNamespace;
-    }
-    public function getTargetNamespace() {
-        return $this->targetNamespace;
-    }
+        $parser = new PiBX_CodeGen_SchemaParser();
+        $parser->setSchema($xml);
 
-    public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
-        /**
-         * Traverses the ParseTree with a depth-first strategy.
-         */
-        foreach ($this->children as $child) {
-            $child->accept($v);
-        }
+        $parsedTree = $parser->parse();
 
-        $v->plowTypesForLevel(0);
+        
     }
 }

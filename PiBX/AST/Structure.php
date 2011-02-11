@@ -39,6 +39,8 @@ class PiBX_AST_Structure extends PiBX_AST_Tree {
      * @var PiBX_AST_StructureType An Enum, what type this structure is
      */
     private $structureType;
+    private $getMethod;
+    private $setMethod;
 
     public function  __construct($name = '', $type = '') {
         parent::__construct($name, $type);
@@ -50,6 +52,20 @@ class PiBX_AST_Structure extends PiBX_AST_Tree {
 
     public function getStructureType() {
         return $this->structureType;
+    }
+
+    public function setGetMethod($methodName) {
+        $this->getMethod = $methodName;
+    }
+    public function getGetMethod() {
+        return $this->getMethod;
+    }
+
+    public function setSetMethod($methodName) {
+        $this->setMethod = $methodName;
+    }
+    public function getSetMethod() {
+        return $this->setMethod;
     }
 
     public function getName() {

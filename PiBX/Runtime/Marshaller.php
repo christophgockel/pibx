@@ -87,6 +87,7 @@ class PiBX_Runtime_Marshaller {
         $this->dom->formatOutput = true;
 
         $this->currentDomNode = $this->parentDomNode = $this->dom;
+        $this->currentDomNode = $this->dom->documentElement;
 
         $classToMarshal = get_class($object);
         $ast = $this->binding->getASTForClass($classToMarshal);
@@ -107,8 +108,15 @@ class PiBX_Runtime_Marshaller {
         $astName = $ast->getName();
         
         $lastNode = $this->currentDomNode;
-        $this->currentDomNode = $this->dom->createElement($astName);
-        $this->parentDomNode->appendChild($this->currentDomNode);
+        
+        if ($astName != '') {
+            // for every named element, a new node in the resulting xml-tree is created
+            $this->currentDomNode = $this->dom->createElement($astName);
+            $this->parentDomNode->appendChild($this->currentDomNode);
+        } else {
+            // "anonymous" elements are just chained down. No new node has to be created
+            $this->currentDomNode = $this->parentDomNode;
+        }
 
         if ($ast instanceof PiBX_AST_Type ) {
             $this->marshalType($object, $ast);
@@ -131,7 +139,13 @@ class PiBX_Runtime_Marshaller {
     private function marshalType($object, PiBX_AST_Type $ast) {
         $lastNode = $this->parentDomNode;
         $this->parentDomNode = $this->currentDomNode;
-        
+        if ($ast->isRoot()) {
+            $targetNamespace = $ast->getTargetNamespace();
+            
+            if ($targetNamespace != '') {
+              $this->currentDomNode->setAttribute('xmlns', $targetNamespace);
+            }
+        }
         if ($ast->hasChildren()) {
             $childrenCount = $ast->countChildren();
             for ($i = 0; $i < $childrenCount; $i++) {
@@ -175,9 +189,10 @@ class PiBX_Runtime_Marshaller {
 
     private function marshalStructure($object, PiBX_AST_Structure $ast) {
         $lastNode = $this->parentDomNode;
-        $this->parentDomNode = $this->currentDomNode;
 
         if ($ast->getStructureType() === PiBX_AST_StructureType::CHOICE()) {
+            $this->parentDomNode = $this->currentDomNode;
+            
             if ($ast->hasChildren()) {
                 $childrenCount = $ast->countChildren();
                 $currentChoice = null;
@@ -195,6 +210,18 @@ class PiBX_Runtime_Marshaller {
 
                 $this->marshalObject($object, $currentChoice);
             }
+        } elseif ($ast->getStructureType() === PiBX_AST_StructureType::ORDERED()) {
+            throw new RuntimeException('Currently not supported.');
+        } else {
+            $this->parentDomNode->removeChild($this->currentDomNode);
+            // when a structure has no type, it is a referenced complex-type
+            // used as a type-attribute
+            $getter = $ast->getGetMethod();
+            $obj = $object->$getter();
+            $classname = $this->binding->getClassnameForName($ast->getName());
+            $structureAst = $this->binding->getASTForClass($classname);
+            
+            $this->marshalObject($obj, $structureAst);
         }
         
         $this->parentDomNode = $lastNode;
@@ -211,8 +238,9 @@ class PiBX_Runtime_Marshaller {
             $getter = $ast->getGetMethod();
             $name = $ast->getName();
             $value = $object->$getter();
-            
-            $this->parentDomNode->setAttribute($name, $value);
+            if ($value != '') {// TODO check for "optional" attribute in binding.
+                $this->parentDomNode->setAttribute($name, $value);
+            }
             // in marshalObject() a child is added everytime.
             // no matter what type it is ("attribute" or "element"),
             // so we can just remove it here

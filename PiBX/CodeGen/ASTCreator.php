@@ -202,6 +202,14 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
                 $schemaType = $tree->getType();
                 $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $ta);
                 array_push($this->stack, $sf);
+                // elements with maxOccurs "unbounded" are collections/lists
+                // with no parent collection element.
+                if ($tree->getMaxOccurs() == 'unbounded') {
+                    $ci = new PiBX_AST_CollectionItem($tree->getName());
+                    $ci->setType($tree->getType());
+                    $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $ci);
+                    array_push($this->stack, $sf);
+                }
             } elseif ($this->currentType() instanceof PiBX_AST_Collection) {
                 $ci = new PiBX_AST_CollectionItem($tree->getName());
                 $ci->setType($tree->getType());
@@ -219,6 +227,8 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
             if ($this->countTypes() == 0) {
                 // the first type is the XSD-root.
                 $t->setAsRoot();
+                $t->setTargetNamespace($tree->getParent()->getTargetNamespace());
+                $t->setNamespaces($tree->getNamespaces());
             }
             $sf = new PiBX_CodeGen_ASTStackFrame(-1, $t);
             array_push($this->stack, $sf);
@@ -254,6 +264,8 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
             if ($this->countTypes() == 0) {
                 // the first type is the XSD-root.
                 $t->setAsRoot();
+                $t->setTargetNamespace($tree->getParent()->getTargetNamespace());
+                $t->setNamespaces($tree->getNamespaces());
             }
             
             $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $t);
@@ -278,6 +290,8 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
             if ($this->countTypes() == 0) {
                 // the first type is the XSD-root.
                 $t->setAsRoot();
+                $t->setTargetNamespace($tree->getParent()->getTargetNamespace());
+                $t->setNamespaces($tree->getNamespaces());
             }
 
             $sf = new PiBX_CodeGen_ASTStackFrame($tree->getLevel(), $t);
