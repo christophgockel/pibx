@@ -77,6 +77,17 @@ class PiBX_Runtime_Unmarshaller {
         return $object;
     }
 
+    /**
+     * Parses the XML data and returns the object-structure represented by the XML.
+     *
+     * @param SimpleXMLElement $xml The current XML node
+     * @param PiBX_AST_Tree $ast The XML corresponding AST subtree
+     * @param object $parentObject The object that contains the element described by $xml and $ast
+     * @return mixed string or object, dependent on the current $xml and $ast.
+     *               If the current $xml is a leaf node <code>parseXml()</code> returns the literal
+     *               value of $xml. When it's composite node, it returns the object-structure
+     *               reflecting the $xml data.
+     */
     private function parseXml(SimpleXMLElement $xml, PiBX_AST_Tree $ast, $parentObject) {
         $count = $ast->countChildren();
         
