@@ -50,7 +50,6 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
     private $xml;
 
     private $astNodes;
-    private $xsdBaseTypes = array('string', 'long', 'date', 'integer', 'decimal');
 
     public function  __construct() {
         $this->xml = '';
@@ -101,7 +100,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
             $this->xml .= "</collection>";
             
         } elseif ($tree->getParent()->countChildren() == 1) {
-            if (in_array($tree->getType(), $this->xsdBaseTypes)) {
+            if (PiBX_ParseTree_BaseType::isBaseType($tree->getType())) {
                 $this->xml .= '<value style="element" name="'.$tree->getName().'" type="'.$tree->getType().'"/>';
             } else {
                 $this->xml .= '<structure map-as="'.$tree->getType().'" name="'.$tree->getName().'"/>';
