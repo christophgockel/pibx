@@ -111,7 +111,7 @@ XML;
         $this->assertEquals($c, $object);
         
     }
-    public function _testOneBook() {
+    public function testOneBook() {
         $bookXml = <<<XML
 <?xml version="1.0"?>
 <book itemId="0815">
