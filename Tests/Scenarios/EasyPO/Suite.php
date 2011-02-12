@@ -49,7 +49,7 @@ class PiBX_Scenarios_EasyPO_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_EasyPO_ClassGeneratorTest');
         $suite->addTestSuite('PiBX_Scenarios_EasyPO_MarshallerTest');
         $suite->addTestSuite('PiBX_Scenarios_EasyPO_SchemaParserTest');
-        //$suite->addTestSuite('PiBX_Scenarios_EasyPO_UnmarshallerTest');
+        $suite->addTestSuite('PiBX_Scenarios_EasyPO_UnmarshallerTest');
         
         return $suite;
     }
