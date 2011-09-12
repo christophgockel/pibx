@@ -27,7 +27,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 require_once dirname(__FILE__) . '/../../bootstrap.php';
-require_once 'PHPUnit/Framework.php';
+require_once 'PHPUnit/Autoload.php';
 require_once 'PiBX/CodeGen/ASTCreator.php';
 require_once 'PiBX/CodeGen/ASTOptimizer.php';
 require_once 'PiBX/CodeGen/ClassGenerator.php';
