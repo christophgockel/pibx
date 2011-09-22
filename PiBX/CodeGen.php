@@ -67,9 +67,9 @@ class PiBX_CodeGen {
         echo "Creating abstract syntax tree\n";
         $creator = new PiBX_CodeGen_ASTCreator($typeUsage);
         $parsedTree->accept($creator);
-        
+
         $typeList = $creator->getTypeList();
-        
+
         // phase 3
         print "Optimizing abstract syntax tree\n";
         print "    Before: " . count($typeList) . " type(s)\n";
@@ -93,7 +93,7 @@ class PiBX_CodeGen {
         print "Generating classes to: ./output\n";
         $generator = new PiBX_CodeGen_ClassGenerator();
 
-        if ($options['typechecks'] === true) {
+        if (array_key_exists('typechecks', $options) && $options['typechecks'] === true) {
             $generator->enableTypeChecks();
         }
         

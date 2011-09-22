@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2010, Christoph Gockel.
+ * Copyright (c) 2010-2011, Christoph Gockel.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -26,46 +26,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once 'PiBX/ParseTree/Tree.php';
+require_once dirname(__FILE__) . '/../../../bootstrap.php';
+require_once 'PHPUnit/Autoload.php';
+require_once 'Tests/Scenarios/Reference/Basic/QualifiedLocalElements.php';
+require_once 'Tests/Scenarios/Reference/Basic/TargetNamespace.php';
 /**
- * Represents a <code>&lt;sequence></code>-node of an XML-Schema.
+ * Basic Reference Test-Suite.
  *
  * @author Christoph Gockel
  */
-class PiBX_ParseTree_SequenceNode extends PiBX_ParseTree_Tree {
-    private $elementCount;
+class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
 
-    public function  __construct($xmlOrOptions, $level = 0) {
-        parent::__construct($xmlOrOptions, $level);
-        $this->options = PiBX_ParseTree_AttributeHelper::getSimpleTypeOptions($xmlOrOptions);
-
-        //list($ns) = array_keys($xml->getNamespaces());
-
-        //$this->elementCount = count($xml->children($ns, true));
-    }
-
-    public function getElementCount() {
-        if ($this->elementCount == 1) {
-            $child = $this->children[0];
-
-            if ($child instanceof PiBX_ParseTree_ElementNode) {
-                $max = $child->getMaxOccurs();
-                if ($max === 'unbounded') {
-                    return -1;
-                }
-            } else {
-                throw new RuntimeException('Currently not supported');
-            }
-        }
-
-        return $this->elementCount;
-    }
-
-    public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
-        $v->visitSequenceNode($this);
-
-        foreach ($this->children as $child) {
-            $child->accept($v);
-        }
+    public static function suite() {
+        $suite = new PHPUnit_Framework_TestSuite();
+        
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_QualifiedLocalElements');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_TargetNamespace');
+        
+        return $suite;
     }
 }

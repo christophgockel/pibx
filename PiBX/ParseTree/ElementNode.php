@@ -27,34 +27,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 require_once 'PiBX/ParseTree/Tree.php';
+require_once 'PiBX/ParseTree/AttributeHelper.php';
 /**
  * Represents a <code>&lt;element></code>-node of an XML-Schema.
  *
  * @author Christoph Gockel
  */
 class PiBX_ParseTree_ElementNode extends PiBX_ParseTree_Tree {
-    protected $name;
-    protected $type;
-    protected $minOccurs;
-    protected $maxOccurs;
 
-    public function  __construct(SimpleXMLElement $xml, $level = 0) {
-        parent::__construct($xml, $level);
-        $attributes = $xml->attributes();
-
-        $this->name = (string)$attributes['name'];
-        $this->type = (string)$attributes['type'];
-        if (strpos($this->type, ':') !== false) {
-            // remove the namespace prefix
-            $parts = explode(':', $this->type);
-            $this->type = $parts[1];
-        }
-        $this->minOccurs = (string)$attributes['minOccurs'];
-        $this->maxOccurs = (string)$attributes['maxOccurs'];
+    public function  __construct($xmlOrOptions, $level = 0) {
+        parent::__construct($xmlOrOptions, $level);
+        $this->options = PiBX_ParseTree_AttributeHelper::getElementOptions($xmlOrOptions);
+//        if ($xmlOrOptions instanceof SimpleXMLElement) {
+//            $attributes = $xmlOrOptions->attributes();
+//
+//            $this->options['name'] = (string)$attributes['name'];
+//            $this->options['type'] = (string)$attributes['type'];
+//            if (strpos($this->options['type'], ':') !== false) {
+//                // remove the namespace prefix
+//                $parts = explode(':', $this->options['type']);
+//                $this->options['type'] = $parts[1];
+//            }
+//            $this->options['minOccurs'] = (string)$attributes['minOccurs'];
+//            $this->options['maxOccurs'] = (string)$attributes['maxOccurs'];
+//        } else {
+//            $this->options = $xmlOrOptions;
+//        }
     }
 
     public function getName() {
-        return $this->name;
+        return $this->options['name'];
     }
 
     public function isAnonym() {
@@ -62,15 +64,15 @@ class PiBX_ParseTree_ElementNode extends PiBX_ParseTree_Tree {
     }
 
     public function getType() {
-        return $this->type;
+        return $this->options['type'];
     }
 
     public function getMinOccurs() {
-        return $this->minOccurs;
+        return $this->options['minOccurs'];
     }
 
     public function getMaxOccurs() {
-        return $this->maxOccurs;
+        return $this->options['maxOccurs'];
     }
 
     public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {

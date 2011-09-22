@@ -48,7 +48,9 @@ require_once 'PiBX/AST/TypeAttribute.php';
  */
 class PiBX_Binding_Names {
     public static function createGetterNameFor(PiBX_AST_Tree $tree) {
-        if ($tree instanceof PiBX_AST_Collection) {
+        if ($tree instanceof PiBX_AST_Type) {
+                return 'get' . self::getCamelCasedName( $tree->getName() );
+        } elseif ($tree instanceof PiBX_AST_Collection) {
             if ($tree->countChildren() == 1) {
                 $child = $tree->get(0);
                 $name = self::getCamelCasedName( $child->getName() );
@@ -80,7 +82,9 @@ class PiBX_Binding_Names {
     }
 
     public static function createSetterNameFor(PiBX_AST_Tree $tree) {
-        if ($tree instanceof PiBX_AST_Collection) {
+        if ($tree instanceof PiBX_AST_Type) {
+                return 'set' . self::getCamelCasedName( $tree->getName() );
+        } elseif ($tree instanceof PiBX_AST_Collection) {
             if ($tree->countChildren() == 1) {
                 $child = $tree->get(0);
                 $name = self::getCamelCasedName( $child->getName() );

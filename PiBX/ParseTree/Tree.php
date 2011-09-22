@@ -54,9 +54,20 @@ abstract class PiBX_ParseTree_Tree {
      */
     protected $namespaces;
 
-    public function  __construct(SimpleXMLElement $xml, $level = 0) {
+    /**
+     * @var array Attributes of the node (key => value)
+     */
+    protected $options;
+
+    public function  __construct($xmlOrOptions, $level = 0) {
         $this->level = $level;
-        $this->namespaces = $xml->getDocNamespaces();
+        if ($xmlOrOptions instanceof SimpleXMLElement) {
+            $this->namespaces = $xmlOrOptions->getDocNamespaces();
+        } elseif (is_array($xmlOrOptions)) {
+            $this->options = $xmlOrOptions;
+        } else {
+            throw new InvalidArgumentException('Parameter must be instance of SimpleXMLElement or array');
+        }
     }
 
     public function setParent(PiBX_ParseTree_Tree $tree) {
@@ -80,6 +91,12 @@ abstract class PiBX_ParseTree_Tree {
     public function getNamespaces() {
        return $this->namespaces;
     }
+    public function setNamespaces(array $namespaces) {
+        $this->namespaces = $namespaces;
+    }
+    public function addNamespace(array $namespace) {
+        $this->namespaces[] = $namespace;
+    }
 
     public function add(PiBX_ParseTree_Tree $tree) {
         $this->children[] = $tree;
@@ -97,6 +114,14 @@ abstract class PiBX_ParseTree_Tree {
         array_splice($this->children, $index, 1);
 
         return true;
+    }
+
+    public function hasChildren() {
+        return count($this->children) > 0;
+    }
+
+    public function countChildren() {
+        return count($this->children);
     }
 
     abstract function accept(PiBX_ParseTree_Visitor_VisitorAbstract $v);

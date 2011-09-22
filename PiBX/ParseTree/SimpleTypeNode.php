@@ -33,15 +33,13 @@ require_once 'PiBX/ParseTree/Tree.php';
  * @author Christoph Gockel
  */
 class PiBX_ParseTree_SimpleTypeNode extends PiBX_ParseTree_Tree {
-    public function  __construct(SimpleXMLElement $xml, $level = 0) {
-        parent::__construct($xml, $level);
-        $attributes = $xml->attributes();
-
-        $this->name = (string)$attributes['name'];
+    public function  __construct($xmlOrOptions, $level = 0) {
+        parent::__construct($xmlOrOptions, $level);
+        $this->options = PiBX_ParseTree_AttributeHelper::getSimpleTypeOptions($xmlOrOptions);
     }
 
     public function getName() {
-        return $this->name;
+        return $this->options['name'];
     }
 
     public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {

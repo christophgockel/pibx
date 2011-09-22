@@ -201,6 +201,16 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         }
         
         $this->xml .= '>';
+
+        if ( !$tree->hasChildren() ) {
+            $this->xml .= '<value style="text"';
+
+            $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+            $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+            $this->xml .= ' get-method="'.$getter.'"';
+            $this->xml .= ' set-method="'.$setter.'"';
+            $this->xml .= '/>';
+        }
         
         return true;
     }
