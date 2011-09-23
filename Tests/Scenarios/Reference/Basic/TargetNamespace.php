@@ -28,6 +28,7 @@
  */
 require_once dirname(__FILE__) . '/../../../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
+require_once 'Tests/Scenarios/Reference/TestCase.php';
 require_once 'PiBX/ParseTree/Tree.php';
 require_once 'PiBX/ParseTree/ElementNode.php';
 require_once 'PiBX/CodeGen/ASTCreator.php';
@@ -35,13 +36,17 @@ require_once 'PiBX/CodeGen/ASTOptimizer.php';
 require_once 'PiBX/CodeGen/ClassGenerator.php';
 require_once 'PiBX/CodeGen/SchemaParser.php';
 require_once 'PiBX/CodeGen/TypeUsage.php';
-require_once 'PiBX/Binding/Creator.php';
 /**
- * Testing the the W3C basic example "TargetNamespace".
+ * Test-data definition for the W3C basic example "TargetNamespace".
  *
  * @author Christoph Gockel
  */
-class PiBX_Scenarios_Reference_Basic_TargetNamespace extends PHPUnit_Framework_TestCase {
+class PiBX_Scenarios_Reference_Basic_TargetNamespace extends PiBX_Scenarios_Reference_TestCase {
+
+    public function setUp() {
+        $this->pathToTestFiles = dirname(__FILE__) . '/../../../_files/Reference/Basic/TargetNamespace';
+        $this->schemaFile = 'targetNamespace.xsd';
+    }
 
     public function _testExampleOutput() {
         return <<<OUTPUT
@@ -54,39 +59,7 @@ class PiBX_Scenarios_Reference_Basic_TargetNamespace extends PHPUnit_Framework_T
 OUTPUT;
     }
 
-    public function testParseTree() {
-        $expectedTree = $this->getParseTree();
-        $xml = simplexml_load_file(dirname(__FILE__) . '/../../../_files/Reference/Basic/TargetNamespace/targetNamespace.xsd');
-
-        $parser = new PiBX_CodeGen_SchemaParser();
-        $parser->setSchema($xml);
-
-        $parsedTree = $parser->parse();
-
-        $this->assertTrue($parsedTree instanceof PiBX_ParseTree_Tree);
-        $this->assertTrue($expectedTree instanceof PiBX_ParseTree_Tree);
-
-        $this->assertEquals($expectedTree, $parsedTree);
-    }
-
-    public function testAST() {
-        $expectedType = $this->getAST();
-        $schema = simplexml_load_file(dirname(__FILE__) . '/../../../_files/Reference/Basic/TargetNamespace/targetNamespace.xsd');
-
-        $parser = new PiBX_CodeGen_SchemaParser();
-        $parser->setSchema($schema);
-        $tree = $parser->parse();
-
-        $creator = new PiBX_CodeGen_ASTCreator(new PiBX_CodeGen_TypeUsage());
-        $tree->accept($creator);
-
-        $typeList = $creator->getTypeList();
-        list($type) = $typeList;
-
-        $this->assertEquals($expectedType, $type);
-    }
-
-    private function getAST() {
+    public function getAST() {
         $expectedType = new PiBX_AST_Type('targetNamespace', 'string');
         $expectedType->setAsRoot();
         $expectedType->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
@@ -132,7 +105,7 @@ OUTPUT;
     }
 
 
-    private function getParseTree() {
+    public function getParseTree() {
         $options = array(
             'name' => 'targetNamespace',
             'type' => 'string'
