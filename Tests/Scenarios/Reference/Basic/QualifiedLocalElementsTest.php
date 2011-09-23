@@ -44,7 +44,7 @@ require_once 'PiBX/Binding/Creator.php';
  *
  * @author Christoph Gockel
  */
-class PiBX_Scenarios_Reference_Basic_QualifiedLocalElements extends PiBX_Scenarios_Reference_TestCase {
+class PiBX_Scenarios_Reference_Basic_QualifiedLocalElementsTest extends PiBX_Scenarios_Reference_TestCase {
     public function setUp() {
         $this->pathToTestFiles = dirname(__FILE__) . '/../../../_files/Reference/Basic/QualifiedLocalElements';
         $this->schemaFile = 'qualifiedLocalElements.xsd';

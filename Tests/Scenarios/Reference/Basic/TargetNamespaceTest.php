@@ -41,7 +41,7 @@ require_once 'PiBX/CodeGen/TypeUsage.php';
  *
  * @author Christoph Gockel
  */
-class PiBX_Scenarios_Reference_Basic_TargetNamespace extends PiBX_Scenarios_Reference_TestCase {
+class PiBX_Scenarios_Reference_Basic_TargetNamespaceTest extends PiBX_Scenarios_Reference_TestCase {
 
     public function setUp() {
         $this->pathToTestFiles = dirname(__FILE__) . '/../../../_files/Reference/Basic/TargetNamespace';
