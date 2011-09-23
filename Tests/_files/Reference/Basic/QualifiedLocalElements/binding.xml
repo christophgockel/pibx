@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements" prefix="ex"/>
+  <mapping class="QualifiedLocalElements" name="qualifiedLocalElements">
+    <value style="element" name="element1" get-method="getElement1" set-method="setElement1"/>
+    <value style="element" name="element2" get-method="getElement2" set-method="setElement2"/>
+  </mapping>
+</binding>

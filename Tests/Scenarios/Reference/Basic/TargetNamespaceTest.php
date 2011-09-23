@@ -75,36 +75,6 @@ OUTPUT;
         return $expectedType;
     }
 
-    public function testBindingFile() {
-        $filepath = dirname(__FILE__) . '/../../../_files/Reference/Basic/TargetNamespace';
-        $schemaFile = $filepath . '/targetNamespace.xsd';
-        $bindingFile = file_get_contents($filepath . '/binding.xml');
-
-        $typeUsage = new PiBX_CodeGen_TypeUsage();
-
-        $parser = new PiBX_CodeGen_SchemaParser($schemaFile, $typeUsage);
-        $parsedTree = $parser->parse();
-
-        $creator = new PiBX_CodeGen_ASTCreator($typeUsage);
-        $parsedTree->accept($creator);
-
-        $typeList = $creator->getTypeList();
-
-        $usages = $typeUsage->getTypeUsages();
-
-        $optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
-        $typeList = $optimizer->optimize();
-
-        $b = new PiBX_Binding_Creator();
-
-        foreach ($typeList as &$type) {
-            $type->accept($b);
-        }
-
-        $this->assertEquals($bindingFile, $b->getXml());
-    }
-
-
     public function getParseTree() {
         $options = array(
             'name' => 'targetNamespace',

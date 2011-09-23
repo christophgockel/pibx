@@ -33,6 +33,8 @@ require_once 'PiBX/ParseTree/ElementNode.php';
 require_once 'PiBX/CodeGen/ASTCreator.php';
 require_once 'PiBX/CodeGen/SchemaParser.php';
 require_once 'PiBX/CodeGen/TypeUsage.php';
+require_once 'PiBX/CodeGen/ASTOptimizer.php';
+require_once 'PiBX/Binding/Creator.php';
 /**
  * This is an abstract base class for all W3C reference tests.
  * It ensures a single definition of how to test the different schemas.
@@ -78,4 +80,33 @@ abstract class PiBX_Scenarios_Reference_TestCase extends PHPUnit_Framework_TestC
 
         $this->assertEquals($expectedTree, $parsedTree);
     }
+
+    public function testBindingFile() {
+        $schemaFile = $this->pathToTestFiles . '/' . $this->schemaFile;
+        $bindingFile = file_get_contents($this->pathToTestFiles . '/binding.xml');
+
+        $typeUsage = new PiBX_CodeGen_TypeUsage();
+
+        $parser = new PiBX_CodeGen_SchemaParser($schemaFile, $typeUsage);
+        $parsedTree = $parser->parse();
+
+        $creator = new PiBX_CodeGen_ASTCreator($typeUsage);
+        $parsedTree->accept($creator);
+
+        $typeList = $creator->getTypeList();
+
+        $usages = $typeUsage->getTypeUsages();
+
+        $optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
+        $typeList = $optimizer->optimize();
+
+        $b = new PiBX_Binding_Creator();
+
+        foreach ($typeList as &$type) {
+            $type->accept($b);
+        }
+
+        $this->assertEquals($bindingFile, $b->getXml());
+    }
+
 }
