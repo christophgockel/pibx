@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="StringElement" name="stringElement">
+    <value style="text" get-method="getStringElement" set-method="setStringElement"/>
+  </mapping>
+  <mapping class="EchoStringElement" name="echoStringElement">
+    <structure type="StringElement" get-method="getStringElement" set-method="setStringElement"/>
+  </mapping>
+</binding>
