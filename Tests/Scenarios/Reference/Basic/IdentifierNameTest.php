@@ -44,68 +44,76 @@ require_once 'PiBX/Binding/Creator.php';
  *
  * @author Christoph Gockel
  */
-class PiBX_Scenarios_Reference_Basic_QualifiedLocalElementsTest extends PiBX_Scenarios_Reference_TestCase {
+class PiBX_Scenarios_Reference_Basic_IdentifierNameTest extends PiBX_Scenarios_Reference_TestCase {
     public function setUp() {
-        $this->pathToTestFiles = dirname(__FILE__) . '/../../../_files/Reference/Basic/QualifiedLocalElements';
-        $this->schemaFile = 'qualifiedLocalElements.xsd';
+        $this->pathToTestFiles = dirname(__FILE__) . '/../../../_files/Reference/Basic/IdentifierName';
+        $this->schemaFile = 'IdentifierName.xsd';
     }
 
     public function getASTs() {
-        $expectedType = new PiBX_AST_Type('qualifiedLocalElements');
-        $expectedType->setAsRoot();
-        $expectedType->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $namespaces = array(
+            '' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
             'xs' => 'http://www.w3.org/2001/XMLSchema',
-            'ex' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
             'xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+            'p' => 'http://www.w3.org/2002/ws/databinding/patterns/6/09/',
+            'ex' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
+        );
+        $elementNamespaces = array(
             'wsdl11' => 'http://schemas.xmlsoap.org/wsdl/',
             'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
         );
-        $expectedType->setNamespaces($namespaces);
 
-        $attribute1 = new PiBX_AST_TypeAttribute('element1', 'string');
-        $attribute2 = new PiBX_AST_TypeAttribute('element2', 'string');
+        $typeReferencedElement = new PiBX_AST_Type('identifierName', 'string');
+        $typeReferencedElement->setAsRoot();
+        $typeReferencedElement->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
+        $typeReferencedElement->setNamespaces($namespaces);
 
-        $expectedType->add($attribute1);
-        $expectedType->add($attribute2);
+        $typeElement = new PiBX_AST_Type('echoIdentifierName');
+        $typeElement->setAsRoot();
+        $typeElement->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
+        $typeElement->setNamespaces($namespaces);
+        
+        $attribute = new PiBX_AST_TypeAttribute('', 'identifierName');
 
-        return array($expectedType);
+        $typeElement->add($attribute);
+        
+        return array($typeReferencedElement, $typeElement);
     }
 
     public function getParseTree() {
         $tree = new PiBX_ParseTree_RootNode();
         $tree->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $options = array(
-            'name' => 'qualifiedLocalElements',
+            'name' => 'identifierName',
             'type' => ''
         );
         $namespaces = array(
+            '' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
             'xs' => 'http://www.w3.org/2001/XMLSchema',
-            'ex' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
             'xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-            'wsdl11' => 'http://schemas.xmlsoap.org/wsdl/',
-            'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
+            'p' => 'http://www.w3.org/2002/ws/databinding/patterns/6/09/',
+            'ex' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
+//            'wsdl11' => 'http://schemas.xmlsoap.org/wsdl/',
+//            'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
         );
-        
-        $element = new PiBX_ParseTree_ElementNode($options, 0);
-        $element->setNamespaces($namespaces);
 
+        $element1 = new PiBX_ParseTree_ElementNode(array('name' => 'identifierName', 'type' => 'string'), 0);
+        $element1->setNamespaces($namespaces);
+        $element2 = new PiBX_ParseTree_ElementNode(array('name' => 'echoIdentifierName', 'type' => ''), 0);
+        $element2->setNamespaces($namespaces);
         $complexType = new PiBX_ParseTree_ComplexTypeNode(array(), 1);
         $complexType->setNamespaces($namespaces);
+        $sequence = new PiBX_ParseTree_SequenceNode(array(), 2);
+        $sequence->setNamespaces($namespaces);
+        $element3 = new PiBX_ParseTree_ElementNode(array('type' => 'identifierName'), 3);
+        $element3->setNamespaces($namespaces);
 
-        $sequenceNode = new PiBX_ParseTree_SequenceNode(array(), 2);
-        $sequenceNode->setNamespaces($namespaces);
+        $sequence->add($element3);
+        $complexType->add($sequence);
+        $element2->add($complexType);
 
-        $element1 = new PiBX_ParseTree_ElementNode(array('name' => 'element1', 'type' => 'string'), 3);
-        $element1->setNamespaces($namespaces);
-        $element2 = new PiBX_ParseTree_ElementNode(array('name' => 'element1', 'type' => 'string'), 3);
-        $element2->setNamespaces($namespaces);
-
-        $sequenceNode->add($element1);
-        $sequenceNode->add($element2);
-        $complexType->add($sequenceNode);
-        $element->add($complexType);
-        $tree->add($element);
+        $tree->add($element1);
+        $tree->add($element2);
         
         return $tree;
     }

@@ -66,7 +66,12 @@ class PiBX_Binding_Names {
                 return 'get' . self::getCollectionName($name);
             }
         } elseif ($tree instanceof PiBX_AST_TypeAttribute) {
-            $name = self::getCamelCasedName( $tree->getName() );
+            if ($tree->getName() != '') {
+                $getterName = $tree->getName();
+            } else {
+                $getterName = $tree->getType();
+            }
+            $name = self::getCamelCasedName( $getterName );
             return 'get' . $name;
         } elseif ($tree instanceof PiBX_AST_StructureElement) {
             $structureAst = $tree->getParent();
@@ -103,7 +108,12 @@ class PiBX_Binding_Names {
                 return 'set' . self::getCollectionName($name);
             }
         } elseif ($tree instanceof PiBX_AST_TypeAttribute) {
-            $name = self::getCamelCasedName( $tree->getName() );
+            if ($tree->getName() != '') {
+                $getterName = $tree->getName();
+            } else {
+                $getterName = $tree->getType();
+            }
+            $name = self::getCamelCasedName( $getterName );
             return 'set' . $name;
         } elseif ($tree instanceof PiBX_AST_StructureElement) {
             $structureAst = $tree->getParent();

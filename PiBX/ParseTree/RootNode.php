@@ -54,7 +54,5 @@ class PiBX_ParseTree_RootNode extends PiBX_ParseTree_Tree {
         foreach ($this->children as $child) {
             $child->accept($v);
         }
-
-        $v->plowTypesForLevel(0);
     }
 }

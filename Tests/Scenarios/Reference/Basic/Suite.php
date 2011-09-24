@@ -30,6 +30,7 @@ require_once dirname(__FILE__) . '/../../../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
 require_once 'Tests/Scenarios/Reference/Basic/QualifiedLocalElementsTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/TargetNamespaceTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/IdentifierNameTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -42,6 +43,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_QualifiedLocalElementsTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_TargetNamespaceTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_IdentifierNameTest');
         
         return $suite;
     }

@@ -51,10 +51,13 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
     private $astNodes;
 
+    private $targetNamespaceHasBeenAdded;
+
     public function  __construct() {
         $this->xml = '';
         
         $this->astNodes = array();
+        $this->targetNamespaceHasBeenAdded = false;
     }
 
     public function getXml() {
@@ -177,16 +180,17 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         if ($tree->isRoot()) {
             $targetNamespace = $tree->getTargetNamespace();
             
-            if ($targetNamespace != '') {
+            if ($targetNamespace != '' && $this->targetNamespaceHasBeenAdded == false) {
                 $availableNamespaces = $tree->getNamespaces();
                 $key = array_search($targetNamespace, $availableNamespaces);
                 
                 $this->xml .= '<namespace uri="' . $targetNamespace . '"';
                 $this->xml .= ' default="elements"';
-                if ($key !== false) {
+                if ($key !== false && $key != '') {
                     $this->xml .= ' prefix="' . $key . '"';
                 }
                 $this->xml .= '/>';
+                $this->targetNamespaceHasBeenAdded = true;
             }
         }
         
@@ -231,14 +235,25 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $this->xml .= ' set-method="'.$setter.'"';
                 $this->xml .= '/>';
             } else {
-                $this->xml .= '<structure map-as="' . $tree->getType() . '"';
+                if ($tree->getName() == '') {
+                    $name = PiBX_Binding_Names::createClassnameFor($tree->getType());
+                    $this->xml .= '<structure type="' . $name . '"';
 
-                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-                $this->xml .= ' get-method="'.$getter.'"';
-                $this->xml .= ' set-method="'.$setter.'"';
-                $this->xml .= ' name="'.$tree->getName().'"';
-                $this->xml .= '/>';
+                    $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+                    $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+                    $this->xml .= ' get-method="'.$getter.'"';
+                    $this->xml .= ' set-method="'.$setter.'"';
+                    $this->xml .= '/>';
+                } else {
+                    $this->xml .= '<structure map-as="' . $tree->getType() . '"';
+
+                    $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+                    $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+                    $this->xml .= ' get-method="'.$getter.'"';
+                    $this->xml .= ' set-method="'.$setter.'"';
+                    $this->xml .= ' name="'.$tree->getName().'"';
+                    $this->xml .= '/>';
+                }
             }
             return false;
         } else {

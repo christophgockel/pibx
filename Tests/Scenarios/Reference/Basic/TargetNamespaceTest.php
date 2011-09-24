@@ -59,7 +59,7 @@ class PiBX_Scenarios_Reference_Basic_TargetNamespaceTest extends PiBX_Scenarios_
 OUTPUT;
     }
 
-    public function getAST() {
+    public function getASTs() {
         $expectedType = new PiBX_AST_Type('targetNamespace', 'string');
         $expectedType->setAsRoot();
         $expectedType->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
@@ -72,7 +72,7 @@ OUTPUT;
         );
         $expectedType->setNamespaces($namespaces);
 
-        return $expectedType;
+        return array($expectedType);
     }
 
     public function getParseTree() {

@@ -69,6 +69,9 @@ class PiBX_ParseTree_AttributeHelper {
 
             $options['name'] = (string)$attributes['name'];
             $options['type'] = (string)$attributes['type'];
+            if (empty($options['type'])) {
+                $options['type'] = (string)$attributes['ref'];
+            }
             if (strpos($options['type'], ':') !== false) {
                 // remove the namespace prefix
                 $parts = explode(':', $options['type']);

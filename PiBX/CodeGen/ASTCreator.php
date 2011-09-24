@@ -47,67 +47,93 @@ require_once 'PiBX/ParseTree/Visitor/VisitorAbstract.php';
  */
 class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract {
     private $typeList;
-
     private $patternMatcher;
-
     private $currentParseTreeLevel;
 
     public function __construct() {
         $this->patternMatcher = new PiBX_CodeGen_ParseTreePatternMatcher();
         $this->currentParseTreeLevel = -1;
     }
-
     
-    
-    public function plowTypesForLevel($level) {/*DUMMY*/ }
     public function getTypeList() {
-        $this->typeList[] = $this->patternMatcher->constructMatchedAST();
+        // construct remaining types
+        $this->handleTypeConstructionForLevel(-1);
         
         return $this->typeList;
+    }
 
+    private function handleTypeConstructionForLevel($parseTreeLevel) {
+        if ($this->parsedElementsAreConstructableInLevel($parseTreeLevel)) {
+            $this->typeList[] = $this->patternMatcher->constructMatchedAST();
+            $this->patternMatcher->reset();
+        }
+    }
+
+    private function parsedElementsAreConstructableInLevel($parseTreeLevel) {
+        return $this->parsedElementsWereBothRootElements($parseTreeLevel) ||
+               $this->parsedElementIsParentOfLastElement($parseTreeLevel);
+               
+    }
+
+    private function parsedElementsWereBothRootElements($parseTreeLevel) {
+        return $parseTreeLevel == 0 && $this->currentParseTreeLevel == 0;
+    }
+
+    private function parsedElementIsParentOfLastElement($parseTreeLevel) {
+        return $parseTreeLevel < $this->currentParseTreeLevel;
     }
 
     public function visitAttributeNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->currentParseTreeLevel = $tree->getLevel();
     }
+    
     public function visitElementNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->patternMatcher->addElement($tree);
-        print "element ".$tree->getName()." \n";
         $this->currentParseTreeLevel = $tree->getLevel();
     }
+
     public function visitSimpleTypeNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->currentParseTreeLevel = $tree->getLevel();
-        print "simpleType \n";
     }
+
     public function visitComplexTypeNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->currentParseTreeLevel = $tree->getLevel();
         $this->patternMatcher->addElement($tree);
-        print "complexType \n";
     }
+
     public function visitSequenceNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->currentParseTreeLevel = $tree->getLevel();
         $this->patternMatcher->addElement($tree);
-        print "sequenceNode \n";
     }
+
     public function visitGroupNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->currentParseTreeLevel = $tree->getLevel();
-        print "groupNode \n";
     }
+
     public function visitAllNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->currentParseTreeLevel = $tree->getLevel();
-        print "allNode \n";
     }
+
     public function visitChoiceNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->currentParseTreeLevel = $tree->getLevel();
-        print "choiceNode \n";
     }
+
     public function visitRestrictionNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->currentParseTreeLevel = $tree->getLevel();
-        print "restriction \n";
     }
+
     public function visitEnumerationNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
         $this->currentParseTreeLevel = $tree->getLevel();
-        print "enumeration \n";
     }
 }
 //class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract {

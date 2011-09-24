@@ -46,11 +46,11 @@ abstract class PiBX_Scenarios_Reference_TestCase extends PHPUnit_Framework_TestC
     protected $pathToTestFiles;
     protected $schemaFile;
 
-    abstract function getAST();
+    abstract function getASTs();
     abstract function getParseTree();
 
     public function testAST() {
-        $expectedType = $this->getAST();
+        $expectedTypes = $this->getASTs();
         $schema = simplexml_load_file($this->pathToTestFiles . '/' . $this->schemaFile);
 
         $parser = new PiBX_CodeGen_SchemaParser();
@@ -61,9 +61,8 @@ abstract class PiBX_Scenarios_Reference_TestCase extends PHPUnit_Framework_TestC
         $tree->accept($creator);
 
         $typeList = $creator->getTypeList();
-        list($type) = $typeList;
-
-        $this->assertEquals($expectedType, $type);
+        
+        $this->assertEquals($expectedTypes, $typeList);
     }
 
     public function testParseTree() {
@@ -97,8 +96,8 @@ abstract class PiBX_Scenarios_Reference_TestCase extends PHPUnit_Framework_TestC
 
         $usages = $typeUsage->getTypeUsages();
 
-        $optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
-        $typeList = $optimizer->optimize();
+        //$optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
+        //$typeList = $optimizer->optimize();
 
         $b = new PiBX_Binding_Creator();
 

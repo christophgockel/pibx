@@ -28,7 +28,7 @@
  */
 require_once 'PiBX/CodeGen/ASTConstructor.php';
 /**
- * This pattern matcher gets feeded with subsequent ParseTree elements.
+ * This pattern matcher gets fed with subsequent ParseTree elements.
  * After every insertion, the matcher can be asked whether a matched AST does
  * exist.
  *
@@ -36,7 +36,7 @@ require_once 'PiBX/CodeGen/ASTConstructor.php';
  */
 class PiBX_CodeGen_ParseTreePatternMatcher {
     private $typePatterns;
-    private $stackOfElements;
+    public $stackOfElements;
 
     private $currentStackElement;
     private $currentStackPosition;
@@ -112,18 +112,7 @@ class PiBX_CodeGen_ParseTreePatternMatcher {
 
     public function constructMatchedAST() {
         $constructor = new PiBX_CodeGen_ASTConstructor($this->stackOfElements);
+
         return $constructor->construct();
-        //TODO: move out into separate classes!
-            $tree = $this->stackOfElements[0];
-            $name = ucfirst($tree->getName());
-            $t = new PiBX_AST_Type($name);
-//        //if ($this->countTypes() == 0) {
-//            // the first type is the XSD-root.
-            $t->setAsRoot();
-            $t->setTargetNamespace($tree->getParent()->getTargetNamespace());
-            $t->setNamespaces($tree->getNamespaces());
-  //          $this->typeList[] = $t;
-        return $t;
-//        print_r($this->stackOfElements);
     }
 }
