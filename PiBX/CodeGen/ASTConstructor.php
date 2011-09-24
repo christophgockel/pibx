@@ -51,7 +51,7 @@ require_once 'PiBX/ParseTree/SimpleTypeNode.php';
  * @author Christoph Gockel
  */
 class PiBX_CodeGen_ASTConstructor {
-    public $stackOfElements;
+    private $stackOfElements;
 
     private $currentAST;
     private $temporarySubnodeStack;

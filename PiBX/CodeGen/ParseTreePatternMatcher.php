@@ -36,7 +36,7 @@ require_once 'PiBX/CodeGen/ASTConstructor.php';
  */
 class PiBX_CodeGen_ParseTreePatternMatcher {
     private $typePatterns;
-    public $stackOfElements;
+    private $stackOfElements;
 
     private $currentStackElement;
     private $currentStackPosition;
