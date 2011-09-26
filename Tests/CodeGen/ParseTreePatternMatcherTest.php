@@ -60,4 +60,22 @@ class PiBX_CodeGen_ParseTreePatternMatcherTest extends PHPUnit_Framework_TestCas
         $this->assertTrue($matcher->elementsMatchDistinct());
         $this->assertTrue($matcher->getMatchedAST() instanceof PiBX_AST_Type);
     }
+
+    public function testComplexTypeWithAttribute() {
+        $complexType = new PiBX_ParseTree_ComplexTypeNode(array('name' => 'testType'), 0);
+            $sequence = new PiBX_ParseTree_SequenceNode(array(), 1);
+                $element = new PiBX_ParseTree_ElementNode(array('name' => 'text', 'type' => 'string', 'minOccurs' => '0'), 2);
+            $attribute = new PiBX_ParseTree_AttributeNode(array('name' => 'string', 'type' => 'string'), 1);
+
+
+        $matcher = new PiBX_CodeGen_ParseTreePatternMatcher();
+        $matcher->addElement($complexType);
+        $matcher->addElement($sequence);
+        $matcher->addElement($element);
+        $matcher->addElement($attribute);
+
+        $this->assertTrue($matcher->elementsMatch());
+        $this->assertTrue($matcher->elementsMatchDistinct());
+        $this->assertTrue($matcher->getMatchedAST() instanceof PiBX_AST_Type);
+    }
 }

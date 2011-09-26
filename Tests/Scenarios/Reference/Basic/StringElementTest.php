@@ -57,8 +57,6 @@ class PiBX_Scenarios_Reference_Basic_StringElementTest extends PiBX_Scenarios_Re
             'xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
             'p' => 'http://www.w3.org/2002/ws/databinding/patterns/6/09/',
             'ex' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
-        );
-        $elementNamespaces = array(
             'wsdl11' => 'http://schemas.xmlsoap.org/wsdl/',
             'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
         );
@@ -83,18 +81,15 @@ class PiBX_Scenarios_Reference_Basic_StringElementTest extends PiBX_Scenarios_Re
     public function getParseTree() {
         $tree = new PiBX_ParseTree_RootNode();
         $tree->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
-        $options = array(
-            'name' => 'stringElement',
-            'type' => ''
-        );
+
         $namespaces = array(
             '' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
             'xs' => 'http://www.w3.org/2001/XMLSchema',
             'xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
             'p' => 'http://www.w3.org/2002/ws/databinding/patterns/6/09/',
             'ex' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
-//            'wsdl11' => 'http://schemas.xmlsoap.org/wsdl/',
-//            'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
+            'wsdl11' => 'http://schemas.xmlsoap.org/wsdl/',
+            'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
         );
 
         $element1 = new PiBX_ParseTree_ElementNode(array('name' => 'stringElement', 'type' => 'string'), 0);

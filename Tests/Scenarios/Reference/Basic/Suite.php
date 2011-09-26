@@ -33,6 +33,7 @@ require_once 'Tests/Scenarios/Reference/Basic/TargetNamespaceTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/IdentifierNameTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NonIdentifierNameTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/StringElementTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/StringAttributeTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -48,6 +49,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_IdentifierNameTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NonIdentifierNameTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_StringElementTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_StringAttributeTest');
         
         return $suite;
     }

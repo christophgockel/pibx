@@ -76,10 +76,6 @@ OUTPUT;
     }
 
     public function getParseTree() {
-        $options = array(
-            'name' => 'targetNamespace',
-            'type' => 'string'
-        );
         $namespaces = array(
             'ex' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
             'xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
@@ -91,7 +87,7 @@ OUTPUT;
         $tree = new PiBX_ParseTree_RootNode();
         $tree->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         
-        $element = new PiBX_ParseTree_ElementNode($options, 0);
+        $element = new PiBX_ParseTree_ElementNode(array('name' => 'targetNamespace','type' => 'string'), 0);
         $element->setNamespaces($namespaces);
 
         $tree->add($element);

@@ -81,6 +81,9 @@ abstract class PiBX_Scenarios_Reference_TestCase extends PHPUnit_Framework_TestC
     }
 
     public function testBindingFile() {
+
+
+        
         $schemaFile = $this->pathToTestFiles . '/' . $this->schemaFile;
         $bindingFile = file_get_contents($this->pathToTestFiles . '/binding.xml');
 
@@ -99,7 +102,7 @@ abstract class PiBX_Scenarios_Reference_TestCase extends PHPUnit_Framework_TestC
         //$optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
         //$typeList = $optimizer->optimize();
 
-        $b = new PiBX_Binding_Creator();
+        $b = new PiBX_Binding_Creator($typeList);
 
         foreach ($typeList as &$type) {
             $type->accept($b);

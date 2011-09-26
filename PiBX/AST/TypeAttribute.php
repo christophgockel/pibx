@@ -34,13 +34,14 @@ require_once 'PiBX/AST/Tree.php';
  */
 class PiBX_AST_TypeAttribute extends PiBX_AST_Tree {
     private $style;
+    private $isOptional;
     private $getMethod;
     private $setMethod;
 
-    public function  __construct($name = '', $type = '') {
+    public function  __construct($name = '', $type = '', $isOptional = false) {
         parent::__construct($name, $type);
         $this->style = 'element';
-
+        $this->isOptional = $isOptional;
     }
 
     public function setStyle($style) {
@@ -62,6 +63,13 @@ class PiBX_AST_TypeAttribute extends PiBX_AST_Tree {
     }
     public function getSetMethod() {
         return $this->setMethod;
+    }
+
+    public function isOptional() {
+        if ($this->style == 'attribute')
+            return true;
+        
+        return $this->isOptional;
     }
 
     public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {

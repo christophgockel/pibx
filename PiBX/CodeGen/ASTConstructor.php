@@ -57,19 +57,22 @@ class PiBX_CodeGen_ASTConstructor {
     private $temporarySubnodeStack;
 
     public function __construct(array $stackOfParseTreeElements) {
+        if (count($stackOfParseTreeElements) == 0) {
+            throw new RuntimeException('Cannot construct an AST without any ParseTree elements');
+        }
+        
         $this->stackOfElements = $stackOfParseTreeElements;
         $this->temporarySubnodeStack = array();
     }
 
     public function construct() {
-        $elementCount = count($this->stackOfElements);
         // to iterate from top to bottom (leave nodes to root node)
-        $reversedElements = $reverted = new ArrayIterator(array_reverse($this->stackOfElements));
+        $reversedElements = new ArrayIterator(array_reverse($this->stackOfElements));
         
         foreach ($reversedElements as &$element) {
             $this->handleParseTreeElement($element);
         }
-
+        
         return $this->currentAST;
     }
 
@@ -77,9 +80,11 @@ class PiBX_CodeGen_ASTConstructor {
         if ($tree instanceof PiBX_ParseTree_ElementNode) {
             $this->handleElementNode($tree);
         } elseif ($tree instanceof PiBX_ParseTree_ComplexTypeNode) {
-            
+            $this->handleComplexTypeNode($tree);
         } elseif ($tree instanceof PiBX_ParseTree_SequenceNode) {
-
+            //TODO: ignored at the moment
+        } elseif ($tree instanceof PiBX_ParseTree_AttributeNode) {
+            $this->handleAttributeNode($tree);
         }
     }
 
@@ -94,15 +99,38 @@ class PiBX_CodeGen_ASTConstructor {
             if ($this->hasTemporaryNodes()) {
                 $this->addTemporaryNodesToTree($type);
             }
-
+            
             $this->currentAST = $type;
         } else {
             if ($element->hasChildren()) {
                 throw new RuntimeException('Elements with children?');
             } else {
-                $typeAttribute = new PiBX_AST_TypeAttribute($element->getName(), $element->getType());
+                $elementIsOptional = $element->getMinOccurs() == 0;
+                $typeAttribute = new PiBX_AST_TypeAttribute($element->getName(), $element->getType(), $elementIsOptional);
                 $this->temporarySubnodeStack[] = $typeAttribute;
             }
+        }
+    }
+
+    private function handleAttributeNode(PiBX_ParseTree_AttributeNode $attribute) {
+        $typeAttribute = new PiBX_AST_TypeAttribute($attribute->getName(), $attribute->getType());
+        $typeAttribute->setStyle('attribute');//TODO: create enum for $style
+        $this->temporarySubnodeStack[] = $typeAttribute;
+    }
+
+    private function handleComplexTypeNode(PiBX_ParseTree_ComplexTypeNode $complexType) {
+        if ($complexType->getLevel() == 0) {
+            $type = new PiBX_AST_Type($complexType->getName());
+            $type->setNamespaces($complexType->getNamespaces());
+            $type->setTargetNamespace($complexType->getParent()->getTargetNamespace());//TODO: get rid of these trainwrecks
+
+            if ($this->hasTemporaryNodes()) {
+                $this->addTemporaryNodesToTree($type);
+            }
+
+            $this->currentAST = $type;
+        } else {
+            //throw new RuntimeException('not supported yet');
         }
     }
 

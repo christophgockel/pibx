@@ -53,11 +53,14 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
     private $targetNamespaceHasBeenAdded;
 
-    public function  __construct() {
+    private $typeList;
+
+    public function  __construct(array $typeList) {
         $this->xml = '';
         
         $this->astNodes = array();
         $this->targetNamespaceHasBeenAdded = false;
+        $this->typeList = $typeList;
     }
 
     public function getXml() {
@@ -206,7 +209,11 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         
         $this->xml .= '>';
 
-        if ( !$tree->hasChildren() ) {
+        if ( !PiBX_ParseTree_BaseType::isBaseType($tree->getType()) && !$tree->hasChildren()) {
+            $this->xml .= '<structure map-as="';
+            $this->xml .= $tree->getType();
+            $this->xml .= '"/>';
+        } elseif ( !$tree->hasChildren() ) {
             $this->xml .= '<value style="text"';
 
             $getter = PiBX_Binding_Names::createGetterNameFor($tree);
@@ -233,27 +240,39 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $setter = PiBX_Binding_Names::createSetterNameFor($tree);
                 $this->xml .= ' get-method="'.$getter.'"';
                 $this->xml .= ' set-method="'.$setter.'"';
+                if ($tree->isOptional()) {
+                    $this->xml .= ' usage="optional"';
+                }
                 $this->xml .= '/>';
             } else {
-                if ($tree->getName() == '') {
-                    $name = PiBX_Binding_Names::createClassnameFor($tree->getType());
-                    $this->xml .= '<structure type="' . $name . '"';
+                $name = $tree->getName();
+                $referencedTypeHasBaseType = true;
+                $name = PiBX_Binding_Names::createClassnameFor($tree->getType());
 
-                    $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-                    $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-                    $this->xml .= ' get-method="'.$getter.'"';
-                    $this->xml .= ' set-method="'.$setter.'"';
-                    $this->xml .= '/>';
-                } else {
-                    $this->xml .= '<structure map-as="' . $tree->getType() . '"';
-
-                    $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-                    $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-                    $this->xml .= ' get-method="'.$getter.'"';
-                    $this->xml .= ' set-method="'.$setter.'"';
-                    $this->xml .= ' name="'.$tree->getName().'"';
-                    $this->xml .= '/>';
+                $referencedType = $this->getTypeByName($tree->getType());
+                
+                if ( !PiBX_ParseTree_BaseType::isBaseType($referencedType->getType()) ) {
+                    $referencedTypeHasBaseType = false;
                 }
+
+                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+                $this->xml .= '<structure';
+
+                if ($referencedTypeHasBaseType) {
+                    $this->xml .= ' type="' . $name . '"';
+                } else {
+                    $this->xml .= ' map-as="' . $name . '"';
+                }
+
+                $this->xml .= ' get-method="'.$getter.'"';
+                $this->xml .= ' set-method="'.$setter.'"';
+
+                if ( !$referencedTypeHasBaseType ) {
+                    $this->xml .= ' name="' . $tree->getType() . '"';
+                }
+
+                $this->xml .= '/>';
             }
             return false;
         } else {
@@ -262,5 +281,15 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
     }
     public function visitTypeAttributeLeave(PiBX_AST_Tree $tree) {
         return true;
+    }
+
+    private function getTypeByName($typeName) {
+        foreach ($this->typeList as &$type) {
+            if ($type->getName() == $typeName) {
+                return $type;
+            }
+        }
+        
+        return null;
     }
 }

@@ -75,10 +75,7 @@ class PiBX_Scenarios_Reference_Basic_QualifiedLocalElementsTest extends PiBX_Sce
     public function getParseTree() {
         $tree = new PiBX_ParseTree_RootNode();
         $tree->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
-        $options = array(
-            'name' => 'qualifiedLocalElements',
-            'type' => ''
-        );
+
         $namespaces = array(
             'xs' => 'http://www.w3.org/2001/XMLSchema',
             'ex' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
@@ -87,7 +84,7 @@ class PiBX_Scenarios_Reference_Basic_QualifiedLocalElementsTest extends PiBX_Sce
             'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
         );
         
-        $element = new PiBX_ParseTree_ElementNode($options, 0);
+        $element = new PiBX_ParseTree_ElementNode(array('name' => 'qualifiedLocalElements', 'type' => ''), 0);
         $element->setNamespaces($namespaces);
 
         $complexType = new PiBX_ParseTree_ComplexTypeNode(array(), 1);

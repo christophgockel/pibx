@@ -77,13 +77,13 @@ class PiBX_CodeGen_ParseTreePatternMatcher {
     }
 
     private function matchElementsInArray($array) {
-        $matchedTypes = array();
-
+        $matchedTypes = $array;
+        
         foreach ($this->stackOfElements as $position => &$element) {
             $this->currentStackElement = get_class($element);
             $this->currentStackPosition = $position;
-
-            $matchedTypes = array_filter($array, array($this, 'currentElementMatchesForArray'));
+            
+            $matchedTypes = array_filter($matchedTypes, array($this, 'currentElementMatchesForArray'));
         }
 
         return $matchedTypes;

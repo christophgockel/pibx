@@ -61,6 +61,10 @@ class PiBX_ParseTree_AttributeHelper {
         return key_exists($key, $array) ? $array[$key] : '';
     }
 
+    private static function getIntValue($array, $key) {
+        return key_exists($key, $array) ? (int)$array[$key] : 0;
+    }
+
     public static function getElementOptions($objectOrArray) {
         $options = array();
 
@@ -77,13 +81,13 @@ class PiBX_ParseTree_AttributeHelper {
                 $parts = explode(':', $options['type']);
                 $options['type'] = $parts[1];
             }
-            $options['minOccurs'] = (string)$attributes['minOccurs'];
-            $options['maxOccurs'] = (string)$attributes['maxOccurs'];
+            $options['minOccurs'] = ((string)$attributes['minOccurs'] != '') ? (string)$attributes['minOccurs'] : 1;
+            $options['maxOccurs'] = ((string)$attributes['maxOccurs'] != '') ? (string)$attributes['maxOccurs'] : 1;
         } else {
             $options['name'] = self::getValue($objectOrArray, 'name');
             $options['type'] = self::getValue($objectOrArray, 'type');
-            $options['minOccurs'] = self::getValue($objectOrArray, 'minOccurs');
-            $options['maxOccurs'] = self::getValue($objectOrArray, 'maxOccurs');
+            $options['minOccurs'] = array_key_exists('minOccurs', $objectOrArray) ? self::getIntValue($objectOrArray, 'minOccurs') : 1;
+            $options['maxOccurs'] = array_key_exists('maxOccurs', $objectOrArray) ? self::getIntValue($objectOrArray, 'maxOccurs') : 1;
         }
         
         return $options;
@@ -127,6 +131,31 @@ class PiBX_ParseTree_AttributeHelper {
         } else {
             $options['name'] = self::getValue($objectOrArray, 'name');
         }*/
+
+        return $options;
+    }
+
+    public static function getAttributeOptions($objectOrArray) {
+        $options = array();
+
+        if ($objectOrArray instanceof SimpleXMLElement) {
+            $attributes = $objectOrArray->attributes();
+
+            $options['name'] = (string)$attributes['name'];
+            $options['type'] = (string)$attributes['type'];
+            if (strpos($options['type'], ':') !== false) {
+                // remove the namespace prefix
+                $parts = explode(':', $options['type']);
+                $options['type'] = $parts[1];
+            }
+            $options['minOccurs'] = (string)$attributes['minOccurs'];
+            $options['maxOccurs'] = (string)$attributes['maxOccurs'];
+        } else {
+            $options['name'] = self::getValue($objectOrArray, 'name');
+            $options['type'] = self::getValue($objectOrArray, 'type');
+            $options['minOccurs'] = self::getValue($objectOrArray, 'minOccurs');
+            $options['maxOccurs'] = self::getValue($objectOrArray, 'maxOccurs');
+        }
 
         return $options;
     }

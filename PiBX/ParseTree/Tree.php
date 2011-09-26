@@ -62,9 +62,10 @@ abstract class PiBX_ParseTree_Tree {
     public function  __construct($xmlOrOptions, $level = 0) {
         $this->level = $level;
         if ($xmlOrOptions instanceof SimpleXMLElement) {
-            $this->namespaces = $xmlOrOptions->getDocNamespaces();
+            $this->namespaces = $xmlOrOptions->getDocNamespaces(true);
         } elseif (is_array($xmlOrOptions)) {
             $this->options = $xmlOrOptions;
+            $this->namespaces = isset($xmlOrOptions['namespaces']) ? $xmlOrOptions['namespaces'] : array();
         } else {
             throw new InvalidArgumentException('Parameter must be instance of SimpleXMLElement or array');
         }

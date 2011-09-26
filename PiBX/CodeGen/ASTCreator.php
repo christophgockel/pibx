@@ -72,7 +72,6 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
     private function parsedElementsAreConstructableInLevel($parseTreeLevel) {
         return $this->parsedElementsWereBothRootElements($parseTreeLevel) ||
                $this->parsedElementIsParentOfLastElement($parseTreeLevel);
-               
     }
 
     private function parsedElementsWereBothRootElements($parseTreeLevel) {
@@ -84,7 +83,7 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
     }
 
     public function visitAttributeNode(PiBX_ParseTree_Tree $tree) {
-        $this->handleTypeConstructionForLevel($tree->getLevel());
+        $this->patternMatcher->addElement($tree);
         $this->currentParseTreeLevel = $tree->getLevel();
     }
     
@@ -96,43 +95,49 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
 
     public function visitSimpleTypeNode(PiBX_ParseTree_Tree $tree) {
         $this->handleTypeConstructionForLevel($tree->getLevel());
+        $this->patternMatcher->addElement($tree);
         $this->currentParseTreeLevel = $tree->getLevel();
     }
 
     public function visitComplexTypeNode(PiBX_ParseTree_Tree $tree) {
         $this->handleTypeConstructionForLevel($tree->getLevel());
-        $this->currentParseTreeLevel = $tree->getLevel();
         $this->patternMatcher->addElement($tree);
+        $this->currentParseTreeLevel = $tree->getLevel();
     }
 
     public function visitSequenceNode(PiBX_ParseTree_Tree $tree) {
         $this->handleTypeConstructionForLevel($tree->getLevel());
-        $this->currentParseTreeLevel = $tree->getLevel();
         $this->patternMatcher->addElement($tree);
+        $this->currentParseTreeLevel = $tree->getLevel();
     }
 
     public function visitGroupNode(PiBX_ParseTree_Tree $tree) {
         $this->handleTypeConstructionForLevel($tree->getLevel());
+        $this->patternMatcher->addElement($tree);
         $this->currentParseTreeLevel = $tree->getLevel();
     }
 
     public function visitAllNode(PiBX_ParseTree_Tree $tree) {
         $this->handleTypeConstructionForLevel($tree->getLevel());
+        $this->patternMatcher->addElement($tree);
         $this->currentParseTreeLevel = $tree->getLevel();
     }
 
     public function visitChoiceNode(PiBX_ParseTree_Tree $tree) {
         $this->handleTypeConstructionForLevel($tree->getLevel());
+        $this->patternMatcher->addElement($tree);
         $this->currentParseTreeLevel = $tree->getLevel();
     }
 
     public function visitRestrictionNode(PiBX_ParseTree_Tree $tree) {
         $this->handleTypeConstructionForLevel($tree->getLevel());
+        $this->patternMatcher->addElement($tree);
         $this->currentParseTreeLevel = $tree->getLevel();
     }
 
     public function visitEnumerationNode(PiBX_ParseTree_Tree $tree) {
         $this->handleTypeConstructionForLevel($tree->getLevel());
+        $this->patternMatcher->addElement($tree);
         $this->currentParseTreeLevel = $tree->getLevel();
     }
 }

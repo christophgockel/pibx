@@ -44,10 +44,10 @@ require_once 'PiBX/Binding/Creator.php';
  *
  * @author Christoph Gockel
  */
-class PiBX_Scenarios_Reference_Basic_IdentifierNameTest extends PiBX_Scenarios_Reference_TestCase {
+class PiBX_Scenarios_Reference_Basic_StringAttributeTest extends PiBX_Scenarios_Reference_TestCase {
     public function setUp() {
-        $this->pathToTestFiles = dirname(__FILE__) . '/../../../_files/Reference/Basic/IdentifierName';
-        $this->schemaFile = 'IdentifierName.xsd';
+        $this->pathToTestFiles = dirname(__FILE__) . '/../../../_files/Reference/Basic/StringAttribute';
+        $this->schemaFile = 'StringAttribute.xsd';
     }
 
     public function getASTs() {
@@ -61,27 +61,44 @@ class PiBX_Scenarios_Reference_Basic_IdentifierNameTest extends PiBX_Scenarios_R
             'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
         );
 
-        $typeReferencedElement = new PiBX_AST_Type('identifierName', 'string');
+        $typeReferencedElement = new PiBX_AST_Type('stringAttribute', 'StringAttribute');
         $typeReferencedElement->setAsRoot();
         $typeReferencedElement->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $typeReferencedElement->setNamespaces($namespaces);
 
-        $typeElement = new PiBX_AST_Type('echoIdentifierName');
-        $typeElement->setAsRoot();
+        $typeElement = new PiBX_AST_Type('StringAttribute');
         $typeElement->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $typeElement->setNamespaces($namespaces);
-        
-        $attribute = new PiBX_AST_TypeAttribute('', 'identifierName');
+            $typeElementAttribute1 = new PiBX_AST_TypeAttribute('text', 'string', true);
+            $typeElementAttribute1->setStyle('element');
 
-        $typeElement->add($attribute);
+            $typeElementAttribute2 = new PiBX_AST_TypeAttribute('string', 'string');
+            $typeElementAttribute2->setStyle('attribute');
+
+        $typeEchoElement = new PiBX_AST_Type('echoStringAttribute');
+        $typeEchoElement->setAsRoot();
+        $typeEchoElement->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
+        $typeEchoElement->setNamespaces($namespaces);
+            $typeEchoElementAttribute1 = new PiBX_AST_TypeAttribute('', 'stringAttribute');
+            $typeEchoElementAttribute1->setStyle('element');
         
-        return array($typeReferencedElement, $typeElement);
+
+        $typeElement->add($typeElementAttribute1);
+        $typeElement->add($typeElementAttribute2);
+
+        $typeEchoElement->add($typeEchoElementAttribute1);
+        
+        return array($typeReferencedElement, $typeElement, $typeEchoElement);
     }
 
     public function getParseTree() {
         $tree = new PiBX_ParseTree_RootNode();
         $tree->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
-
+        
+        $options = array(
+            'name' => 'stringElement',
+            'type' => ''
+        );
         $namespaces = array(
             '' => 'http://www.w3.org/2002/ws/databinding/examples/6/09/',
             'xs' => 'http://www.w3.org/2001/XMLSchema',
@@ -92,23 +109,36 @@ class PiBX_Scenarios_Reference_Basic_IdentifierNameTest extends PiBX_Scenarios_R
             'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
         );
 
-        $element1 = new PiBX_ParseTree_ElementNode(array('name' => 'identifierName', 'type' => 'string'), 0);
+        $element1 = new PiBX_ParseTree_ElementNode(array('name' => 'stringAttribute', 'type' => 'StringAttribute'), 0);
         $element1->setNamespaces($namespaces);
-        $element2 = new PiBX_ParseTree_ElementNode(array('name' => 'echoIdentifierName', 'type' => ''), 0);
-        $element2->setNamespaces($namespaces);
-        $complexType = new PiBX_ParseTree_ComplexTypeNode(array(), 1);
-        $complexType->setNamespaces($namespaces);
-        $sequence = new PiBX_ParseTree_SequenceNode(array(), 2);
-        $sequence->setNamespaces($namespaces);
-        $element3 = new PiBX_ParseTree_ElementNode(array('type' => 'identifierName'), 3);
+        $complexType1 = new PiBX_ParseTree_ComplexTypeNode(array('name' => 'StringAttribute'), 0);
+        $complexType1->setNamespaces($namespaces);
+            $sequence1 = new PiBX_ParseTree_SequenceNode(array(), 1);
+            $sequence1->setNamespaces($namespaces);
+                $element2 = new PiBX_ParseTree_ElementNode(array('name' => 'text', 'type' => 'string', 'minOccurs' => '0'), 2);
+                $element2->setNamespaces($namespaces);
+                $attribute = new PiBX_ParseTree_AttributeNode(array('name' => 'string', 'type' => 'string'), 1);
+                $attribute->setNamespaces($namespaces);
+        $element3 = new PiBX_ParseTree_ElementNode(array('name' => 'echoStringAttribute'), 0);
         $element3->setNamespaces($namespaces);
+            $complexType2 = new PiBX_ParseTree_ComplexTypeNode(array(), 1);
+            $complexType2->setNamespaces($namespaces);
+                $sequence2 = new PiBX_ParseTree_SequenceNode(array(), 2);
+                $sequence2->setNamespaces($namespaces);
+                    $element4 = new PiBX_ParseTree_ElementNode(array('type' => 'stringAttribute'), 3);
+                    $element4->setNamespaces($namespaces);
 
-        $sequence->add($element3);
-        $complexType->add($sequence);
-        $element2->add($complexType);
+        $sequence1->add($element2);
+        $complexType1->add($sequence1);
+        $complexType1->add($attribute);
+
+        $sequence2->add($element4);
+        $complexType2->add($sequence2);
+        $element3->add($complexType2);
 
         $tree->add($element1);
-        $tree->add($element2);
+        $tree->add($complexType1);
+        $tree->add($element3);
         
         return $tree;
     }
