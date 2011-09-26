@@ -49,7 +49,11 @@ require_once 'PiBX/AST/TypeAttribute.php';
 class PiBX_Binding_Names {
     public static function createGetterNameFor(PiBX_AST_Tree $tree) {
         if ($tree instanceof PiBX_AST_Type) {
-                return 'get' . self::getCamelCasedName( $tree->getName() );
+            if ($tree->getType() == 'boolean') {
+                return 'is' . self::getCamelCasedName( $tree->getName() );
+            }
+
+            return 'get' . self::getCamelCasedName( $tree->getName() );
         } elseif ($tree instanceof PiBX_AST_Collection) {
             if ($tree->countChildren() == 1) {
                 $child = $tree->get(0);
@@ -71,7 +75,9 @@ class PiBX_Binding_Names {
             } else {
                 $getterName = $tree->getType();
             }
+
             $name = self::getCamelCasedName( $getterName );
+
             return 'get' . $name;
         } elseif ($tree instanceof PiBX_AST_StructureElement) {
             $structureAst = $tree->getParent();
