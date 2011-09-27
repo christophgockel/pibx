@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="DoubleAttribute" name="doubleAttribute">
+    <structure map-as="DoubleAttribute"/>
+  </mapping>
+  <mapping class="DoubleAttribute" abstract="true" type-name="DoubleAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="double" get-method="getDouble" set-method="setDouble" usage="optional"/>
+  </mapping>
+  <mapping class="EchoDoubleAttribute" name="echoDoubleAttribute">
+    <structure map-as="DoubleAttribute" get-method="getDoubleAttribute" set-method="setDoubleAttribute" name="doubleAttribute"/>
+  </mapping>
+</binding>
