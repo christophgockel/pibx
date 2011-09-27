@@ -36,6 +36,7 @@ require_once 'Tests/Scenarios/Reference/Basic/StringElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/StringAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/BooleanElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/BooleanAttributeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/DoubleElementTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -54,6 +55,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_StringAttributeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_BooleanElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_BooleanAttributeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_DoubleElementTest');
         
         return $suite;
     }

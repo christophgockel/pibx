@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="DoubleElement" name="doubleElement">
+    <value style="text" get-method="getDoubleElement" set-method="setDoubleElement"/>
+  </mapping>
+  <mapping class="EchoDoubleElement" name="echoDoubleElement">
+    <structure type="DoubleElement" get-method="getDoubleElement" set-method="setDoubleElement"/>
+  </mapping>
+</binding>
