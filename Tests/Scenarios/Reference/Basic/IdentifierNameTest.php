@@ -40,7 +40,7 @@ require_once 'PiBX/CodeGen/SchemaParser.php';
 require_once 'PiBX/CodeGen/TypeUsage.php';
 require_once 'PiBX/Binding/Creator.php';
 /**
- * Implementation of the W3C basic example "QualifiedLocalElements".
+ * Implementation of the W3C basic example "IdentifierName".
  *
  * @author Christoph Gockel
  */
