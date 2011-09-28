@@ -89,6 +89,32 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
         return $this->namespaces;
     }
 
+    public function isEnumerationType() {
+        if (!$this->hasChildren()) {
+            return false;
+        }
+
+        $firstEnumeration = $this->get(0);
+        if ($firstEnumeration instanceof PiBX_AST_Enumeration) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isStandardType() {
+        if (!$this->hasChildren()) {
+            return true;
+        }
+
+        $firstAttribute = $this->get(0);
+        if ($firstAttribute instanceof PiBX_AST_TypeAttribute) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {
         if ($v->visitTypeEnter($this)) {
             foreach ($this->children as $child) {

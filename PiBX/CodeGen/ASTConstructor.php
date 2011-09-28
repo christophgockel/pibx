@@ -85,6 +85,12 @@ class PiBX_CodeGen_ASTConstructor {
             //TODO: ignored at the moment
         } elseif ($tree instanceof PiBX_ParseTree_AttributeNode) {
             $this->handleAttributeNode($tree);
+        } elseif ($tree instanceof PiBX_ParseTree_EnumerationNode) {
+            $this->handleEnumerationNode($tree);
+        } elseif ($tree instanceof PiBX_ParseTree_SimpleTypeNode) {
+            $this->handleSimpleTypeNode($tree);
+        } elseif ($tree instanceof PiBX_ParseTree_RestrictionNode) {
+            $this->handleRestrictionNode($tree);
         }
     }
 
@@ -134,6 +140,44 @@ class PiBX_CodeGen_ASTConstructor {
         }
     }
 
+    private function handleEnumerationNode(PiBX_ParseTree_EnumerationNode $enumeration) {
+        $enumerationValue = new PiBX_AST_EnumerationValue($enumeration->getValue(), $enumeration->getParent()->getBase());
+        $this->temporarySubnodeStack[] = $enumerationValue;
+    }
+
+    private function handleSimpleTypeNode(PiBX_ParseTree_SimpleTypeNode $simpleType) {
+        if ($simpleType->getLevel() == 0) {
+            $type = new PiBX_AST_Type($simpleType->getName());
+            $type->setAsRoot();
+            $type->setNamespaces($simpleType->getNamespaces());
+            //$type->setTargetNamespace($simpleType->getTargetNamespace());//TODO: get rid of these trainwrecks
+
+            if ($this->hasTemporaryNodes()) {
+                $this->addTemporaryNodesToTree($type);
+            }
+
+            $this->currentAST = $type;
+        } else {
+            throw new RuntimeException('TODO: non-global simpleType element');
+        }
+    }
+
+    private function handleRestrictionNode(PiBX_ParseTree_RestrictionNode $restriction) {
+        if (!$this->hasTemporaryNodes()) {
+            throw new RuntimeException('Restriction without values.');
+        }
+
+        list($firstRestriction) = $this->temporarySubnodeStack;
+
+        if ($firstRestriction instanceof PiBX_AST_EnumerationValue) {
+            $enumeration = new PiBX_AST_Enumeration();
+            $this->addTemporaryNodesToTree($enumeration);
+            $this->temporarySubnodeStack[] = $enumeration;
+        } else {
+            throw new RuntimeException('Restriction type not supported');
+        }
+    }
+
     private function hasTemporaryNodes() {
         return count($this->temporarySubnodeStack) > 0;
     }
@@ -144,5 +188,7 @@ class PiBX_CodeGen_ASTConstructor {
         foreach ($reversedSubnodes as &$node) {
             $tree->add($node);
         }
+
+        $this->temporarySubnodeStack = array();
     }
 }

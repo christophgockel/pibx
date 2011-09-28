@@ -27,30 +27,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 require_once 'PiBX/ParseTree/Tree.php';
+require_once 'PiBX/ParseTree/AttributeHelper.php';
 /**
  * Represents a <code>&lt;enumeration></code>-node of an XML-Schema.
  *
  * @author Christoph Gockel
  */
 class PiBX_ParseTree_EnumerationNode extends PiBX_ParseTree_Tree {
-    private $value;
 
-    public function  __construct(SimpleXMLElement $xml, $level = 0) {
-        parent::__construct($xml, $level);
-
-        list($prefix, $ns) = each($this->namespaces);
-        if ($xml->attributes($ns)) {
-            $attributes = $xml->attributes($ns);
-        } else {
-            // fallback to global namespace if no attributes can be found
-            $attributes = $xml->attributes();
-        }
-
-        $this->value = (string)$attributes['value'];
+    public function  __construct($xmlOrOptions, $level = 0) {
+        parent::__construct($xmlOrOptions, $level);
+        $this->options = PiBX_ParseTree_AttributeHelper::getEnumerationOptions($xmlOrOptions);
     }
 
     public function getValue() {
-        return $this->value;
+        return $this->options['value'];
     }
 
     public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {

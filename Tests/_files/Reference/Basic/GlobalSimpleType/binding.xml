@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="GlobalSimpleType" name="globalSimpleType">
+    <value style="text" get-method="getGlobalSimpleType" set-method="setGlobalSimpleType" format="GlobalSimpleType"/>
+  </mapping>
+  <format label="GlobalSimpleType" type="GlobalSimpleType1" enum-value-method="toString"/>
+  <mapping class="EchoGlobalSimpleType" name="echoGlobalSimpleType">
+    <structure type="GlobalSimpleType" get-method="getGlobalSimpleType" set-method="setGlobalSimpleType"/>
+  </mapping>
+</binding>

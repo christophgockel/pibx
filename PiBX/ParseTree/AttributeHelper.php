@@ -159,4 +159,38 @@ class PiBX_ParseTree_AttributeHelper {
 
         return $options;
     }
+
+    public static function getRestrictionOptions($objectOrArray) {
+        $options = array();
+
+        if ($objectOrArray instanceof SimpleXMLElement) {
+            $attributes = $objectOrArray->attributes();
+            
+            $options['base'] = (string)$attributes['base'];
+
+            if (strpos($options['base'], ':') !== false) {
+                // remove the namespace prefix
+                $parts = explode(':', $options['base']);
+                $options['base'] = $parts[1];
+            }
+        } else {
+            $options['base'] = self::getValue($objectOrArray, 'base');
+        }
+
+        return $options;
+    }
+
+    public static function getEnumerationOptions($objectOrArray) {
+        $options = array();
+
+        if ($objectOrArray instanceof SimpleXMLElement) {
+            $attributes = $objectOrArray->attributes();
+            
+            $options['value'] = (string)$attributes['value'];
+        } else {
+            $options['value'] = self::getValue($objectOrArray, 'value');
+        }
+
+        return $options;
+    }
 }

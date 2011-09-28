@@ -36,6 +36,7 @@ require_once 'PiBX/CodeGen/ASTConstructor.php';
  */
 class PiBX_CodeGen_ParseTreePatternMatcher {
     private $typePatterns;
+    private $enumPatterns;
     private $stackOfElements;
 
     private $currentStackElement;
@@ -64,6 +65,14 @@ class PiBX_CodeGen_ParseTreePatternMatcher {
                 'PiBX_ParseTree_SequenceNode'
             ),
         );
+
+        $this->enumPatterns = array(
+            array(
+                'PiBX_ParseTree_SimpleTypeNode',
+                'PiBX_ParseTree_Restriction_Node',
+                'PiBX_ParseTree_EnumerationNode'
+            )
+        );
     }
 
     public function addElement(PiBX_ParseTree_Tree $element) {
@@ -72,7 +81,7 @@ class PiBX_CodeGen_ParseTreePatternMatcher {
 
     public function elementsMatch() {
         $matches = $this->matchElementsInArray($this->typePatterns);
-
+        
         return count($matches) > 0;
     }
 

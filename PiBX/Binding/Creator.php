@@ -196,38 +196,66 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $this->targetNamespaceHasBeenAdded = true;
             }
         }
-        
-        $className = PiBX_Binding_Names::createClassnameFor($tree);
-        $this->xml .= '<mapping class="' . $className . '"';
-        
-        if ($tree->isRoot()) {
-            $this->xml .= ' name="'.$tree->getName().'"';
-        } else {
-            $this->xml .= ' abstract="true"';
-            $this->xml .= ' type-name="'.$tree->getName().'"';
-        }
-        
-        $this->xml .= '>';
 
-        if ( !PiBX_ParseTree_BaseType::isBaseType($tree->getType()) && !$tree->hasChildren()) {
-            $this->xml .= '<structure map-as="';
-            $this->xml .= $tree->getType();
-            $this->xml .= '"/>';
-        } elseif ( !$tree->hasChildren() ) {
-            $this->xml .= '<value style="text"';
+        if ($tree->isStandardType()) {
+            $className = PiBX_Binding_Names::createClassnameFor($tree);
+            $this->xml .= '<mapping class="' . $className . '"';
 
-            $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-            $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+            if ($tree->isRoot()) {
+                $this->xml .= ' name="'.$tree->getName().'"';
+            } else {
+                $this->xml .= ' abstract="true"';
+                $this->xml .= ' type-name="'.$tree->getName().'"';
+            }
+
+            $this->xml .= '>';
+
+            if ( !PiBX_ParseTree_BaseType::isBaseType($tree->getType()) && !$tree->hasChildren()) {
+                $usedType = $tree->getType();
+                $referencedType = $this->getTypeByName($usedType);
+                if ($referencedType->isEnumerationType()) {
+                    $this->xml .= '<value style="text"';
+
+                    $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+                    $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+
+                    $this->xml .= ' get-method="'.$getter.'"';
+                    $this->xml .= ' set-method="'.$setter.'"';
+                    $this->xml .= ' format="' . $usedType . '"';
+                    $this->xml .= '/>';
+                } else {
+                    $this->xml .= '<structure map-as="';
+                    $this->xml .= $tree->getType();
+                    $this->xml .= '"/>';
+                }
+            } elseif ( !$tree->hasChildren() ) {
+                $this->xml .= '<value style="text"';
+
+                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+
+                $this->xml .= ' get-method="'.$getter.'"';
+                $this->xml .= ' set-method="'.$setter.'"';
+                $this->xml .= '/>';
+            }
+        } elseif ($tree->isEnumerationType()) {
+            $labelName = PiBX_Binding_Names::createClassnameFor($tree);
+            $className = $labelName . '1';
             
-            $this->xml .= ' get-method="'.$getter.'"';
-            $this->xml .= ' set-method="'.$setter.'"';
+            $this->xml .= '<format';
+            $this->xml .= ' label="' . $labelName . '"';
+            $this->xml .= ' type="' . $className . '"';
+            $this->xml .= ' enum-value-method="toString"';
             $this->xml .= '/>';
         }
         
         return true;
     }
     public function visitTypeLeave(PiBX_AST_Tree $tree) {
-        $this->xml .= "</mapping>";
+        if ($tree->isStandardType()) {
+            $this->xml .= "</mapping>";
+        }
+        
         return true;
     }
 
@@ -246,31 +274,37 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 }
                 $this->xml .= '/>';
             } else {
-                $name = $tree->getName();
-                $referencedTypeHasBaseType = true;
+                $usedTypeHasToBeMapped = true;
                 $name = PiBX_Binding_Names::createClassnameFor($tree->getType());
 
-                $referencedType = $this->getTypeByName($tree->getType());
-                
-                if ( !PiBX_ParseTree_BaseType::isBaseType($referencedType->getType()) ) {
-                    $referencedTypeHasBaseType = false;
-                }
+                $referencedType = $tree;
+                do {
+                    // following the path of used types to get information about the "leaf type"
+                    // based on the leaf type it's decided whether the type has to be mapped or not
+                    $referencedType = $this->getTypeByName($referencedType->getType());
+
+                    if ($referencedType == null)
+                        break;
+
+                    if (PiBX_ParseTree_BaseType::isBaseType($referencedType->getType()) || $referencedType->isEnumerationType()) {
+                        $usedTypeHasToBeMapped = false;
+                    }
+                } while ($referencedType != null);
 
                 $getter = PiBX_Binding_Names::createGetterNameFor($tree);
                 $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+
                 $this->xml .= '<structure';
 
-                if ($referencedTypeHasBaseType) {
-                    $this->xml .= ' type="' . $name . '"';
-                } else {
+                if ($usedTypeHasToBeMapped) {
                     $this->xml .= ' map-as="' . $name . '"';
-                }
-
-                $this->xml .= ' get-method="'.$getter.'"';
-                $this->xml .= ' set-method="'.$setter.'"';
-
-                if ( !$referencedTypeHasBaseType ) {
+                    $this->xml .= ' get-method="'.$getter.'"';
+                    $this->xml .= ' set-method="'.$setter.'"';
                     $this->xml .= ' name="' . $tree->getType() . '"';
+                } else {
+                    $this->xml .= ' type="' . $name . '"';
+                    $this->xml .= ' get-method="'.$getter.'"';
+                    $this->xml .= ' set-method="'.$setter.'"';
                 }
 
                 $this->xml .= '/>';

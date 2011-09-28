@@ -78,4 +78,19 @@ class PiBX_CodeGen_ParseTreePatternMatcherTest extends PHPUnit_Framework_TestCas
         $this->assertTrue($matcher->elementsMatchDistinct());
         $this->assertTrue($matcher->getMatchedAST() instanceof PiBX_AST_Type);
     }
+
+    public function testSimpleTypeWithEnumeration() {
+        $simpleType = new PiBX_ParseTree_SimpleTypeNode(array('name' => 'testEnum'), 0);
+            $restriction = new PiBX_ParseTree_RestrictionNode(array(), 1);
+                $enumeration = new PiBX_ParseTree_EnumerationNode(array('name' => 'text', 'type' => 'string', 'minOccurs' => '0'), 2);
+
+        $matcher = new PiBX_CodeGen_ParseTreePatternMatcher();
+        $matcher->addElement($simpleType);
+        $matcher->addElement($restriction);
+        $matcher->addElement($enumeration);
+
+        $this->assertTrue($matcher->elementsMatch());
+        $this->assertTrue($matcher->elementsMatchDistinct());
+        $this->assertTrue($matcher->getMatchedAST() instanceof PiBX_AST_Enumeration);
+    }
 }

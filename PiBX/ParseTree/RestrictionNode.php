@@ -27,30 +27,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 require_once 'PiBX/ParseTree/Tree.php';
+require_once 'PiBX/ParseTree/AttributeHelper.php';
 /**
  * Represents a <code>&lt;restriction></code>-node of an XML-Schema.
  *
  * @author Christoph Gockel
  */
 class PiBX_ParseTree_RestrictionNode extends PiBX_ParseTree_Tree {
-    /**
-     * @var string The restriction-node's "base" attribute.
-     */
-    private $base;
-    
-    public function  __construct(SimpleXMLElement $xml, $level = 0) {
-        parent::__construct($xml, $level);
 
-        $attributes = $xml->attributes();
-        $base = (string)$attributes['base'];
-        
-        if (strpos($base, ':') !== false) {
-            // remove the namespace prefix
-            $parts = explode(':', $base);
-            $base = $parts[1];
-        }
-        
-        $this->base = $base;
+    public function  __construct($xmlOrOptions, $level = 0) {
+        parent::__construct($xmlOrOptions, $level);
+        $this->options = PiBX_ParseTree_AttributeHelper::getRestrictionOptions($xmlOrOptions);
     }
 
     /**
@@ -58,7 +45,7 @@ class PiBX_ParseTree_RestrictionNode extends PiBX_ParseTree_Tree {
      * @return string
      */
     public function getBase() {
-        return $this->base;
+        return $this->options['base'];
     }
 
     public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
