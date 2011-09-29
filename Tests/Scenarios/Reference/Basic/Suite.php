@@ -39,6 +39,7 @@ require_once 'Tests/Scenarios/Reference/Basic/BooleanAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/DoubleElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/DoubleAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/GlobalSimpleTypeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/StringEnumerationTypeTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -60,6 +61,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_DoubleElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_DoubleAttributeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_GlobalSimpleTypeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_StringEnumerationTypeTest');
         
         return $suite;
     }
