@@ -47,12 +47,8 @@ class PiBX_ParseTree_AttributeNode extends PiBX_ParseTree_Tree {
         return $this->options['type'];
     }
 
-    public function getMinOccurs() {
-        return $this->options['minOccurs'];
-    }
-
-    public function getMaxOccurs() {
-        return $this->options['maxOccurs'];
+    public function getUse() {
+        return $this->options['use'];
     }
 
     public function accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {

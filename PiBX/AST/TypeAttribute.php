@@ -45,6 +45,9 @@ class PiBX_AST_TypeAttribute extends PiBX_AST_Tree {
     }
 
     public function setStyle($style) {
+        if ($style == 'attribute')
+            $this->isOptional = true;
+        
         $this->style = $style;
     }
     public function getStyle() {
@@ -66,8 +69,6 @@ class PiBX_AST_TypeAttribute extends PiBX_AST_Tree {
     }
 
     public function isOptional() {
-        if ($this->style == 'attribute')
-            return true;
         
         return $this->isOptional;
     }

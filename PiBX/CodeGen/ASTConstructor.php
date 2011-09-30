@@ -125,8 +125,9 @@ class PiBX_CodeGen_ASTConstructor {
     }
 
     private function handleAttributeNode(PiBX_ParseTree_AttributeNode $attribute) {
-        $typeAttribute = new PiBX_AST_TypeAttribute($attribute->getName(), $attribute->getType());
-        $typeAttribute->setStyle('attribute');//TODO: create enum for $style
+        $isOptional = $attribute->getUse() == 'optional';
+        $typeAttribute = new PiBX_AST_TypeAttribute($attribute->getName(), $attribute->getType(), $isOptional);
+        $typeAttribute->setStyle('attribute');//TODO: create enum for $style    
         $this->temporarySubnodeStack[] = $typeAttribute;
     }
 

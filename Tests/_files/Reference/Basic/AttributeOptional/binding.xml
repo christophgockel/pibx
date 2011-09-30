@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="AttributeOptional" name="attributeOptional">
+    <structure map-as="AttributeOptional"/>
+  </mapping>
+  <mapping class="AttributeOptional" abstract="true" type-name="AttributeOptional">
+    <value style="element" name="amount" get-method="getAmount" set-method="setAmount"/>
+    <value style="attribute" name="id" get-method="getId" set-method="setId" usage="optional"/>
+    <value style="attribute" name="currency" get-method="getCurrency" set-method="setCurrency" usage="optional"/>
+  </mapping>
+  <mapping class="EchoAttributeOptional" name="echoAttributeOptional">
+    <structure map-as="AttributeOptional" get-method="getAttributeOptional" set-method="setAttributeOptional" name="attributeOptional"/>
+  </mapping>
+</binding>

@@ -144,13 +144,11 @@ class PiBX_ParseTree_AttributeHelper {
                 $parts = explode(':', $options['type']);
                 $options['type'] = $parts[1];
             }
-            $options['minOccurs'] = (string)$attributes['minOccurs'];
-            $options['maxOccurs'] = (string)$attributes['maxOccurs'];
+            $options['use'] = ((string)$attributes['use'] != '') ? (string)$attributes['use'] : 'optional';
         } else {
             $options['name'] = self::getValue($objectOrArray, 'name');
             $options['type'] = self::getValue($objectOrArray, 'type');
-            $options['minOccurs'] = self::getValue($objectOrArray, 'minOccurs');
-            $options['maxOccurs'] = self::getValue($objectOrArray, 'maxOccurs');
+            $options['use'] = array_key_exists('use', $objectOrArray) ? self::getValue($objectOrArray, 'use') : 'optional';
         }
 
         return $options;
