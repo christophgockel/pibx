@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ElementMaxOccurs1" name="elementMaxOccurs1">
+    <structure map-as="ElementMaxOccurs1"/>
+  </mapping>
+  <mapping class="ElementMaxOccurs1" abstract="true" type-name="ElementMaxOccurs1">
+    <value style="element" name="value" get-method="getValue" set-method="setValue"/>
+  </mapping>
+  <mapping class="EchoElementMaxOccurs1" name="echoElementMaxOccurs1">
+    <structure map-as="ElementMaxOccurs1" get-method="getElementMaxOccurs1" set-method="setElementMaxOccurs1" name="elementMaxOccurs1"/>
+  </mapping>
+</binding>
