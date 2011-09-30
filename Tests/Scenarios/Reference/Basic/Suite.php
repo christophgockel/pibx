@@ -42,6 +42,7 @@ require_once 'Tests/Scenarios/Reference/Basic/GlobalSimpleTypeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/StringEnumerationTypeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ComplexTypeSequenceTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ElementMinOccurs1Test.php';
+require_once 'Tests/Scenarios/Reference/Basic/ElementMaxOccurs1Test.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -66,6 +67,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_StringEnumerationTypeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ComplexTypeSequenceTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementMinOccurs1Test');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementMaxOccurs1Test');
         
         return $suite;
     }
