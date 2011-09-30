@@ -113,6 +113,12 @@ class PiBX_CodeGen_ASTConstructor {
             } else {
                 $elementIsOptional = $element->getMinOccurs() == 0;
                 $typeAttribute = new PiBX_AST_TypeAttribute($element->getName(), $element->getType(), $elementIsOptional);
+
+                if ($element->getMaxOccurs() == 'unbounded') {
+                    $collectionItem = new PiBX_AST_CollectionItem($element->getName(), $element->getType());
+                    $typeAttribute->add($collectionItem);
+                }
+
                 $this->temporarySubnodeStack[] = $typeAttribute;
             }
         }

@@ -218,13 +218,19 @@ class PiBX_Binding_Names {
     }
 
     /**
-     * Concats a plural "s" on a name if applicable, i.e. "item" gets "items" and so on.
+     * A very naive implemantation to create a plural version of the given name.
+     * It concats a "s" on a name if applicable, i.e. "item" gets "items" and so on.
+     * Or replaces a trailing "y" with "ies", i.e. "country" gets "countries".
      * 
      * @param string $name
-     * @return string
+     * @return string Plural of $name
      */
     private static function getCollectionName($name) {
-        if (strtolower(substr($name, -1)) != 's') {
+        $lowercaseLastLetter = strtolower(substr($name, -1));
+        
+        if ($lowercaseLastLetter == 'y') {
+            $name = substr_replace($name, 'ies', strlen($name) - 1, 1);
+        } elseif ($lowercaseLastLetter != 's') {
             $name .= 's';
         }
         

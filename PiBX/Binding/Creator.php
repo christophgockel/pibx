@@ -102,7 +102,19 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
             $this->xml .= ' get-method="'.$getter.'"';
             $this->xml .= ' set-method="'.$setter.'"';
             $this->xml .= '>';
-            $this->xml .= '<structure map-as="'.$tree->getType().'" name="'.$tree->getName().'"/>';
+
+            $usedTypeHasToBeMapped = false;
+
+            if (!PiBX_ParseTree_BaseType::isBaseType($tree->getType())) {
+                $usedTypeHasToBeMapped = true;
+            }
+
+            if ($usedTypeHasToBeMapped) {
+                $this->xml .= '<structure map-as="'.$tree->getType().'" name="'.$tree->getName().'"/>';
+            } else {
+                $this->xml .= '<value style="element" name="'.$tree->getName().'" type="'.$tree->getType().'"/>';
+            }
+
             $this->xml .= "</collection>";
             
         } elseif ($tree->getParent()->countChildren() == 1) {

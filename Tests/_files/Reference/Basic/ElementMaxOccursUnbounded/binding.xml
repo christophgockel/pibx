@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="Publications" name="publications">
+    <structure map-as="Publications"/>
+  </mapping>
+  <mapping class="Publications" abstract="true" type-name="Publications">
+    <collection get-method="getDaies" set-method="setDaies">
+      <value style="element" name="day" type="string"/>
+    </collection>
+  </mapping>
+  <mapping class="EchoElementMaxOccursUnbounded" name="echoElementMaxOccursUnbounded">
+    <structure map-as="Publications" get-method="getPublications" set-method="setPublications" name="publications"/>
+  </mapping>
+</binding>

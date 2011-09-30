@@ -61,10 +61,6 @@ class PiBX_ParseTree_AttributeHelper {
         return key_exists($key, $array) ? $array[$key] : '';
     }
 
-    private static function getIntValue($array, $key) {
-        return key_exists($key, $array) ? (int)$array[$key] : 0;
-    }
-
     public static function getElementOptions($objectOrArray) {
         $options = array();
 
@@ -86,8 +82,8 @@ class PiBX_ParseTree_AttributeHelper {
         } else {
             $options['name'] = self::getValue($objectOrArray, 'name');
             $options['type'] = self::getValue($objectOrArray, 'type');
-            $options['minOccurs'] = array_key_exists('minOccurs', $objectOrArray) ? self::getIntValue($objectOrArray, 'minOccurs') : 1;
-            $options['maxOccurs'] = array_key_exists('maxOccurs', $objectOrArray) ? self::getIntValue($objectOrArray, 'maxOccurs') : 1;
+            $options['minOccurs'] = array_key_exists('minOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'minOccurs') : 1;
+            $options['maxOccurs'] = array_key_exists('maxOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'maxOccurs') : 1;
         }
         
         return $options;
