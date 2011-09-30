@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ComplexTypeSequence" name="complexTypeSequence">
+    <structure map-as="ComplexTypeSequence"/>
+  </mapping>
+  <mapping class="ComplexTypeSequence" abstract="true" type-name="ComplexTypeSequence">
+    <value style="element" name="name" get-method="getName" set-method="setName"/>
+    <value style="element" name="shade" get-method="getShade" set-method="setShade"/>
+    <value style="element" name="length" get-method="getLength" set-method="setLength"/>
+    <value style="attribute" name="id" get-method="getId" set-method="setId" usage="optional"/>
+    <value style="attribute" name="inStock" get-method="getInStock" set-method="setInStock" usage="optional"/>
+  </mapping>
+  <mapping class="EchoComplexTypeSequence" name="echoComplexTypeSequence">
+    <structure map-as="ComplexTypeSequence" get-method="getComplexTypeSequence" set-method="setComplexTypeSequence" name="complexTypeSequence"/>
+  </mapping>
+</binding>
