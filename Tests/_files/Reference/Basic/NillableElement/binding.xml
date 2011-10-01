@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="NillableMiddleName" name="nillableMiddleName">
+    <structure map-as="NillableMiddleName"/>
+  </mapping>
+  <mapping class="NillableMiddleName" abstract="true" type-name="NillableMiddleName">
+    <value style="element" name="firstName" get-method="getFirstName" set-method="setFirstName"/>
+    <value style="element" name="middleName" get-method="getMiddleName" set-method="setMiddleName" usage="optional"/>
+    <value style="element" name="lastName" get-method="getLastName" set-method="setLastName"/>
+  </mapping>
+  <mapping class="EchoNillableElement" name="echoNillableElement">
+    <structure map-as="NillableMiddleName" get-method="getNillableMiddleName" set-method="setNillableMiddleName" name="nillableMiddleName"/>
+  </mapping>
+</binding>

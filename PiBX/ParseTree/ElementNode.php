@@ -75,6 +75,14 @@ class PiBX_ParseTree_ElementNode extends PiBX_ParseTree_Tree {
         return $this->options['maxOccurs'];
     }
 
+    public function isNillable() {
+        return $this->options['nillable'];
+    }
+
+    public function isOptional() {
+        return $this->getMinOccurs() == 0 || $this->isNillable();
+    }
+
     public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
         $v->visitElementNode($this);
 

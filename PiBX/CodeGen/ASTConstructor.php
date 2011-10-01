@@ -111,7 +111,7 @@ class PiBX_CodeGen_ASTConstructor {
             if ($element->hasChildren()) {
                 throw new RuntimeException('Elements with children?');
             } else {
-                $elementIsOptional = $element->getMinOccurs() == 0;
+                $elementIsOptional = $element->isOptional();
                 $typeAttribute = new PiBX_AST_TypeAttribute($element->getName(), $element->getType(), $elementIsOptional);
 
                 if ($element->getMaxOccurs() == 'unbounded') {
