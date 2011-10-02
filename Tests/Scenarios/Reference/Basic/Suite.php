@@ -49,6 +49,7 @@ require_once 'Tests/Scenarios/Reference/Basic/GlobalElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ElementMinOccurs0Test.php';
 require_once 'Tests/Scenarios/Reference/Basic/NillableElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NullEnumerationTypeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/ElementEmptyComplexTypeTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -80,6 +81,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementMinOccurs0Test');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NillableElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NullEnumerationTypeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementEmptyComplexTypeTest');
         
         return $suite;
     }

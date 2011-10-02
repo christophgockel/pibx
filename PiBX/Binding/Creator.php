@@ -225,6 +225,12 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
             if ( !PiBX_ParseTree_BaseType::isBaseType($tree->getType()) && !$tree->hasChildren()) {
                 $usedType = $tree->getType();
                 $referencedType = $this->getTypeByName($usedType);
+
+                if ($referencedType == null) {
+                    // an empty type. not common but possible
+                    return true;
+                }
+
                 if ($referencedType->isEnumerationType()) {
                     $this->xml .= '<value style="text"';
 
@@ -288,19 +294,33 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
             } else {
                 $usedTypeHasToBeMapped = true;
                 $name = PiBX_Binding_Names::createClassnameFor($tree->getType());
-
-                $referencedType = $tree;
+                
+                $currentType = $tree;
                 do {
                     // following the path of used types to get information about the "leaf type"
                     // based on the leaf type it's decided whether the type has to be mapped or not
-                    $referencedType = $this->getTypeByName($referencedType->getType());
+                    $referencedType = $this->getTypeByName($currentType->getType());
 
-                    if ($referencedType == null)
+                    if ($referencedType == null) {
+                        if ($currentType->isRoot()) {
+                            $usedTypeHasToBeMapped = false;
+                        }
                         break;
-
-                    if (PiBX_ParseTree_BaseType::isBaseType($referencedType->getType()) || $referencedType->isEnumerationType()) {
-                        $usedTypeHasToBeMapped = false;
                     }
+
+                    if ($referencedType->isRoot() && ($referencedType->hasChildren() == false)) {
+                        if ($referencedType->getType() == '') {
+                            $usedTypeHasToBeMapped = false;
+                        } else {
+                            if (PiBX_ParseTree_BaseType::isBaseType($referencedType->getType())) {
+                                $usedTypeHasToBeMapped = false;
+                            } else {
+                                $usedTypeHasToBeMapped = true;
+                            }
+                        }
+                    }
+                    
+                    $currentType = $referencedType;
                 } while ($referencedType != null);
 
                 $getter = PiBX_Binding_Names::createGetterNameFor($tree);
@@ -331,6 +351,10 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
     }
 
     private function getTypeByName($typeName) {
+        if ($typeName == '') {
+            return null;
+        }
+        
         foreach ($this->typeList as &$type) {
             if ($type->getName() == $typeName) {
                 return $type;
