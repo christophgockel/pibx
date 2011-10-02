@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="NestedSequenceElementList" name="nestedSequenceElementList">
+    <structure map-as="NestedSequenceElementList"/>
+  </mapping>
+  <mapping class="NestedItem" abstract="true" type-name="NestedItem">
+    <collection get-method="getItems" set-method="setItems">
+      <value style="element" name="item" type="string"/>
+    </collection>
+  </mapping>
+  <mapping class="NestedSequenceElementList" abstract="true" type-name="NestedSequenceElementList">
+    <collection get-method="getNestedItems" set-method="setNestedItems">
+      <structure map-as="NestedItem" name="nestedItem"/>
+    </collection>
+  </mapping>
+  <mapping class="EchoNestedSequenceElementList" name="echoNestedSequenceElementList">
+    <structure map-as="NestedSequenceElementList" get-method="getNestedSequenceElementList" set-method="setNestedSequenceElementList" name="nestedSequenceElementList"/>
+  </mapping>
+</binding>
