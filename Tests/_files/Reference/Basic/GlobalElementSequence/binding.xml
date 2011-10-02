@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="GlobalElementSequence" name="globalElementSequence">
+    <value style="element" name="foo" get-method="getFoo" set-method="setFoo"/>
+    <value style="element" name="bar" get-method="getBar" set-method="setBar"/>
+  </mapping>
+  <mapping class="EchoGlobalElementSequence" name="echoGlobalElementSequence">
+    <structure type="GlobalElementSequence" get-method="getGlobalElementSequence" set-method="setGlobalElementSequence"/>
+  </mapping>
+</binding>
