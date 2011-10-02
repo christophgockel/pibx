@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ElementEmptySequence" name="elementEmptySequence"/>
+  <mapping class="EchoElementEmptySequence" name="echoElementEmptySequence">
+    <structure type="ElementEmptySequence" get-method="getElementEmptySequence" set-method="setElementEmptySequence"/>
+  </mapping>
+</binding>
