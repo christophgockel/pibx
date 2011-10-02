@@ -308,16 +308,10 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                         break;
                     }
 
-                    if ($referencedType->isRoot() && ($referencedType->hasChildren() == false)) {
-                        if ($referencedType->getType() == '') {
-                            $usedTypeHasToBeMapped = false;
-                        } else {
-                            if (PiBX_ParseTree_BaseType::isBaseType($referencedType->getType())) {
-                                $usedTypeHasToBeMapped = false;
-                            } else {
-                                $usedTypeHasToBeMapped = true;
-                            }
-                        }
+                    if (PiBX_ParseTree_BaseType::isBaseType($referencedType->getType())) {
+                        $usedTypeHasToBeMapped = false;
+                    } else {
+                        $usedTypeHasToBeMapped = true;
                     }
                     
                     $currentType = $referencedType;
