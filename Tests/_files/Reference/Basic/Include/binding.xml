@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="EchoInclude" name="echoInclude">
+    <structure type="Include" get-method="getInclude" set-method="setInclude"/>
+  </mapping>
+  <mapping class="Include" name="include">
+    <value style="text" get-method="getInclude" set-method="setInclude"/>
+  </mapping>
+</binding>

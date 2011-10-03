@@ -54,6 +54,13 @@ class PiBX_CodeGen_SchemaParser {
      * @var PiBX_CodeGen_TypeUsage
      */
     private $typeUsage;
+
+    /**
+     * @var array List of referenced schemas (via xsd:include)
+     */
+    private $referencedSchemas;
+
+    private $schemaBaseDir;
     
     /**
      * Creates a new SchemaParser.
@@ -70,6 +77,7 @@ class PiBX_CodeGen_SchemaParser {
         }
         
         $this->typeUsage = $typeUsage;
+        $this->referencedSchemas = array();
     }
 
     /**
@@ -107,6 +115,18 @@ class PiBX_CodeGen_SchemaParser {
         }
         // starts a straight-forward schema parsing
         $this->parseSchemaNodes($this->xml, $this->parseTree);
+
+        if ($this->schemaHasReferencedSchemas()) {
+            foreach ($this->referencedSchemas as $schema) {
+                if (file_exists($this->schemaBaseDir . '/' . $schema)) {
+                    $this->init($this->schemaBaseDir . '/' . $schema);
+                    $this->parseSchemaNodes($this->xml, $this->parseTree);
+                } else {
+                    throw new RuntimeException('When using referenced schemas, please specify the complete path');
+
+                }
+            }
+        }
 
         return $this->parseTree;
     }
@@ -147,6 +167,15 @@ class PiBX_CodeGen_SchemaParser {
                 $newPart = new PiBX_ParseTree_EnumerationNode($child, $level);
             } elseif ($name == 'attribute') {
                 $newPart = new PiBX_ParseTree_AttributeNode($child, $level);
+            } elseif ($name == 'include') {
+                $attributes = $child->attributes();
+                $location = (string)$attributes['schemaLocation'];
+                
+                $this->referencedSchemas[] = $location;
+
+                continue;
+            } else {
+                throw new RuntimeException('Schema element "' . $name . '" not supported at the moment');
             }
 
             $this->parseSchemaNodes($child, $newPart, $level+1);
@@ -177,6 +206,8 @@ class PiBX_CodeGen_SchemaParser {
             throw new InvalidArgumentException("Unreadable XSD-Schema file: $schemaFile");
         }
 
+        $this->schemaBaseDir = dirname($schemaFile);
+
         $this->init($schemaFile);
     }
 
@@ -197,5 +228,9 @@ class PiBX_CodeGen_SchemaParser {
        }
 
        return $string;
+    }
+
+    private function schemaHasReferencedSchemas() {
+        return count($this->referencedSchemas) > 0;
     }
 }
