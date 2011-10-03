@@ -38,10 +38,10 @@ class PiBX_ParseTree_SequenceNode extends PiBX_ParseTree_Tree {
     public function  __construct($xmlOrOptions, $level = 0) {
         parent::__construct($xmlOrOptions, $level);
         $this->options = PiBX_ParseTree_AttributeHelper::getSimpleTypeOptions($xmlOrOptions);
+    }
 
-        //list($ns) = array_keys($xml->getNamespaces());
-
-        //$this->elementCount = count($xml->children($ns, true));
+    public function getMinOccurs() {
+        return $this->options['minOccurs'];
     }
 
     public function getElementCount() {

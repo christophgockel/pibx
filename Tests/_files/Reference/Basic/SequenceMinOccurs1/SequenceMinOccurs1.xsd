@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:p="http://www.w3.org/2002/ws/databinding/patterns/6/09/"
+           xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           targetNamespace="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           elementFormDefault="qualified">
+   <xs:element xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+               xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+               name="sequenceMinOccurs1"
+               type="ex:SequenceMinOccurs1"/>
+   <xs:complexType xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+                   xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+                   name="SequenceMinOccurs1">
+        <xs:sequence minOccurs="1">
+          <xs:element name="sequenceMinOccurs1item" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+   <xs:element name="echoSequenceMinOccurs1">
+
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="ex:sequenceMinOccurs1"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

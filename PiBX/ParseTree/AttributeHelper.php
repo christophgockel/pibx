@@ -121,6 +121,13 @@ class PiBX_ParseTree_AttributeHelper {
 
     public static function getSequenceOptions($objectOrArray) {
         $options = array();
+        if ($objectOrArray instanceof SimpleXMLElement) {
+            $attributes = $objectOrArray->attributes();
+
+            $options['minOccurs'] = ((string)$attributes['minOccurs'] != '') ? (string)$attributes['minOccurs'] : 1;
+        } else {
+            $options['minOccurs'] = array_key_exists('minOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'minOccurs') : 1;
+        }
 
         return $options;
     }

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="SequenceMinOccurs1" name="sequenceMinOccurs1">
+    <structure map-as="SequenceMinOccurs1"/>
+  </mapping>
+  <mapping class="SequenceMinOccurs1" abstract="true" type-name="SequenceMinOccurs1">
+    <value style="element" name="sequenceMinOccurs1item" get-method="getSequenceMinOccurs1item" set-method="setSequenceMinOccurs1item"/>
+  </mapping>
+  <mapping class="EchoSequenceMinOccurs1" name="echoSequenceMinOccurs1">
+    <structure map-as="SequenceMinOccurs1" get-method="getSequenceMinOccurs1" set-method="setSequenceMinOccurs1" name="sequenceMinOccurs1"/>
+  </mapping>
+</binding>
