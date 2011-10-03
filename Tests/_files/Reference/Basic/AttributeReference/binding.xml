@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ClientName" name="clientName">
+    <structure map-as="ClientName"/>
+  </mapping>
+  <mapping class="PhoneNumber" abstract="true" type-name="PhoneNumber">
+    <value style="attribute" get-method="getPhoneNumber" set-method="setPhoneNumber"/>
+  </mapping>
+  <mapping class="ClientName" abstract="true" type-name="ClientName">
+    <value style="element" name="firstName" get-method="getFirstName" set-method="setFirstName"/>
+    <value style="element" name="lastName" get-method="getLastName" set-method="setLastName"/>
+    <structure get-method="getPhoneNumber" set-method="setPhoneNumber" usage="optional">
+      <value style="attribute" name="phoneNumber" ns="http://www.w3.org/2002/ws/databinding/examples/6/09/" get-method="getPhoneNumber" set-method="setPhoneNumber" usage="optional"/>
+    </structure>
+  </mapping>
+  <mapping class="EchoAttributeReference" name="echoAttributeReference">
+    <structure map-as="ClientName" get-method="getClientName" set-method="setClientName" name="clientName"/>
+  </mapping>
+</binding>

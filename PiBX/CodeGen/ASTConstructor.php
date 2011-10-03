@@ -72,7 +72,7 @@ class PiBX_CodeGen_ASTConstructor {
         foreach ($reversedElements as &$element) {
             $this->handleParseTreeElement($element);
         }
-        
+
         return $this->currentAST;
     }
 
@@ -125,10 +125,19 @@ class PiBX_CodeGen_ASTConstructor {
     }
 
     private function handleAttributeNode(PiBX_ParseTree_AttributeNode $attribute) {
-        $isOptional = $attribute->getUse() == 'optional';
-        $typeAttribute = new PiBX_AST_TypeAttribute($attribute->getName(), $attribute->getType(), $isOptional);
-        $typeAttribute->setStyle('attribute');//TODO: create enum for $style    
-        $this->temporarySubnodeStack[] = $typeAttribute;
+        if ($attribute->getLevel() == 0) {
+            $type = new PiBX_AST_Type($attribute->getName(), $attribute->getType());
+            $type->setNamespaces($attribute->getNamespaces());
+            $type->setTargetNamespace($attribute->getParent()->getTargetNamespace());//TODO: get rid of these trainwrecks
+            $type->setValueStyle('attribute');
+
+            $this->currentAST = $type;
+        } else {
+            $isOptional = $attribute->getUse() == 'optional';
+            $typeAttribute = new PiBX_AST_TypeAttribute($attribute->getName(), $attribute->getType(), $isOptional);
+            $typeAttribute->setStyle('attribute');//TODO: create enum for $style
+            $this->temporarySubnodeStack[] = $typeAttribute;
+        }
     }
 
     private function handleComplexTypeNode(PiBX_ParseTree_ComplexTypeNode $complexType) {

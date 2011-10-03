@@ -217,7 +217,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $this->xml .= ' name="'.$tree->getName().'"';
             } else {
                 $this->xml .= ' abstract="true"';
-                $this->xml .= ' type-name="'.$tree->getName().'"';
+                $this->xml .= ' type-name="' . $className . '"';
             }
 
             $this->xml .= '>';
@@ -247,7 +247,11 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                     $this->xml .= '"/>';
                 }
             } elseif ( !$tree->hasChildren() ) {
-                $this->xml .= '<value style="text"';
+                if ($tree->getValueStyle() == 'attribute') {
+                    $this->xml .= '<value style="attribute"';
+                } else {
+                    $this->xml .= '<value style="text"';
+                }
 
                 $getter = PiBX_Binding_Names::createGetterNameFor($tree);
                 $setter = PiBX_Binding_Names::createSetterNameFor($tree);
@@ -328,9 +332,42 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                     $this->xml .= ' set-method="'.$setter.'"';
                     $this->xml .= ' name="' . $tree->getType() . '"';
                 } else {
+                    if ($tree->getStyle() == 'attribute') {
+                        $this->xml .= ' get-method="'.$getter.'"';
+                        $this->xml .= ' set-method="'.$setter.'"';
+
+                        if ($tree->isOptional()) {
+                            $this->xml .= ' usage="optional"';
+                        }
+                        
+                        if (!PiBX_ParseTree_BaseType::isBaseType($tree->getType())) {
+                            $usedType = $this->getTypeByName($tree->getType());
+                            $this->xml .= '>';
+                            $this->xml .= '<value';
+                            $this->xml .= ' style="attribute"';
+                            $this->xml .= ' name="' . $usedType->getName() . '"';
+
+                            if ($usedType->getTargetNamespace() != '') {
+                                $this->xml .= ' ns="' . $usedType->getTargetNamespace() . '"';
+                            }
+
+                            $this->xml .= ' get-method="' . $getter . '"';
+                            $this->xml .= ' set-method="' . $setter . '"';
+
+                            if ($tree->isOptional()) {
+                                $this->xml .= ' usage="optional"';
+                            }
+
+                            $this->xml .= '/>';
+                            $this->xml .= '</structure>';
+
+                            return false;
+                        }
+                    } else {
                     $this->xml .= ' type="' . $name . '"';
-                    $this->xml .= ' get-method="'.$getter.'"';
-                    $this->xml .= ' set-method="'.$setter.'"';
+                    $this->xml .= ' get-method="' . $getter . '"';
+                    $this->xml .= ' set-method="' . $setter . '"';
+                    }
                 }
 
                 $this->xml .= '/>';

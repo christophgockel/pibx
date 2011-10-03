@@ -83,6 +83,10 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
     }
 
     public function visitAttributeNode(PiBX_ParseTree_Tree $tree) {
+        if ($tree->getLevel() == 0) {
+            $this->handleTypeConstructionForLevel($tree->getLevel());
+        }
+        
         $this->patternMatcher->addElement($tree);
         $this->currentParseTreeLevel = $tree->getLevel();
     }

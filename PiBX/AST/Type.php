@@ -55,10 +55,13 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
      */
     private $namespaces;
 
+    private $valueStyle;
+
     public function  __construct($name = '', $type = '') {
         parent::__construct($name, $type);
 
         $this->isRootType = false;
+        $this->valueStyle = 'element';
     }
 
     public function setAsRoot() {
@@ -87,6 +90,13 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
     }
     public function getNamespaces() {
         return $this->namespaces;
+    }
+
+    public function setValueStyle($valueStyle) {
+        $this->valueStyle = $valueStyle;
+    }
+    public function getValueStyle() {
+        return $this->valueStyle;
     }
 
     public function isEnumerationType() {

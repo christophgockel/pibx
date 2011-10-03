@@ -81,9 +81,6 @@ abstract class PiBX_Scenarios_Reference_TestCase extends PHPUnit_Framework_TestC
     }
 
     public function testBindingFile() {
-
-
-        
         $schemaFile = $this->pathToTestFiles . '/' . $this->schemaFile;
         $bindingFile = file_get_contents($this->pathToTestFiles . '/binding.xml');
 

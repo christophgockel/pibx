@@ -64,6 +64,9 @@ class PiBX_CodeGen_ParseTreePatternMatcher {
                 'PiBX_ParseTree_ComplexTypeNode',
                 'PiBX_ParseTree_SequenceNode'
             ),
+            array(
+                'PiBX_ParseTree_AttributeNode'
+            ),
         );
 
         $this->enumPatterns = array(
