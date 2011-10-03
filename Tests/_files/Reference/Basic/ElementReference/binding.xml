@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="CustomerName" name="customerName">
+    <structure map-as="CustomerName"/>
+  </mapping>
+  <mapping class="FirstName" name="firstName">
+    <value style="text" get-method="getFirstName" set-method="setFirstName"/>
+  </mapping>
+  <mapping class="LastName" name="lastName">
+    <value style="text" get-method="getLastName" set-method="setLastName"/>
+  </mapping>
+  <mapping class="CustomerName" abstract="true" type-name="CustomerName">
+    <structure type="FirstName" get-method="getFirstName" set-method="setFirstName"/>
+    <structure type="LastName" get-method="getLastName" set-method="setLastName"/>
+  </mapping>
+  <mapping class="EchoElementReference" name="echoElementReference">
+    <structure map-as="CustomerName" get-method="getCustomerName" set-method="setCustomerName" name="customerName"/>
+  </mapping>
+</binding>
