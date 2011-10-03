@@ -54,6 +54,7 @@ require_once 'Tests/Scenarios/Reference/Basic/ElementEmptySequenceTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NestedSequenceElementListTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ElementReferenceTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/AttributeReferenceTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/IncludeTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -90,6 +91,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NestedSequenceElementListTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementReferenceTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_AttributeReferenceTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_IncludeTest');
         
         return $suite;
     }
