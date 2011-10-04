@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="MyAgeDetails" name="myAgeDetails">
+    <structure map-as="MyAgeDetails"/>
+  </mapping>
+  <mapping class="MyAgeDetails" abstract="true" type-name="MyAgeDetails">
+    <value style="element" name="myAge" get-method="getMyAge" set-method="setMyAge"/>
+  </mapping>
+  <mapping class="EchoSequenceMaxOccurs1" name="echoSequenceMaxOccurs1">
+    <structure map-as="MyAgeDetails" get-method="getMyAgeDetails" set-method="setMyAgeDetails" name="myAgeDetails"/>
+  </mapping>
+</binding>

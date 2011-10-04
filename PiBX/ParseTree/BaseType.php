@@ -45,6 +45,7 @@ class PiBX_ParseTree_BaseType {
     private static $time;
     private static $decimal;
     private static $double;
+    private static $short;
 
     private $value;
     private static $alreadyInitialized = false;
@@ -68,6 +69,7 @@ class PiBX_ParseTree_BaseType {
             self::$time    = new PiBX_ParseTree_BaseType('time');
             self::$decimal = new PiBX_ParseTree_BaseType('decimal');
             self::$double  = new PiBX_ParseTree_BaseType('double');
+            self::$short   = new PiBX_ParseTree_BaseType('short');
 
             self::$alreadyInitialized = true;
         }
@@ -121,6 +123,10 @@ class PiBX_ParseTree_BaseType {
 
     public static function DOUBLE() {
         return self::$double;
+    }
+
+    public static function SHORT() {
+        return self::$short;
     }
 
     public function __toString() {

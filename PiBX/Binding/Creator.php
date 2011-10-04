@@ -306,7 +306,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                     $referencedType = $this->getTypeByName($currentType->getType());
 
                     if ($referencedType == null) {
-                        if ($currentType->isRoot()) {
+                        if ($currentType instanceof PiBX_AST_Type && $currentType->isRoot()) {
                             $usedTypeHasToBeMapped = false;
                         }
                         break;
@@ -364,9 +364,9 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                             return false;
                         }
                     } else {
-                    $this->xml .= ' type="' . $name . '"';
-                    $this->xml .= ' get-method="' . $getter . '"';
-                    $this->xml .= ' set-method="' . $setter . '"';
+                        $this->xml .= ' type="' . $name . '"';
+                        $this->xml .= ' get-method="' . $getter . '"';
+                        $this->xml .= ' set-method="' . $setter . '"';
                     }
                 }
 
