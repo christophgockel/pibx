@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="AgeList" name="ageList">
+    <structure map-as="AgeList"/>
+  </mapping>
+  <mapping class="AgeList" abstract="true" type-name="AgeList">
+    <collection get-method="getAgeValues" set-method="setAgeValues">
+      <value style="element" name="ageValue" type="short"/>
+    </collection>
+  </mapping>
+  <mapping class="EchoElementMinOccurs1MaxOccursUnbounded" name="echoElementMinOccurs1MaxOccursUnbounded">
+    <structure map-as="AgeList" get-method="getAgeList" set-method="setAgeList" name="ageList"/>
+  </mapping>
+</binding>
