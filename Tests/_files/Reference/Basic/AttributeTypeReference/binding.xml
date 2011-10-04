@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="AttributeTypeReference" name="attributeTypeReference">
+    <structure map-as="AttributeTypeReference"/>
+  </mapping>
+  <format label="SimpleType" type="SimpleType" enum-value-method="toString"/>
+  <mapping class="AttributeTypeReference" abstract="true" type-name="AttributeTypeReference">
+    <value style="element" name="element" get-method="getElement" set-method="setElement"/>
+    <value style="attribute" name="attr" get-method="getAttr" set-method="setAttr" usage="optional" format="SimpleType"/>
+  </mapping>
+  <mapping class="EchoAttributeTypeReference" name="echoAttributeTypeReference">
+    <structure map-as="AttributeTypeReference" get-method="getAttributeTypeReference" set-method="setAttributeTypeReference" name="attributeTypeReference"/>
+  </mapping>
+</binding>

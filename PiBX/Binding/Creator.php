@@ -262,7 +262,12 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
             }
         } elseif ($tree->isEnumerationType()) {
             $labelName = PiBX_Binding_Names::createClassnameFor($tree);
-            $className = $labelName . '1';
+            $className = $labelName;
+            $nameUsage = $this->getNameUsagesRegardlessOfCase($labelName);
+
+            if ($nameUsage > 1) {
+                $className = $labelName . ($nameUsage - 1);
+            }
             
             $this->xml .= '<format';
             $this->xml .= ' label="' . $labelName . '"';
@@ -283,17 +288,27 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
     public function visitTypeAttributeEnter(PiBX_AST_Tree $tree) {
         if ($tree->countChildren() == 0) {
-            if (PiBX_ParseTree_BaseType::isBaseType($tree->getType())) {
+
+            $usedType = $this->getTypeByName($tree->getType());
+
+            if (PiBX_ParseTree_BaseType::isBaseType($tree->getType()) || ($usedType->isEnumerationType())) {
                 $this->xml .= '<value style="'.$tree->getStyle().'"';
                 $this->xml .= ' name="'.$tree->getName().'"';
 
                 $getter = PiBX_Binding_Names::createGetterNameFor($tree);
                 $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+
                 $this->xml .= ' get-method="'.$getter.'"';
                 $this->xml .= ' set-method="'.$setter.'"';
+
                 if ($tree->isOptional()) {
                     $this->xml .= ' usage="optional"';
                 }
+
+                if ($usedType !== null && $usedType->isEnumerationType()) {
+                    $this->xml .= ' format="' . $usedType->getName() . '"';
+                }
+
                 $this->xml .= '/>';
             } else {
                 $usedTypeHasToBeMapped = true;
@@ -393,5 +408,18 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         }
         
         return null;
+    }
+
+    private function getNameUsagesRegardlessOfCase($typeName) {
+        $lowerCaseTypeName = strtolower($typeName);
+        $usage = 0;
+
+        foreach ($this->typeList as &$type) {
+            if (strtolower($type->getName()) == $lowerCaseTypeName) {
+                $usage++;
+            }
+        }
+
+        return $usage;
     }
 }
