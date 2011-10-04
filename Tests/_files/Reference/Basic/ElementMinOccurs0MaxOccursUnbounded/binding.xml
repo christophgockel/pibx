@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="DurationList" name="durationList">
+    <structure map-as="DurationList"/>
+  </mapping>
+  <mapping class="DurationList" abstract="true" type-name="DurationList">
+    <collection get-method="getDurationValues" set-method="setDurationValues">
+      <value style="element" name="durationValue" type="short"/>
+    </collection>
+  </mapping>
+  <mapping class="EchoElementMinOccurs0MaxOccursUnbounded" name="echoElementMinOccurs0MaxOccursUnbounded">
+    <structure map-as="DurationList" get-method="getDurationList" set-method="setDurationList" name="durationList"/>
+  </mapping>
+</binding>
