@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ElementTypeReference" name="elementTypeReference">
+    <structure map-as="ElementTypeReference"/>
+  </mapping>
+  <mapping class="ElementTypeReferenced" abstract="true" type-name="ElementTypeReferenced">
+    <value style="element" name="referenced" get-method="getReferenced" set-method="setReferenced"/>
+  </mapping>
+  <mapping class="ElementTypeReference" abstract="true" type-name="ElementTypeReference">
+    <structure map-as="ElementTypeReferenced" get-method="getText" set-method="setText" name="text"/>
+  </mapping>
+  <mapping class="EchoElementTypeReference" name="echoElementTypeReference">
+    <structure map-as="ElementTypeReference" get-method="getElementTypeReference" set-method="setElementTypeReference" name="elementTypeReference"/>
+  </mapping>
+</binding>

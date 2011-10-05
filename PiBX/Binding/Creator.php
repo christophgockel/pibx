@@ -345,7 +345,12 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                     $this->xml .= ' map-as="' . $name . '"';
                     $this->xml .= ' get-method="'.$getter.'"';
                     $this->xml .= ' set-method="'.$setter.'"';
-                    $this->xml .= ' name="' . $tree->getType() . '"';
+
+                    if ($tree->getName() !== '') {
+                        $this->xml .= ' name="' . $tree->getName() . '"';
+                    } else {
+                        $this->xml .= ' name="' . $tree->getType() . '"';
+                    }
                 } else {
                     if ($tree->getStyle() == 'attribute') {
                         $this->xml .= ' get-method="'.$getter.'"';

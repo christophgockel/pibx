@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:p="http://www.w3.org/2002/ws/databinding/patterns/6/09/"
+           xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           targetNamespace="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           elementFormDefault="qualified">
+   <xs:element xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+               xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+               name="elementTypeReference"
+               type="ex:ElementTypeReference"/>
+   <xs:complexType xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+                   xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+                   name="ElementTypeReferenced">
+        <xs:sequence>
+          <xs:element name="referenced" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+   <xs:complexType xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+                   xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+                   name="ElementTypeReference">
+
+        <xs:sequence>
+          <xs:element name="text" type="ex:ElementTypeReferenced"/>
+        </xs:sequence>
+      </xs:complexType>
+   <xs:element name="echoElementTypeReference">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="ex:elementTypeReference"/>
+         </xs:sequence>
+
+      </xs:complexType>
+   </xs:element>
+</xs:schema>
