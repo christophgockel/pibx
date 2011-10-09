@@ -118,7 +118,7 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
         }
 
         $firstAttribute = $this->get(0);
-        if ($firstAttribute instanceof PiBX_AST_TypeAttribute) {
+        if ($firstAttribute instanceof PiBX_AST_TypeAttribute || $firstAttribute instanceof PiBX_AST_Structure) {
             return true;
         }
 

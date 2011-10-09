@@ -68,7 +68,7 @@ class PiBX_CodeGen_ASTConstructor {
     public function construct() {
         // to iterate from top to bottom (leave nodes to root node)
         $reversedElements = new ArrayIterator(array_reverse($this->stackOfElements));
-        
+
         foreach ($reversedElements as &$element) {
             $this->handleParseTreeElement($element);
         }
@@ -109,7 +109,20 @@ class PiBX_CodeGen_ASTConstructor {
             $this->currentAST = $type;
         } else {
             if ($element->hasChildren()) {
-                throw new RuntimeException('Elements with children?');
+                // an element with children is a local type definition
+                $structure = new PiBX_AST_Structure($element->getName());
+
+                if ($this->hasTemporaryNodes()) {
+                    $reversedSubnodes = new ArrayIterator(array_reverse($this->temporarySubnodeStack));
+
+                    foreach ($reversedSubnodes as &$node) {
+                        $structureElement = new PiBX_AST_StructureElement($node->getName(), $node->getType());
+                        $structure->add($structureElement);
+                    }
+                }
+
+                $this->temporarySubnodeStack = array();
+                $this->temporarySubnodeStack[] = $structure;
             } else {
                 $elementIsOptional = $element->isOptional();
                 $typeAttribute = new PiBX_AST_TypeAttribute($element->getName(), $element->getType(), $elementIsOptional);
@@ -152,7 +165,6 @@ class PiBX_CodeGen_ASTConstructor {
 
             $this->currentAST = $type;
         } else {
-            //throw new RuntimeException('not supported yet');
         }
     }
 

@@ -175,14 +175,25 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         $this->xml .= '<value';
         $this->xml .= ' style="element"';
         $this->xml .= ' name="'.$tree->getName().'"';
-        $testMethod = PiBX_Binding_Names::createTestFunctionFor($tree);
+
         $getMethod = PiBX_Binding_Names::createGetterNameFor($tree);
         $setMethod = PiBX_Binding_Names::createSetterNameFor($tree);
-        $this->xml .= ' test-method="'.$testMethod.'"';
-        $this->xml .= ' get-method="'.$getMethod.'"';
-        $this->xml .= ' set-method="'.$setMethod.'"';
-        $this->xml .= ' usage="optional"';
+
+        if ($tree->getParent()->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
+            $testMethod = PiBX_Binding_Names::createTestFunctionFor($tree);
+            $this->xml .= ' test-method="'.$testMethod.'"';
+            $this->xml .= ' get-method="'.$getMethod.'"';
+            $this->xml .= ' set-method="'.$setMethod.'"';
+            $this->xml .= ' usage="optional"';
+        } elseif ($tree->getParent()->getStructureType() == PiBX_AST_StructureType::ORDERED()) {
+
+        } else {
+            $this->xml .= ' get-method="'.$getMethod.'"';
+            $this->xml .= ' set-method="'.$setMethod.'"';
+        }
+
         $this->xml .= '/>';
+
         return true;
     }
     public function visitStructureElementLeave(PiBX_AST_Tree $tree) {
