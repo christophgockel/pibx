@@ -62,6 +62,7 @@ require_once 'Tests/Scenarios/Reference/Basic/ElementMinOccurs1MaxOccursUnbounde
 require_once 'Tests/Scenarios/Reference/Basic/AttributeTypeReferenceTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ElementTypeReferenceTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/LocalElementComplexTypeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/IdTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -105,6 +106,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_AttributeTypeReferenceTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementTypeReferenceTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_LocalElementComplexTypeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_IdTest');
         
         return $suite;
     }
