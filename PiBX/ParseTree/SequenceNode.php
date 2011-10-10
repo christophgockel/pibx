@@ -44,6 +44,10 @@ class PiBX_ParseTree_SequenceNode extends PiBX_ParseTree_Tree {
         return $this->options['minOccurs'];
     }
 
+    public function getId() {
+        return $this->options['id'];
+    }
+
     public function getElementCount() {
         if ($this->elementCount == 1) {
             $child = $this->children[0];

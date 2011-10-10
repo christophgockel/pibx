@@ -59,6 +59,10 @@ class PiBX_ParseTree_ElementNode extends PiBX_ParseTree_Tree {
         return $this->options['name'];
     }
 
+    public function getId() {
+        return $this->options['id'];
+    }
+
     public function isAnonym() {
         return $this->getName() === '';
     }

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="IdExample" name="idExample">
+    <structure map-as="IdExample"/>
+  </mapping>
+  <mapping class="IdExample" abstract="true" type-name="IdExample">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="string" get-method="getString" set-method="setString" usage="optional"/>
+  </mapping>
+  <mapping class="EchoId" name="echoId">
+    <structure map-as="IdExample" get-method="getIdExample" set-method="setIdExample" name="idExample"/>
+  </mapping>
+</binding>

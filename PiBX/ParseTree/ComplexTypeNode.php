@@ -42,6 +42,10 @@ class PiBX_ParseTree_ComplexTypeNode extends PiBX_ParseTree_Tree {
         return $this->options['name'];
     }
 
+    public function getId() {
+        return $this->options['id'];
+    }
+
     public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
         $v->visitComplexTypeNode($this);
 

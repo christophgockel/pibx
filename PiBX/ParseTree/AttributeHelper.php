@@ -80,12 +80,14 @@ class PiBX_ParseTree_AttributeHelper {
             $options['minOccurs'] = ((string)$attributes['minOccurs'] != '') ? (string)$attributes['minOccurs'] : 1;
             $options['maxOccurs'] = ((string)$attributes['maxOccurs'] != '') ? (string)$attributes['maxOccurs'] : 1;
             $options['nillable']  = ((string)$attributes['nillable'] == 'true') ? true : false;
+            $options['id']        = (string)$attributes['id'];
         } else {
             $options['name'] = self::getValue($objectOrArray, 'name');
             $options['type'] = self::getValue($objectOrArray, 'type');
             $options['minOccurs'] = array_key_exists('minOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'minOccurs') : 1;
             $options['maxOccurs'] = array_key_exists('maxOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'maxOccurs') : 1;
             $options['nillable']  = array_key_exists('nillable', $objectOrArray) ? ($objectOrArray['nillable'] == 'true') : false;
+            $options['id']        = self::getValue($objectOrArray, 'id');
         }
         
         return $options;
@@ -112,8 +114,10 @@ class PiBX_ParseTree_AttributeHelper {
             $attributes = $objectOrArray->attributes();
 
             $options['name'] = (string)$attributes['name'];
+            $options['id']   = (string)$attributes['id'];
         } else {
             $options['name'] = self::getValue($objectOrArray, 'name');
+            $options['id']   = self::getValue($objectOrArray, 'id');
         }
 
         return $options;
@@ -125,8 +129,10 @@ class PiBX_ParseTree_AttributeHelper {
             $attributes = $objectOrArray->attributes();
 
             $options['minOccurs'] = ((string)$attributes['minOccurs'] != '') ? (string)$attributes['minOccurs'] : 1;
+            $options['id']        = (string)$attributes['id'];
         } else {
             $options['minOccurs'] = array_key_exists('minOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'minOccurs') : 1;
+            $options['id']        = self::getValue($objectOrArray, 'id');
         }
 
         return $options;
