@@ -58,7 +58,7 @@ class PiBX_CodeGen_ASTConstructor {
 
     public function __construct(array $stackOfParseTreeElements) {
         if (count($stackOfParseTreeElements) == 0) {
-            throw new RuntimeException('Cannot construct an AST without any ParseTree elements');
+            throw new InvalidArgumentException('Cannot construct an AST without any ParseTree elements');
         }
         
         $this->stackOfElements = $stackOfParseTreeElements;
