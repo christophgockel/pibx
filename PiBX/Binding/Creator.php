@@ -51,7 +51,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
     private $astNodes;
 
-    private $targetNamespaceHasBeenAdded;
+    private $namespaceLine;
 
     private $typeList;
 
@@ -59,12 +59,15 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         $this->xml = '';
         
         $this->astNodes = array();
-        $this->targetNamespaceHasBeenAdded = false;
+        $this->namespaceLine = '';
         $this->typeList = $typeList;
     }
 
     public function getXml() {
-        $this->xml = '<binding>' . $this->xml . '</binding>';
+        $this->xml = '<binding>'
+                   . $this->namespaceLine
+                   . $this->xml
+                   . '</binding>';
         $dom = new DomDocument();
         $dom->loadXML($this->xml);
         $dom->formatOutput = true;
@@ -206,17 +209,16 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         if ($tree->isRoot()) {
             $targetNamespace = $tree->getTargetNamespace();
             
-            if ($targetNamespace != '' && $this->targetNamespaceHasBeenAdded == false) {
+            if ($targetNamespace != '' && $this->namespaceLine == '') {
                 $availableNamespaces = $tree->getNamespaces();
                 $key = array_search($targetNamespace, $availableNamespaces);
                 
-                $this->xml .= '<namespace uri="' . $targetNamespace . '"';
-                $this->xml .= ' default="elements"';
+                $this->namespaceLine .= '<namespace uri="' . $targetNamespace . '"';
+                $this->namespaceLine .= ' default="elements"';
                 if ($key !== false && $key != '') {
-                    $this->xml .= ' prefix="' . $key . '"';
+                    $this->namespaceLine .= ' prefix="' . $key . '"';
                 }
-                $this->xml .= '/>';
-                $this->targetNamespaceHasBeenAdded = true;
+                $this->namespaceLine .= '/>';
             }
         }
 

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="GlobalAttributeAttr" abstract="true" type-name="GlobalAttributeAttr">
+    <value style="attribute" get-method="getGlobalAttributeAttr" set-method="setGlobalAttributeAttr"/>
+  </mapping>
+  <mapping class="GlobalAttribute" abstract="true" type-name="GlobalAttribute">
+    <value style="element" name="globalAttributeElement" get-method="getGlobalAttributeElement" set-method="setGlobalAttributeElement"/>
+    <structure get-method="getGlobalAttributeAttr" set-method="setGlobalAttributeAttr" usage="optional">
+      <value style="attribute" name="globalAttributeAttr" ns="http://www.w3.org/2002/ws/databinding/examples/6/09/" get-method="getGlobalAttributeAttr" set-method="setGlobalAttributeAttr" usage="optional"/>
+    </structure>
+  </mapping>
+  <mapping class="GlobalAttribute" name="globalAttribute">
+    <structure map-as="GlobalAttribute"/>
+  </mapping>
+  <mapping class="EchoGlobalAttribute" name="echoGlobalAttribute">
+    <structure map-as="GlobalAttribute" get-method="getGlobalAttribute" set-method="setGlobalAttribute" name="globalAttribute"/>
+  </mapping>
+</binding>

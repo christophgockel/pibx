@@ -64,6 +64,7 @@ require_once 'Tests/Scenarios/Reference/Basic/ElementTypeReferenceTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/LocalElementComplexTypeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/IdTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/GlobalElementComplexTypeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/GlobalAttributeTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -109,7 +110,8 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_LocalElementComplexTypeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_IdTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_GlobalElementComplexTypeTest');
-        
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_GlobalAttributeTest');
+
         return $suite;
     }
 }
