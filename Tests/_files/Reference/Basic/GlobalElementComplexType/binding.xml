@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="GlobalElementComplexType" name="globalElementComplexType">
+    <structure name="name">
+      <value style="element" name="firstName" get-method="getNameFirstName" set-method="setNameFirstName"/>
+      <value style="element" name="lastName" get-method="getNameLastName" set-method="setNameLastName"/>
+    </structure>
+  </mapping>
+  <mapping class="EchoGlobalElementComplexType" name="echoGlobalElementComplexType">
+    <structure type="GlobalElementComplexType" get-method="getGlobalElementComplexType" set-method="setGlobalElementComplexType"/>
+  </mapping>
+</binding>

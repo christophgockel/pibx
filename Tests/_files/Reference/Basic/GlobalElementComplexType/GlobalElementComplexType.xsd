@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:p="http://www.w3.org/2002/ws/databinding/patterns/6/09/"
+           xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           targetNamespace="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           elementFormDefault="qualified">
+   <xs:element xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+               xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+               name="globalElementComplexType">
+      <xs:complexType>
+        <xs:sequence>
+            <xs:element name="name">
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element name="firstName" type="xs:string"/>
+
+                     <xs:element name="lastName" type="xs:string"/>
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+   <xs:element name="echoGlobalElementComplexType">
+      <xs:complexType>
+
+         <xs:sequence>
+            <xs:element ref="ex:globalElementComplexType"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>
