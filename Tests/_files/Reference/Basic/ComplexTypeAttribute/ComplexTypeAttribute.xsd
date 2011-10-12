@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:p="http://www.w3.org/2002/ws/databinding/patterns/6/09/"
+           xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           targetNamespace="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           elementFormDefault="qualified">
+   <xs:element xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+               xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+               name="complexTypeAttribute"
+               type="ex:ComplexTypeAttribute"/>
+   <xs:complexType xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+                   xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+                   name="ComplexTypeAttribute">
+        <xs:sequence>
+          <xs:element name="premium" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="currency" type="xs:string"/>
+
+      </xs:complexType>
+   <xs:element name="echoComplexTypeAttribute">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="ex:complexTypeAttribute"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>
