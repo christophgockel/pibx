@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="SequenceElement" name="sequenceElement">
+    <structure map-as="SequenceElement"/>
+  </mapping>
+  <mapping class="SequenceElement" abstract="true" type-name="SequenceElement">
+    <value style="element" name="element1" get-method="getElement1" set-method="setElement1"/>
+    <value style="element" name="element2" get-method="getElement2" set-method="setElement2"/>
+    <value style="element" name="element3" get-method="getElement3" set-method="setElement3"/>
+  </mapping>
+  <mapping class="EchoSequenceElement" name="echoSequenceElement">
+    <structure map-as="SequenceElement" get-method="getSequenceElement" set-method="setSequenceElement" name="sequenceElement"/>
+  </mapping>
+</binding>
