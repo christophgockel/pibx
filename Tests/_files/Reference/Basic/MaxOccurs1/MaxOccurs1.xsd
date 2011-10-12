@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:p="http://www.w3.org/2002/ws/databinding/patterns/6/09/"
+           xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           targetNamespace="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           elementFormDefault="qualified">
+   <xs:element xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+               xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+               name="maxOccurs1"
+               type="ex:MaxOccurs1"/>
+   <xs:complexType xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+                   xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+                   name="MaxOccurs1">
+        <xs:sequence>
+          <xs:element name="value" type="xs:string" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:complexType>
+   <xs:element name="echoMaxOccurs1">
+
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="ex:maxOccurs1"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

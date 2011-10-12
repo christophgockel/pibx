@@ -68,6 +68,7 @@ require_once 'Tests/Scenarios/Reference/Basic/GlobalAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/SequenceElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/SequenceSingleRepeatedElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/MinOccurs1Test.php';
+require_once 'Tests/Scenarios/Reference/Basic/MaxOccurs1Test.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -117,6 +118,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_SequenceElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_SequenceSingleRepeatedElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_MinOccurs1Test');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_MaxOccurs1Test');
 
         return $suite;
     }
