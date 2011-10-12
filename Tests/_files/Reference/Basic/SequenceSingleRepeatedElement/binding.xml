@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="SequenceSingleRepeatedElement" name="sequenceSingleRepeatedElement">
+    <structure map-as="SequenceSingleRepeatedElement"/>
+  </mapping>
+  <mapping class="SequenceSingleRepeatedElement" abstract="true" type-name="SequenceSingleRepeatedElement">
+    <collection get-method="getElements" set-method="setElements">
+      <value style="element" name="element" type="string"/>
+    </collection>
+  </mapping>
+  <mapping class="EchoSequenceSingleRepeatedElement" name="echoSequenceSingleRepeatedElement">
+    <structure map-as="SequenceSingleRepeatedElement" get-method="getSequenceSingleRepeatedElement" set-method="setSequenceSingleRepeatedElement" name="sequenceSingleRepeatedElement"/>
+  </mapping>
+</binding>
