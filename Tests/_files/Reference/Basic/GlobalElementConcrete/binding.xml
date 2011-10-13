@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="GlobalElementConcrete" name="globalElementConcrete">
+    <value style="text" get-method="getGlobalElementConcrete" set-method="setGlobalElementConcrete"/>
+  </mapping>
+  <mapping class="EchoGlobalElementConcrete" name="echoGlobalElementConcrete">
+    <structure type="GlobalElementConcrete" get-method="getGlobalElementConcrete" set-method="setGlobalElementConcrete"/>
+  </mapping>
+</binding>

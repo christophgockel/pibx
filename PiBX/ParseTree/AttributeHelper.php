@@ -81,6 +81,7 @@ class PiBX_ParseTree_AttributeHelper {
             $options['maxOccurs'] = ((string)$attributes['maxOccurs'] != '') ? (string)$attributes['maxOccurs'] : 1;
             $options['nillable']  = ((string)$attributes['nillable'] == 'true') ? true : false;
             $options['id']        = (string)$attributes['id'];
+            $options['abstract']  = ((string)$attributes['abstract'] == 'true') ? true : false;
         } else {
             $options['name'] = self::getValue($objectOrArray, 'name');
             $options['type'] = self::getValue($objectOrArray, 'type');
@@ -88,6 +89,7 @@ class PiBX_ParseTree_AttributeHelper {
             $options['maxOccurs'] = array_key_exists('maxOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'maxOccurs') : 1;
             $options['nillable']  = array_key_exists('nillable', $objectOrArray) ? ($objectOrArray['nillable'] == 'true') : false;
             $options['id']        = self::getValue($objectOrArray, 'id');
+            $options['abstract']  = array_key_exists('abstract', $objectOrArray) ? ($objectOrArray['abstract'] == 'true') : false;
         }
         
         return $options;
