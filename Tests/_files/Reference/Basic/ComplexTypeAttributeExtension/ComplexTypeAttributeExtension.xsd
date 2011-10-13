@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:p="http://www.w3.org/2002/ws/databinding/patterns/6/09/"
+           xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           targetNamespace="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           elementFormDefault="qualified">
+   <xs:element xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+               xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+               name="complexTypeAttributeExtension"
+               type="ex:ComplexTypeAttributeExtension"/>
+   <xs:complexType xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+                   xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+                   name="ComplexTypeAttributeBase">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+   <xs:complexType xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+                   xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+                   name="ComplexTypeAttributeExtension">
+
+        <xs:complexContent>
+          <xs:extension base="ex:ComplexTypeAttributeBase">
+            <xs:attribute name="gender" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+   <xs:element name="echoComplexTypeAttributeExtension">
+      <xs:complexType>
+         <xs:sequence>
+
+            <xs:element ref="ex:complexTypeAttributeExtension"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

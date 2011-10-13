@@ -200,4 +200,43 @@ class PiBX_ParseTree_AttributeHelper {
 
         return $options;
     }
+
+    public static function getComplexContentOptions($objectOrArray) {
+        $options = array();
+
+        if ($objectOrArray instanceof SimpleXMLElement) {
+            $attributes = $objectOrArray->attributes();
+
+            $options['mixed'] = (string)$attributes['mixed'];
+            $options['id']    = (string)$attributes['id'];
+        } else {
+            $options['mixed'] = self::getValue($objectOrArray, 'mixed');
+            $options['id']    = self::getValue($objectOrArray, 'id');
+        }
+
+        return $options;
+    }
+
+    public static function getExtensionOptions($objectOrArray) {
+        $options = array();
+
+        if ($objectOrArray instanceof SimpleXMLElement) {
+            $attributes = $objectOrArray->attributes();
+
+            $options['base'] = (string)$attributes['base'];
+
+            if (strpos($options['base'], ':') !== false) {
+                // remove the namespace prefix
+                $parts = explode(':', $options['base']);
+                $options['base'] = $parts[1];
+            }
+
+            $options['id']    = (string)$attributes['id'];
+        } else {
+            $options['base'] = self::getValue($objectOrArray, 'base');
+            $options['id']    = self::getValue($objectOrArray, 'id');
+        }
+
+        return $options;
+    }
 }

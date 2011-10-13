@@ -29,9 +29,11 @@
 require_once 'PiBX/CodeGen/TypeUsage.php';
 require_once 'PiBX/ParseTree/Tree.php';
 require_once 'PiBX/ParseTree/ChoiceNode.php';
+require_once 'PiBX/ParseTree/ComplexContentNode.php';
 require_once 'PiBX/ParseTree/ComplexTypeNode.php';
 require_once 'PiBX/ParseTree/ElementNode.php';
 require_once 'PiBX/ParseTree/EnumerationNode.php';
+require_once 'PiBX/ParseTree/ExtensionNode.php';
 require_once 'PiBX/ParseTree/RestrictionNode.php';
 require_once 'PiBX/ParseTree/RootNode.php';
 require_once 'PiBX/ParseTree/SequenceNode.php';
@@ -174,6 +176,10 @@ class PiBX_CodeGen_SchemaParser {
                 $this->referencedSchemas[] = $location;
 
                 continue;
+            } elseif ($name == 'complexContent') {
+                $newPart = new PiBX_ParseTree_ComplexContentNode($child, $level);
+            } elseif ($name == 'extension') {
+                $newPart = new PiBX_ParseTree_ExtensionNode($child, $level);
             } else {
                 throw new RuntimeException('Schema element "' . $name . '" not supported at the moment');
             }

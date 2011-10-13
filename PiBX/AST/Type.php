@@ -57,11 +57,14 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
 
     private $valueStyle;
 
-    public function  __construct($name = '', $type = '') {
+    private $baseType;
+
+    public function  __construct($name = '', $type = '', $baseType = '') {
         parent::__construct($name, $type);
 
         $this->isRootType = false;
         $this->valueStyle = 'element';
+        $this->baseType = $baseType;
     }
 
     public function setAsRoot() {
@@ -123,6 +126,18 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
         }
 
         return false;
+    }
+
+    public function hasBaseType() {
+        return $this->baseType !== '';
+    }
+
+    public function getBaseType() {
+        return $this->baseType;
+    }
+
+    public function setBaseType($baseType) {
+        $this->baseType = $baseType;
     }
 
     public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {

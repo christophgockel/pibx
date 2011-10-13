@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ComplexTypeAttributeExtension" name="complexTypeAttributeExtension">
+    <structure map-as="ComplexTypeAttributeExtension"/>
+  </mapping>
+  <mapping class="ComplexTypeAttributeBase" abstract="true" type-name="ComplexTypeAttributeBase">
+    <value style="element" name="name" get-method="getName" set-method="setName"/>
+  </mapping>
+  <mapping class="ComplexTypeAttributeExtension" abstract="true" type-name="ComplexTypeAttributeExtension">
+    <structure map-as="ComplexTypeAttributeBase"/>
+    <value style="attribute" name="gender" get-method="getGender" set-method="setGender" usage="optional"/>
+  </mapping>
+  <mapping class="EchoComplexTypeAttributeExtension" name="echoComplexTypeAttributeExtension">
+    <structure map-as="ComplexTypeAttributeExtension" get-method="getComplexTypeAttributeExtension" set-method="setComplexTypeAttributeExtension" name="complexTypeAttributeExtension"/>
+  </mapping>
+</binding>

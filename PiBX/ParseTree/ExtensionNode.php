@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2010, Christoph Gockel.
+ * Copyright (c) 2010-2011, Christoph Gockel.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,21 +28,30 @@
  */
 require_once 'PiBX/ParseTree/Tree.php';
 /**
- * Defines the structure of the Visitor-Pattern used for the ParseTree.
- * 
+ * Represents a <code>&lt;extension></code>-node of an XML-Schema.
+ *
  * @author Christoph Gockel
  */
-interface PiBX_ParseTree_Visitor_VisitorAbstract {
-    public function visitAttributeNode(PiBX_ParseTree_Tree $tree);
-    public function visitElementNode(PiBX_ParseTree_Tree $tree);
-    public function visitSimpleTypeNode(PiBX_ParseTree_Tree $tree);
-    public function visitComplexTypeNode(PiBX_ParseTree_Tree $tree);
-    public function visitSequenceNode(PiBX_ParseTree_Tree $tree);
-    public function visitGroupNode(PiBX_ParseTree_Tree $tree);
-    public function visitAllNode(PiBX_ParseTree_Tree $tree);
-    public function visitChoiceNode(PiBX_ParseTree_Tree $tree);
-    public function visitRestrictionNode(PiBX_ParseTree_Tree $tree);
-    public function visitEnumerationNode(PiBX_ParseTree_Tree $tree);
-    public function visitComplexContentNode(PiBX_ParseTree_Tree $tree);
-    public function visitExtensionNode(PiBX_ParseTree_Tree $tree);
+class PiBX_ParseTree_ExtensionNode extends PiBX_ParseTree_Tree {
+
+    public function  __construct($xmlOrOptions, $level = 0) {
+        parent::__construct($xmlOrOptions, $level);
+        $this->options = PiBX_ParseTree_AttributeHelper::getExtensionOptions($xmlOrOptions);
+    }
+
+    public function getId() {
+        return $this->options['id'];
+    }
+
+    public function getBase() {
+        return $this->options['base'];
+    }
+
+    public function accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
+        $v->visitExtensionNode($this);
+
+        foreach ($this->children as $child) {
+            $child->accept($v);
+        }
+    }
 }

@@ -55,6 +55,7 @@ class PiBX_CodeGen_ASTConstructor {
 
     private $currentAST;
     private $temporarySubnodeStack;
+    private $currentBaseType;
 
     public function __construct(array $stackOfParseTreeElements) {
         if (count($stackOfParseTreeElements) == 0) {
@@ -63,6 +64,7 @@ class PiBX_CodeGen_ASTConstructor {
         
         $this->stackOfElements = $stackOfParseTreeElements;
         $this->temporarySubnodeStack = array();
+        $this->currentBaseType = '';
     }
 
     public function construct() {
@@ -91,6 +93,12 @@ class PiBX_CodeGen_ASTConstructor {
             $this->handleSimpleTypeNode($tree);
         } elseif ($tree instanceof PiBX_ParseTree_RestrictionNode) {
             $this->handleRestrictionNode($tree);
+        } elseif ($tree instanceof PiBX_ParseTree_ExtensionNode) {
+            $this->handleExtensionNode($tree);
+        } elseif ($tree instanceof PiBX_ParseTree_ComplexContentNode) {
+            $this->handleComplexContentNode($tree);
+        } else {
+            throw new RuntimeException(get_class($tree) . ' not supported yet for constructing an AST');
         }
     }
 
@@ -155,7 +163,7 @@ class PiBX_CodeGen_ASTConstructor {
 
     private function handleComplexTypeNode(PiBX_ParseTree_ComplexTypeNode $complexType) {
         if ($complexType->getLevel() == 0) {
-            $type = new PiBX_AST_Type($complexType->getName());
+            $type = new PiBX_AST_Type($complexType->getName(), null, $this->currentBaseType);
             $type->setNamespaces($complexType->getNamespaces());
             $type->setTargetNamespace($complexType->getParent()->getTargetNamespace());//TODO: get rid of these trainwrecks
 
@@ -164,8 +172,13 @@ class PiBX_CodeGen_ASTConstructor {
             }
 
             $this->currentAST = $type;
+            $this->clearCurrentBaseType();
         } else {
         }
+    }
+
+    private function clearCurrentBaseType() {
+        $this->currentBaseType = '';
     }
 
     private function handleEnumerationNode(PiBX_ParseTree_EnumerationNode $enumeration) {
@@ -204,6 +217,14 @@ class PiBX_CodeGen_ASTConstructor {
         } else {
             throw new RuntimeException('Restriction type not supported');
         }
+    }
+
+    private function handleExtensionNode(PiBX_ParseTree_ExtensionNode $extension) {
+        $this->currentBaseType = $extension->getBase();
+    }
+
+    private function handleComplexContentNode(PiBX_ParseTree_ComplexContentNode $extension) {
+
     }
 
     private function hasTemporaryNodes() {

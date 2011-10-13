@@ -235,6 +235,10 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
             $this->xml .= '>';
 
+            if ($tree->hasBaseType()) {
+                $this->xml .= '<structure map-as="' . $tree->getBaseType() . '"/>';
+            }
+
             if ( !PiBX_ParseTree_BaseType::isBaseType($tree->getType()) && !$tree->hasChildren()) {
                 $usedType = $tree->getType();
                 $referencedType = $this->getTypeByName($usedType);

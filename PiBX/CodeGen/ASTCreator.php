@@ -144,6 +144,18 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
         $this->patternMatcher->addElement($tree);
         $this->currentParseTreeLevel = $tree->getLevel();
     }
+
+    public function visitComplexContentNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
+        $this->patternMatcher->addElement($tree);
+        $this->currentParseTreeLevel = $tree->getLevel();
+    }
+
+    public function visitExtensionNode(PiBX_ParseTree_Tree $tree) {
+        $this->handleTypeConstructionForLevel($tree->getLevel());
+        $this->patternMatcher->addElement($tree);
+        $this->currentParseTreeLevel = $tree->getLevel();
+    }
 }
 //class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract {
 //    /**
