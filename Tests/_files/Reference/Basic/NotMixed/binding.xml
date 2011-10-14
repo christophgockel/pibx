@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="NotMixed" name="notMixed">
+    <structure map-as="NotMixed"/>
+  </mapping>
+  <mapping class="NotMixed" abstract="true" type-name="NotMixed">
+    <value style="element" name="notMixedElement" get-method="getNotMixedElement" set-method="setNotMixedElement"/>
+  </mapping>
+  <mapping class="EchoNotMixed" name="echoNotMixed">
+    <structure map-as="NotMixed" get-method="getNotMixed" set-method="setNotMixed" name="notMixed"/>
+  </mapping>
+</binding>

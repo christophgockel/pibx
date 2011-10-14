@@ -50,6 +50,10 @@ class PiBX_ParseTree_ComplexTypeNode extends PiBX_ParseTree_Tree {
         return $this->options['abstract'] === true;
     }
 
+    public function isMixed() {
+        return $this->options['mixed'] === true;
+    }
+
     public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
         $v->visitComplexTypeNode($this);
 

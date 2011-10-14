@@ -75,6 +75,7 @@ require_once 'Tests/Scenarios/Reference/Basic/GlobalElementConcreteTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/GlobalComplexTypeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ComplexTypeConcreteTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/AttributeFormUnqualifiedTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/NotMixedTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -131,6 +132,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_GlobalComplexTypeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ComplexTypeConcreteTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_AttributeFormUnqualifiedTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NotMixedTest');
 
         return $suite;
     }
