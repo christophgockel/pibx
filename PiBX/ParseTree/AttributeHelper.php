@@ -162,10 +162,12 @@ class PiBX_ParseTree_AttributeHelper {
             }
 
             $options['use'] = ((string)$attributes['use'] != '') ? (string)$attributes['use'] : 'optional';
+            $options['form'] = (string)$attributes['form'];
         } else {
             $options['name'] = self::getValue($objectOrArray, 'name');
             $options['type'] = self::getValue($objectOrArray, 'type');
             $options['use'] = array_key_exists('use', $objectOrArray) ? self::getValue($objectOrArray, 'use') : 'optional';
+            $options['form'] = self::getValue($objectOrArray, 'form');
         }
 
         return $options;

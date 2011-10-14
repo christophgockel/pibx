@@ -51,6 +51,10 @@ class PiBX_ParseTree_AttributeNode extends PiBX_ParseTree_Tree {
         return $this->options['use'];
     }
 
+    public function getForm() {
+        return $this->options['form'];
+    }
+
     public function accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {
         $v->visitAttributeNode($this);
 
