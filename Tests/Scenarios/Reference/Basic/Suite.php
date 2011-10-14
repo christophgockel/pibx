@@ -116,6 +116,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementReferenceTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_AttributeReferenceTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_IncludeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_SequenceMinOccurs1Test');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_SequenceMaxOccurs1Test');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementMinOccurs0MaxOccursUnboundedTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementMinOccurs1MaxOccursUnboundedTest');
