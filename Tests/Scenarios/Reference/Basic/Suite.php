@@ -72,6 +72,8 @@ require_once 'Tests/Scenarios/Reference/Basic/MaxOccurs1Test.php';
 require_once 'Tests/Scenarios/Reference/Basic/ComplexTypeAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ComplexTypeAttributeExtensionTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/GlobalElementConcreteTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/GlobalComplexTypeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/ComplexTypeConcreteTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -125,6 +127,8 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ComplexTypeAttributeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ComplexTypeAttributeExtensionTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_GlobalElementConcreteTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_GlobalComplexTypeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ComplexTypeConcreteTest');
 
         return $suite;
     }
