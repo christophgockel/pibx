@@ -117,9 +117,11 @@ class PiBX_ParseTree_AttributeHelper {
 
             $options['name'] = (string)$attributes['name'];
             $options['id']   = (string)$attributes['id'];
+            $options['abstract'] = ((string)$attributes['abstract'] == 'true') ? true : false;
         } else {
             $options['name'] = self::getValue($objectOrArray, 'name');
             $options['id']   = self::getValue($objectOrArray, 'id');
+            $options['abstract'] = array_key_exists('abstract', $objectOrArray) ? ($objectOrArray['abstract'] == 'true') : false;
         }
 
         return $options;

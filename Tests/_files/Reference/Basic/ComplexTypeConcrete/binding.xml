@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ComplexTypeConcrete" name="complexTypeConcrete">
+    <structure map-as="ComplexTypeConcrete"/>
+  </mapping>
+  <mapping class="ComplexTypeConcrete" abstract="true" type-name="ComplexTypeConcrete">
+    <value style="element" name="premium" get-method="getPremium" set-method="setPremium"/>
+  </mapping>
+  <mapping class="EchoComplexTypeConcrete" name="echoComplexTypeConcrete">
+    <structure map-as="ComplexTypeConcrete" get-method="getComplexTypeConcrete" set-method="setComplexTypeConcrete" name="complexTypeConcrete"/>
+  </mapping>
+</binding>
