@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="GlobalComplexType" name="globalComplexType">
+    <structure map-as="GlobalComplexType"/>
+  </mapping>
+  <mapping class="GlobalComplexType" abstract="true" type-name="GlobalComplexType">
+    <value style="element" name="premium" get-method="getPremium" set-method="setPremium"/>
+  </mapping>
+  <mapping class="EchoGlobalComplexType" name="echoGlobalComplexType">
+    <structure map-as="GlobalComplexType" get-method="getGlobalComplexType" set-method="setGlobalComplexType" name="globalComplexType"/>
+  </mapping>
+</binding>
