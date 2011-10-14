@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ElementFormQualified" name="elementFormQualified">
+    <structure map-as="ElementFormQualified"/>
+  </mapping>
+  <mapping class="ElementFormQualified" abstract="true" type-name="ElementFormQualified">
+    <value style="element" name="premium" get-method="getPremium" set-method="setPremium"/>
+  </mapping>
+  <mapping class="EchoElementFormQualified" name="echoElementFormQualified">
+    <structure map-as="ElementFormQualified" get-method="getElementFormQualified" set-method="setElementFormQualified" name="elementFormQualified"/>
+  </mapping>
+</binding>

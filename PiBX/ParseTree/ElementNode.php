@@ -83,6 +83,10 @@ class PiBX_ParseTree_ElementNode extends PiBX_ParseTree_Tree {
         return $this->options['nillable'];
     }
 
+    public function getForm() {
+        return $this->options['form'];
+    }
+
     public function isOptional() {
         return $this->getMinOccurs() == 0 || $this->isNillable();
     }
