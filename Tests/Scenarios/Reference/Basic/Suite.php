@@ -80,6 +80,7 @@ require_once 'Tests/Scenarios/Reference/Basic/NotNillableElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ElementFormQualifiedTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ComplexTypeSequenceExtensionTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/DateTimeElementTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/DateTimeAttributeTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -142,6 +143,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementFormQualifiedTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ComplexTypeSequenceExtensionTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_DateTimeElementTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_DateTimeAttributeTest');
 
         return $suite;
     }
