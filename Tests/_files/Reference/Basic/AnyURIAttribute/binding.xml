@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="AnyURIAttribute" name="anyURIAttribute">
+    <structure map-as="AnyURIAttribute"/>
+  </mapping>
+  <mapping class="AnyURIAttribute" abstract="true" type-name="AnyURIAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="anyURI" get-method="getAnyURI" set-method="setAnyURI" usage="optional"/>
+  </mapping>
+  <mapping class="EchoAnyURIAttribute" name="echoAnyURIAttribute">
+    <structure map-as="AnyURIAttribute" get-method="getAnyURIAttribute" set-method="setAnyURIAttribute" name="anyURIAttribute"/>
+  </mapping>
+</binding>
