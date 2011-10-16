@@ -337,6 +337,10 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                     // based on the leaf type it's decided whether the type has to be mapped or not
                     $referencedType = $this->getTypeByName($currentType->getType());
 
+                    if ($currentType === $referencedType) {
+                        break;
+                    }
+
                     if ($referencedType == null) {
                         if ($currentType instanceof PiBX_AST_Type && $currentType->isRoot()) {
                             $usedTypeHasToBeMapped = false;

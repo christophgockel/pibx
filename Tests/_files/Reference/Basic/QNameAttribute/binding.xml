@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="QNameAttribute" name="QNameAttribute">
+    <structure map-as="QNameAttribute"/>
+  </mapping>
+  <mapping class="QNameAttribute" abstract="true" type-name="QNameAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="QName" get-method="getQName" set-method="setQName" usage="optional"/>
+  </mapping>
+  <mapping class="EchoQNameAttribute" name="echoQNameAttribute">
+    <structure map-as="QNameAttribute" get-method="getQNameAttribute" set-method="setQNameAttribute" name="QNameAttribute"/>
+  </mapping>
+</binding>
