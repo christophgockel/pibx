@@ -82,6 +82,7 @@ require_once 'Tests/Scenarios/Reference/Basic/ComplexTypeSequenceExtensionTest.p
 require_once 'Tests/Scenarios/Reference/Basic/DateTimeElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/DateTimeAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/Base64BinaryElementTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/AnyURIElementTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -146,6 +147,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_DateTimeElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_DateTimeAttributeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_Base64BinaryElementTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_AnyURIElementTest');
 
         return $suite;
     }

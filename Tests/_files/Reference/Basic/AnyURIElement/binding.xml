@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="AnyURIElement" name="anyURIElement">
+    <value style="text" get-method="getAnyURIElement" set-method="setAnyURIElement"/>
+  </mapping>
+  <mapping class="EchoAnyURIElement" name="echoAnyURIElement">
+    <structure type="AnyURIElement" get-method="getAnyURIElement" set-method="setAnyURIElement"/>
+  </mapping>
+</binding>
