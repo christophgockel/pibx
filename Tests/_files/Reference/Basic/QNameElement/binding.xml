@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="QNameElement" name="QNameElement">
+    <value style="text" get-method="getQNameElement" set-method="setQNameElement"/>
+  </mapping>
+  <mapping class="EchoQNameElement" name="echoQNameElement">
+    <structure type="QNameElement" get-method="getQNameElement" set-method="setQNameElement"/>
+  </mapping>
+</binding>
