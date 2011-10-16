@@ -84,6 +84,8 @@ require_once 'Tests/Scenarios/Reference/Basic/DateTimeAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/Base64BinaryElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/AnyURIElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/AnyURIAttributeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/QNameElementTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/QNameAttributeTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -150,6 +152,8 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_Base64BinaryElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_AnyURIElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_AnyURIAttributeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_QNameElementTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_QNameAttributeTest');
 
         return $suite;
     }
