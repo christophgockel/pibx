@@ -192,7 +192,7 @@ class PiBX_ParseTree_BaseType {
     public static function LANGUAGE() { return self::$language; }
     public static function NMTOKEN() { return self::$NMTOKEN; }
     public static function NMTOKENS() { return self::$NMTOKENS; }
-    public static function NAME() { return self::$Name; }
+    public static function NAME() { return (string)self::$Name; }
     public static function NCNAME() { return self::$NCName; }
     public static function ID() { return self::$ID; }
     public static function IDREF() { return self::$IDREF; }
