@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="NormalizedStringElement" name="normalizedStringElement">
+    <value style="text" get-method="getNormalizedStringElement" set-method="setNormalizedStringElement"/>
+  </mapping>
+  <mapping class="EchoNormalizedStringElement" name="echoNormalizedStringElement">
+    <structure type="NormalizedStringElement" get-method="getNormalizedStringElement" set-method="setNormalizedStringElement"/>
+  </mapping>
+</binding>
