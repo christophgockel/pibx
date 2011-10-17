@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2010, Christoph Gockel.
+ * Copyright (c) 2010-2011, Christoph Gockel.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -167,51 +167,51 @@ class PiBX_ParseTree_BaseType {
         return $this->value;
     }
 
-    public static function STRING() { return self::$string; }
-    public static function BOOLEAN() { return self::$boolean; }
-    public static function DECIMAL() { return self::$decimal; }
-    public static function FLOAT() { return self::$float; }
-    public static function DOUBLE() { return self::$double; }
-    public static function DURATION() { return self::$duration; }
-    public static function DATETIME() { return self::$dateTime; }
-    public static function TIME() { return self::$time; }
-    public static function DATE() { return self::$date; }
-    public static function GYEARMONTH() { return self::$gYearMonth; }
-    public static function GYEAR() { return self::$gYear; }
-    public static function GMONTHDAY() { return self::$gMonthDay; }
-    public static function GDAY() { return self::$gDay; }
-    public static function GMONTH() { return self::$gMonth; }
-    public static function HEXBINARY() { return self::$hexBinary; }
-    public static function BASE64BINARY() { return self::$base64Binary; }
-    public static function ANYURI() { return self::$anyURI; }
-    public static function QNAME() { return self::$QName; }
-    public static function NOTATION() { return self::$NOTATION; }
+    public static function STRING() { return (string)self::$string; }
+    public static function BOOLEAN() { return (string)self::$boolean; }
+    public static function DECIMAL() { return (string)self::$decimal; }
+    public static function FLOAT() { return (string)self::$float; }
+    public static function DOUBLE() { return (string)self::$double; }
+    public static function DURATION() { return (string)self::$duration; }
+    public static function DATETIME() { return (string)self::$dateTime; }
+    public static function TIME() { return (string)self::$time; }
+    public static function DATE() { return (string)self::$date; }
+    public static function GYEARMONTH() { return (string)self::$gYearMonth; }
+    public static function GYEAR() { return (string)self::$gYear; }
+    public static function GMONTHDAY() { return (string)self::$gMonthDay; }
+    public static function GDAY() { return (string)self::$gDay; }
+    public static function GMONTH() { return (string)self::$gMonth; }
+    public static function HEXBINARY() { return (string)self::$hexBinary; }
+    public static function BASE64BINARY() { return (string)self::$base64Binary; }
+    public static function ANYURI() { return (string)self::$anyURI; }
+    public static function QNAME() { return (string)self::$QName; }
+    public static function NOTATION() { return (string)self::$NOTATION; }
 
-    public static function NORMALIZEDSTRING() { return self::$normalizedString; }
-    public static function TOKEN() { return self::$token; }
-    public static function LANGUAGE() { return self::$language; }
-    public static function NMTOKEN() { return self::$NMTOKEN; }
-    public static function NMTOKENS() { return self::$NMTOKENS; }
+    public static function NORMALIZEDSTRING() { return (string)self::$normalizedString; }
+    public static function TOKEN() { return (string)self::$token; }
+    public static function LANGUAGE() { return (string)self::$language; }
+    public static function NMTOKEN() { return (string)self::$NMTOKEN; }
+    public static function NMTOKENS() { return (string)self::$NMTOKENS; }
     public static function NAME() { return (string)self::$Name; }
-    public static function NCNAME() { return self::$NCName; }
-    public static function ID() { return self::$ID; }
-    public static function IDREF() { return self::$IDREF; }
-    public static function IDREFS() { return self::$IDREFS; }
-    public static function ENTITY() { return self::$ENTITY; }
-    public static function ENTITIES() { return self::$ENTITIES; }
-    public static function INTEGER() { return self::$integer; }
-    public static function NONPOSITIVEINTEGER() { return self::$nonPositiveInteger; }
-    public static function NEGATIVEINTEGER() { return self::$negativeInteger; }
-    public static function LONG() { return self::$long; }
-    public static function INT() { return self::$int; }
-    public static function SHORT() { return self::$short; }
-    public static function BYTE() { return self::$byte; }
-    public static function NONNEGATIVEINTEGER() { return self::$nonNegativeInteger; }
-    public static function UNSIGNEDLONG() { return self::$unsignedLong; }
-    public static function UNSIGNEDINT() { return self::$unsignedInt; }
-    public static function UNSIGNEDSHORT() { return self::$unsignedShort; }
-    public static function UNSIGNEDBYTE() { return self::$unsignedByte; }
-    public static function POSITIVEINTEGER() { return self::$positiveInteger; }
+    public static function NCNAME() { return (string)self::$NCName; }
+    public static function ID() { return (string)self::$ID; }
+    public static function IDREF() { return (string)self::$IDREF; }
+    public static function IDREFS() { return (string)self::$IDREFS; }
+    public static function ENTITY() { return (string)self::$ENTITY; }
+    public static function ENTITIES() { return (string)self::$ENTITIES; }
+    public static function INTEGER() { return (string)self::$integer; }
+    public static function NONPOSITIVEINTEGER() { return (string)self::$nonPositiveInteger; }
+    public static function NEGATIVEINTEGER() { return (string)self::$negativeInteger; }
+    public static function LONG() { return (string)self::$long; }
+    public static function INT() { return (string)self::$int; }
+    public static function SHORT() { return (string)self::$short; }
+    public static function BYTE() { return (string)self::$byte; }
+    public static function NONNEGATIVEINTEGER() { return (string)self::$nonNegativeInteger; }
+    public static function UNSIGNEDLONG() { return (string)self::$unsignedLong; }
+    public static function UNSIGNEDINT() { return (string)self::$unsignedInt; }
+    public static function UNSIGNEDSHORT() { return (string)self::$unsignedShort; }
+    public static function UNSIGNEDBYTE() { return (string)self::$unsignedByte; }
+    public static function POSITIVEINTEGER() { return (string)self::$positiveInteger; }
 
 }
 
