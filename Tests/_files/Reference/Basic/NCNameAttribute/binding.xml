@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="NCNameAttribute" name="NCNameAttribute">
+    <structure map-as="NCNameAttribute"/>
+  </mapping>
+  <mapping class="NCNameAttribute" abstract="true" type-name="NCNameAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="NCName" get-method="getNCName" set-method="setNCName" usage="optional"/>
+  </mapping>
+  <mapping class="EchoNCNameAttribute" name="echoNCNameAttribute">
+    <structure map-as="NCNameAttribute" get-method="getNCNameAttribute" set-method="setNCNameAttribute" name="NCNameAttribute"/>
+  </mapping>
+</binding>
