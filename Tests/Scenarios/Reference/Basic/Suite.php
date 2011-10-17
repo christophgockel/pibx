@@ -94,6 +94,7 @@ require_once 'Tests/Scenarios/Reference/Basic/NameElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NameAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NCNameElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NCNameAttributeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/LongElementTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -170,6 +171,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NameAttributeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NCNameElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NCNameAttributeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_LongElementTest');
 
         return $suite;
     }

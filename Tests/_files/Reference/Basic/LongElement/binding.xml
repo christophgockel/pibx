@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="LongElement" name="longElement">
+    <value style="text" get-method="getLongElement" set-method="setLongElement"/>
+  </mapping>
+  <mapping class="EchoLongElement" name="echoLongElement">
+    <structure type="LongElement" get-method="getLongElement" set-method="setLongElement"/>
+  </mapping>
+</binding>
