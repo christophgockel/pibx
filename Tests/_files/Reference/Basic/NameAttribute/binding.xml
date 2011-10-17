@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="NameAttribute" name="nameAttribute">
+    <structure map-as="NameAttribute"/>
+  </mapping>
+  <mapping class="NameAttribute" abstract="true" type-name="NameAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="name" get-method="getName" set-method="setName" usage="optional"/>
+  </mapping>
+  <mapping class="EchoNameAttribute" name="echoNameAttribute">
+    <structure map-as="NameAttribute" get-method="getNameAttribute" set-method="setNameAttribute" name="nameAttribute"/>
+  </mapping>
+</binding>
