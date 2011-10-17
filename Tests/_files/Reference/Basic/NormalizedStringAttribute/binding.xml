@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="NormalizedStringAttribute" name="normalizedStringAttribute">
+    <structure map-as="NormalizedStringAttribute"/>
+  </mapping>
+  <mapping class="NormalizedStringAttribute" abstract="true" type-name="NormalizedStringAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="normalizedString" get-method="getNormalizedString" set-method="setNormalizedString" usage="optional"/>
+  </mapping>
+  <mapping class="EchoNormalizedStringAttribute" name="echoNormalizedStringAttribute">
+    <structure map-as="NormalizedStringAttribute" get-method="getNormalizedStringAttribute" set-method="setNormalizedStringAttribute" name="normalizedStringAttribute"/>
+  </mapping>
+</binding>
