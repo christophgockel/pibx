@@ -88,6 +88,7 @@ require_once 'Tests/Scenarios/Reference/Basic/QNameElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/QNameAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NormalizedStringElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NormalizedStringAttributeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/TokenElementTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -158,6 +159,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_QNameAttributeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NormalizedStringElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NormalizedStringAttributeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_TokenElementTest');
 
         return $suite;
     }
