@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="LongAttribute" name="longAttribute">
+    <structure map-as="LongAttribute"/>
+  </mapping>
+  <mapping class="LongAttribute" abstract="true" type-name="LongAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="long" get-method="getLong" set-method="setLong" usage="optional"/>
+  </mapping>
+  <mapping class="EchoLongAttribute" name="echoLongAttribute">
+    <structure map-as="LongAttribute" get-method="getLongAttribute" set-method="setLongAttribute" name="longAttribute"/>
+  </mapping>
+</binding>
