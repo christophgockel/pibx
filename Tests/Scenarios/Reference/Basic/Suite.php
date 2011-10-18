@@ -51,6 +51,7 @@ require_once 'Tests/Scenarios/Reference/Basic/NillableElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NullEnumerationTypeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ElementEmptyComplexTypeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ElementEmptySequenceTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/GlobalElementSequenceTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NestedSequenceElementListTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ElementReferenceTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/AttributeReferenceTest.php';
@@ -143,6 +144,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NullEnumerationTypeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementEmptyComplexTypeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementEmptySequenceTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_GlobalElementSequenceTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NestedSequenceElementListTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ElementReferenceTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_AttributeReferenceTest');
