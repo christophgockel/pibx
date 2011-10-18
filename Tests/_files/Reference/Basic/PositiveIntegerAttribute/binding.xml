@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="PositiveIntegerAttribute" name="positiveIntegerAttribute">
+    <structure map-as="PositiveIntegerAttribute"/>
+  </mapping>
+  <mapping class="PositiveIntegerAttribute" abstract="true" type-name="PositiveIntegerAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="positiveInteger" get-method="getPositiveInteger" set-method="setPositiveInteger" usage="optional"/>
+  </mapping>
+  <mapping class="EchoPositiveIntegerAttribute" name="echoPositiveIntegerAttribute">
+    <structure map-as="PositiveIntegerAttribute" get-method="getPositiveIntegerAttribute" set-method="setPositiveIntegerAttribute" name="positiveIntegerAttribute"/>
+  </mapping>
+</binding>
