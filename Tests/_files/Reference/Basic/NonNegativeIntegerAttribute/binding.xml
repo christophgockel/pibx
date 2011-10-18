@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="NonNegativeIntegerAttribute" name="nonNegativeIntegerAttribute">
+    <structure map-as="NonNegativeIntegerAttribute"/>
+  </mapping>
+  <mapping class="NonNegativeIntegerAttribute" abstract="true" type-name="NonNegativeIntegerAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="nonNegativeInteger" get-method="getNonNegativeInteger" set-method="setNonNegativeInteger" usage="optional"/>
+  </mapping>
+  <mapping class="EchoNonNegativeIntegerAttribute" name="echoNonNegativeIntegerAttribute">
+    <structure map-as="NonNegativeIntegerAttribute" get-method="getNonNegativeIntegerAttribute" set-method="setNonNegativeIntegerAttribute" name="nonNegativeIntegerAttribute"/>
+  </mapping>
+</binding>
