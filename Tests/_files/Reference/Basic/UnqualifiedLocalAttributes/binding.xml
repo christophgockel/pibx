@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements" prefix="ex"/>
+  <mapping class="UnqualifiedLocalAttributes" name="unqualifiedLocalAttributes">
+    <value style="text" get-method="getUnqualifiedLocalAttributes" set-method="setUnqualifiedLocalAttributes"/>
+  </mapping>
+</binding>

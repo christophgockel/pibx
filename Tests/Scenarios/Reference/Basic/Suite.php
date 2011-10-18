@@ -106,6 +106,7 @@ require_once 'Tests/Scenarios/Reference/Basic/NonNegativeIntegerAttributeTest.ph
 require_once 'Tests/Scenarios/Reference/Basic/PositiveIntegerElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/PositiveIntegerAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/DocumentationElementTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/UnqualifiedLocalAttributesTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -194,6 +195,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_PositiveIntegerElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_PositiveIntegerAttributeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_DocumentationElementTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_UnqualifiedLocalAttributesTest');
 
         return $suite;
     }
