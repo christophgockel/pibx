@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ByteAttribute" name="byteAttribute">
+    <structure map-as="ByteAttribute"/>
+  </mapping>
+  <mapping class="ByteAttribute" abstract="true" type-name="ByteAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="byte" get-method="getByte" set-method="setByte" usage="optional"/>
+  </mapping>
+  <mapping class="EchoByteAttribute" name="echoByteAttribute">
+    <structure map-as="ByteAttribute" get-method="getByteAttribute" set-method="setByteAttribute" name="byteAttribute"/>
+  </mapping>
+</binding>
