@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="ShortAttribute" name="shortAttribute">
+    <structure map-as="ShortAttribute"/>
+  </mapping>
+  <mapping class="ShortAttribute" abstract="true" type-name="ShortAttribute">
+    <value style="element" name="text" get-method="getText" set-method="setText" usage="optional"/>
+    <value style="attribute" name="short" get-method="getShort" set-method="setShort" usage="optional"/>
+  </mapping>
+  <mapping class="EchoShortAttribute" name="echoShortAttribute">
+    <structure map-as="ShortAttribute" get-method="getShortAttribute" set-method="setShortAttribute" name="shortAttribute"/>
+  </mapping>
+</binding>
