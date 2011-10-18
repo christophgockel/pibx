@@ -98,6 +98,7 @@ require_once 'Tests/Scenarios/Reference/Basic/LongElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/LongAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/IntElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/IntAttributeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/ShortElementTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -178,6 +179,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_LongAttributeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_IntElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_IntAttributeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ShortElementTest');
 
         return $suite;
     }
