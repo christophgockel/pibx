@@ -109,6 +109,7 @@ require_once 'Tests/Scenarios/Reference/Basic/DocumentationElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/UnqualifiedLocalAttributesTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/SchemaVersionTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ImportNamespaceTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/ImportSchemaTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -200,6 +201,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_UnqualifiedLocalAttributesTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_SchemaVersionTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ImportNamespaceTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ImportSchemaTest');
 
         return $suite;
     }

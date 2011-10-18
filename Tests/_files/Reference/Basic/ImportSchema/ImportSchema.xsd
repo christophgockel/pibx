@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:p="http://www.w3.org/2002/ws/databinding/patterns/6/09/"
+           xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           targetNamespace="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           elementFormDefault="qualified">
+   <xs:import xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+              xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+              namespace="http://example.com/a/namespace"
+              schemaLocation="http://www.w3.org/2002/ws/databinding/examples/6/09/static/Imported.xsd"/>
+   <xs:element name="echoImportSchema">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="ex:importSchema"/>
+         </xs:sequence>
+      </xs:complexType>
+
+   </xs:element>
+</xs:schema>
