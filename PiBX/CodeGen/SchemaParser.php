@@ -180,6 +180,10 @@ class PiBX_CodeGen_SchemaParser {
                 $newPart = new PiBX_ParseTree_ComplexContentNode($child, $level);
             } elseif ($name == 'extension') {
                 $newPart = new PiBX_ParseTree_ExtensionNode($child, $level);
+            } elseif ($name == 'annotation') {
+                // annotations are ignored at the moment
+                // plans are, to add them as comments in the generated classes
+                continue;
             } else {
                 throw new RuntimeException('Schema element "' . $name . '" not supported at the moment');
             }

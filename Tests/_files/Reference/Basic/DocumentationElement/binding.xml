@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="DocumentationElement" name="documentationElement">
+    <value style="text" get-method="getDocumentationElement" set-method="setDocumentationElement"/>
+  </mapping>
+  <mapping class="EchoDocumentationElement" name="echoDocumentationElement">
+    <structure type="DocumentationElement" get-method="getDocumentationElement" set-method="setDocumentationElement"/>
+  </mapping>
+</binding>

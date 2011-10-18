@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:p="http://www.w3.org/2002/ws/databinding/patterns/6/09/"
+           xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           targetNamespace="http://www.w3.org/2002/ws/databinding/examples/6/09/"
+           elementFormDefault="qualified">
+   <xs:annotation xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/">
+        <xs:documentation xml:lang="en">Schema Level Documentation</xs:documentation>
+      </xs:annotation>
+   <xs:element xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+               xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+               name="documentationElement"
+               type="xs:string">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This is a string Element</xs:documentation>
+
+        </xs:annotation>
+      </xs:element>
+   <xs:element name="echoDocumentationElement">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="ex:documentationElement"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+
+</xs:schema>
