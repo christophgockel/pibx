@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="IntElement" name="intElement">
+    <value style="text" get-method="getIntElement" set-method="setIntElement"/>
+  </mapping>
+  <mapping class="EchoIntElement" name="echoIntElement">
+    <structure type="IntElement" get-method="getIntElement" set-method="setIntElement"/>
+  </mapping>
+</binding>
