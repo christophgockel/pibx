@@ -103,6 +103,7 @@ require_once 'Tests/Scenarios/Reference/Basic/ShortAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ByteElementTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/ByteAttributeTest.php';
 require_once 'Tests/Scenarios/Reference/Basic/NonNegativeIntegerAttributeTest.php';
+require_once 'Tests/Scenarios/Reference/Basic/PositiveIntegerElementTest.php';
 /**
  * Basic Reference Test-Suite.
  *
@@ -188,6 +189,7 @@ class PiBX_Scenarios_Reference_Basic_Suite extends PHPUnit_Framework_TestSuite {
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ByteElementTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_ByteAttributeTest');
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_NonNegativeIntegerAttributeTest');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_PositiveIntegerElementTest');
 
         return $suite;
     }
