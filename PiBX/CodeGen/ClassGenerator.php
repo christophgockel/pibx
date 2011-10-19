@@ -39,7 +39,7 @@ require_once 'PiBX/AST/TypeAttribute.php';
 require_once 'PiBX/AST/Visitor/VisitorAbstract.php';
 require_once 'PiBX/Binding/Names.php';
 require_once 'PiBX/CodeGen/TypeCheckGenerator.php';
-require_once 'PiBX/ParseTree/BaseType.php';
+require_once 'PiBX/Util/XsdType.php';
 /**
  * Generating the PHP-code of the classes is done here, with a Hierarchical Visitor
  * of the AST.
@@ -328,7 +328,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
             $type = $tree->getType();
 
             $methods = "\tpublic function set".$methodName."(";
-            if (!PiBX_ParseTree_BaseType::isBaseType($type)) {
+            if (!PiBX_Util_XsdType::isBaseType($type)) {
                 // complexTypes (i.e. classes) have to be type-hinted
                 // in the method signature.
                 $expectedType = PiBX_Binding_Names::createClassnameFor($type);

@@ -28,11 +28,11 @@
  */
 
 /**
- * BaseType is an Enum of available types.
+ * An Enum of all XSD types.
  * 
  * @author Christoph Gockel
  */
-class PiBX_ParseTree_BaseType {
+class PiBX_Util_XsdType {
 
     // primitive datatypes
     // according to http://www.w3.org/TR/xmlschema-2/
@@ -94,58 +94,58 @@ class PiBX_ParseTree_BaseType {
     public static function init() {
 
         if (!self::$alreadyInitialized) {
-            self::$string       = new PiBX_ParseTree_BaseType('string');
-            self::$boolean      = new PiBX_ParseTree_BaseType('boolean');
-            self::$decimal      = new PiBX_ParseTree_BaseType('decimal');
-            self::$float        = new PiBX_ParseTree_BaseType('float');
-            self::$double       = new PiBX_ParseTree_BaseType('double');
-            self::$duration     = new PiBX_ParseTree_BaseType('duration');
-            self::$dateTime     = new PiBX_ParseTree_BaseType('dateTime');
-            self::$time         = new PiBX_ParseTree_BaseType('time');
-            self::$date         = new PiBX_ParseTree_BaseType('date');
-            self::$gYearMonth   = new PiBX_ParseTree_BaseType('gYearMonth');
-            self::$gYear        = new PiBX_ParseTree_BaseType('gYear');
-            self::$gMonthDay    = new PiBX_ParseTree_BaseType('gMonthDay');
-            self::$gDay         = new PiBX_ParseTree_BaseType('gDay');
-            self::$gMonth       = new PiBX_ParseTree_BaseType('gMonth');
-            self::$hexBinary    = new PiBX_ParseTree_BaseType('hexBinary');
-            self::$base64Binary = new PiBX_ParseTree_BaseType('base64Binary');
-            self::$anyURI       = new PiBX_ParseTree_BaseType('anyURI');
-            self::$QName        = new PiBX_ParseTree_BaseType('QName');
-            self::$NOTATION     = new PiBX_ParseTree_BaseType('NOTATION');
+            self::$string       = new PiBX_Util_XsdType('string');
+            self::$boolean      = new PiBX_Util_XsdType('boolean');
+            self::$decimal      = new PiBX_Util_XsdType('decimal');
+            self::$float        = new PiBX_Util_XsdType('float');
+            self::$double       = new PiBX_Util_XsdType('double');
+            self::$duration     = new PiBX_Util_XsdType('duration');
+            self::$dateTime     = new PiBX_Util_XsdType('dateTime');
+            self::$time         = new PiBX_Util_XsdType('time');
+            self::$date         = new PiBX_Util_XsdType('date');
+            self::$gYearMonth   = new PiBX_Util_XsdType('gYearMonth');
+            self::$gYear        = new PiBX_Util_XsdType('gYear');
+            self::$gMonthDay    = new PiBX_Util_XsdType('gMonthDay');
+            self::$gDay         = new PiBX_Util_XsdType('gDay');
+            self::$gMonth       = new PiBX_Util_XsdType('gMonth');
+            self::$hexBinary    = new PiBX_Util_XsdType('hexBinary');
+            self::$base64Binary = new PiBX_Util_XsdType('base64Binary');
+            self::$anyURI       = new PiBX_Util_XsdType('anyURI');
+            self::$QName        = new PiBX_Util_XsdType('QName');
+            self::$NOTATION     = new PiBX_Util_XsdType('NOTATION');
 
-            self::$normalizedString   = new PiBX_ParseTree_BaseType('normalizedString');
-            self::$token              = new PiBX_ParseTree_BaseType('token');
-            self::$language           = new PiBX_ParseTree_BaseType('language');
-            self::$NMTOKEN            = new PiBX_ParseTree_BaseType('NMTOKEN');
-            self::$NMTOKENS           = new PiBX_ParseTree_BaseType('NMTOKENS');
-            self::$Name               = new PiBX_ParseTree_BaseType('Name');
-            self::$NCName             = new PiBX_ParseTree_BaseType('NCName');
-            self::$ID                 = new PiBX_ParseTree_BaseType('ID');
-            self::$IDREF              = new PiBX_ParseTree_BaseType('IDREF');
-            self::$IDREFS             = new PiBX_ParseTree_BaseType('IDREFS');
-            self::$ENTITY             = new PiBX_ParseTree_BaseType('ENTITY');
-            self::$ENTITIES           = new PiBX_ParseTree_BaseType('ENTITIES');
-            self::$integer            = new PiBX_ParseTree_BaseType('integer');
-            self::$nonPositiveInteger = new PiBX_ParseTree_BaseType('nonPositiveInteger');
-            self::$negativeInteger    = new PiBX_ParseTree_BaseType('negativeInteger');
-            self::$long               = new PiBX_ParseTree_BaseType('long');
-            self::$int                = new PiBX_ParseTree_BaseType('int');
-            self::$short              = new PiBX_ParseTree_BaseType('short');
-            self::$byte               = new PiBX_ParseTree_BaseType('byte');
-            self::$nonNegativeInteger = new PiBX_ParseTree_BaseType('nonNegativeInteger');
-            self::$unsignedLong       = new PiBX_ParseTree_BaseType('unsignedLong');
-            self::$unsignedInt        = new PiBX_ParseTree_BaseType('unsignedInt');
-            self::$unsignedShort      = new PiBX_ParseTree_BaseType('unsignedShort');
-            self::$unsignedByte       = new PiBX_ParseTree_BaseType('unsignedByte');
-            self::$positiveInteger    = new PiBX_ParseTree_BaseType('positiveInteger');
+            self::$normalizedString   = new PiBX_Util_XsdType('normalizedString');
+            self::$token              = new PiBX_Util_XsdType('token');
+            self::$language           = new PiBX_Util_XsdType('language');
+            self::$NMTOKEN            = new PiBX_Util_XsdType('NMTOKEN');
+            self::$NMTOKENS           = new PiBX_Util_XsdType('NMTOKENS');
+            self::$Name               = new PiBX_Util_XsdType('Name');
+            self::$NCName             = new PiBX_Util_XsdType('NCName');
+            self::$ID                 = new PiBX_Util_XsdType('ID');
+            self::$IDREF              = new PiBX_Util_XsdType('IDREF');
+            self::$IDREFS             = new PiBX_Util_XsdType('IDREFS');
+            self::$ENTITY             = new PiBX_Util_XsdType('ENTITY');
+            self::$ENTITIES           = new PiBX_Util_XsdType('ENTITIES');
+            self::$integer            = new PiBX_Util_XsdType('integer');
+            self::$nonPositiveInteger = new PiBX_Util_XsdType('nonPositiveInteger');
+            self::$negativeInteger    = new PiBX_Util_XsdType('negativeInteger');
+            self::$long               = new PiBX_Util_XsdType('long');
+            self::$int                = new PiBX_Util_XsdType('int');
+            self::$short              = new PiBX_Util_XsdType('short');
+            self::$byte               = new PiBX_Util_XsdType('byte');
+            self::$nonNegativeInteger = new PiBX_Util_XsdType('nonNegativeInteger');
+            self::$unsignedLong       = new PiBX_Util_XsdType('unsignedLong');
+            self::$unsignedInt        = new PiBX_Util_XsdType('unsignedInt');
+            self::$unsignedShort      = new PiBX_Util_XsdType('unsignedShort');
+            self::$unsignedByte       = new PiBX_Util_XsdType('unsignedByte');
+            self::$positiveInteger    = new PiBX_Util_XsdType('positiveInteger');
 
             self::$alreadyInitialized = true;
         }
     }
 
     public static function isBaseType($type) {
-        $r = new ReflectionClass('PiBX_ParseTree_BaseType');
+        $r = new ReflectionClass('PiBX_Util_XsdType');
         $props = $r->getProperties(ReflectionProperty::IS_STATIC);
         
         foreach ($props as &$prop) {
@@ -216,4 +216,4 @@ class PiBX_ParseTree_BaseType {
 }
 
 // simulate static initializer
-PiBX_ParseTree_BaseType::init();
+PiBX_Util_XsdType::init();

@@ -93,7 +93,7 @@ class PiBX_Scenarios_Reference_Basic_NameElementTest extends PiBX_Scenarios_Refe
             'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
         );
 
-        $node1_element = new PiBX_ParseTree_ElementNode(array('name' => 'NameElement', 'type' => PiBX_ParseTree_BaseType::NAME()), 0);
+        $node1_element = new PiBX_ParseTree_ElementNode(array('name' => 'NameElement', 'type' => PiBX_Util_XsdType::NAME()), 0);
         $node1_element->setNamespaces($namespaces);
 
 

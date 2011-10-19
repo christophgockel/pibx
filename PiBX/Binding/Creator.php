@@ -38,7 +38,7 @@ require_once 'PiBX/AST/Type.php';
 require_once 'PiBX/AST/TypeAttribute.php';
 require_once 'PiBX/AST/Visitor/VisitorAbstract.php';
 require_once 'PiBX/Binding/Names.php';
-require_once 'PiBX/ParseTree/BaseType.php';
+require_once 'PiBX/Util/XsdType.php';
 /**
  * An Binding_Creator is a Visitor of a AST.
  * It traverses a abstract-syntax-tree-structure to produce an xml output of the
@@ -108,7 +108,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
             $usedTypeHasToBeMapped = false;
 
-            if (!PiBX_ParseTree_BaseType::isBaseType($tree->getType())) {
+            if (!PiBX_Util_XsdType::isBaseType($tree->getType())) {
                 $usedTypeHasToBeMapped = true;
             }
 
@@ -121,7 +121,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
             $this->xml .= "</collection>";
             
         } elseif ($tree->getParent()->countChildren() == 1) {
-            if (PiBX_ParseTree_BaseType::isBaseType($tree->getType())) {
+            if (PiBX_Util_XsdType::isBaseType($tree->getType())) {
                 $this->xml .= '<value style="element" name="'.$tree->getName().'" type="'.$tree->getType().'"/>';
             } else {
                 $this->xml .= '<structure map-as="'.$tree->getType().'" name="'.$tree->getName().'"/>';
@@ -239,7 +239,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $this->xml .= '<structure map-as="' . $tree->getBaseType() . '"/>';
             }
 
-            if ( !PiBX_ParseTree_BaseType::isBaseType($tree->getType()) && !$tree->hasChildren()) {
+            if ( !PiBX_Util_XsdType::isBaseType($tree->getType()) && !$tree->hasChildren()) {
                 $usedType = $tree->getType();
                 $referencedType = $this->getTypeByName($usedType);
 
@@ -308,7 +308,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
             $usedType = $this->getTypeByName($tree->getType());
 
-            if (PiBX_ParseTree_BaseType::isBaseType($tree->getType()) || ($usedType->isEnumerationType())) {
+            if (PiBX_Util_XsdType::isBaseType($tree->getType()) || ($usedType->isEnumerationType())) {
                 $this->xml .= '<value style="'.$tree->getStyle().'"';
                 $this->xml .= ' name="'.$tree->getName().'"';
 
@@ -348,7 +348,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                         break;
                     }
 
-                    if (PiBX_ParseTree_BaseType::isBaseType($referencedType->getType())) {
+                    if (PiBX_Util_XsdType::isBaseType($referencedType->getType())) {
                         $usedTypeHasToBeMapped = false;
                     } else {
                         $usedTypeHasToBeMapped = true;
@@ -381,7 +381,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                             $this->xml .= ' usage="optional"';
                         }
                         
-                        if (!PiBX_ParseTree_BaseType::isBaseType($tree->getType())) {
+                        if (!PiBX_Util_XsdType::isBaseType($tree->getType())) {
                             $usedType = $this->getTypeByName($tree->getType());
                             $this->xml .= '>';
                             $this->xml .= '<value';

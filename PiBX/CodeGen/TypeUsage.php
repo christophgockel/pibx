@@ -26,7 +26,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once 'PiBX/ParseTree/BaseType.php';
+require_once 'PiBX/Util/XsdType.php';
 /**
  * A TypeUsage-object is used as a reference counter for defined types
  * (complex and simple) in a schema.
@@ -47,7 +47,7 @@ class PiBX_CodeGen_TypeUsage {
     }
     
     public function addType($type) {
-        if (PiBX_ParseTree_BaseType::isBaseType($type)) {
+        if (PiBX_Util_XsdType::isBaseType($type)) {
             // there is no interest in base-type usages
             return;
         }

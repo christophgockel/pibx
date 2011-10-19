@@ -29,7 +29,7 @@
 require_once dirname(__FILE__) . '/../../../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
 require_once 'Tests/Scenarios/Reference/TestCase.php';
-require_once 'PiBX/ParseTree/BaseType.php';
+require_once 'PiBX/Util/XsdType.php';
 require_once 'PiBX/ParseTree/Tree.php';
 require_once 'PiBX/ParseTree/RootNode.php';
 require_once 'PiBX/ParseTree/ElementNode.php';
@@ -114,7 +114,7 @@ class PiBX_Scenarios_Reference_Basic_PositiveIntegerAttributeTest extends PiBX_S
             $node2_sequence->setNamespaces($namespaces);
                 $node2_element = new PiBX_ParseTree_ElementNode(array('name' => 'text', 'type' => 'string', 'minOccurs' => '0'), 2);
                 $node2_element->setNamespaces($namespaces);
-                $node2_attribute = new PiBX_ParseTree_AttributeNode(array('name' => 'positiveInteger', 'type' => PiBX_ParseTree_BaseType::POSITIVEINTEGER()), 1);
+                $node2_attribute = new PiBX_ParseTree_AttributeNode(array('name' => 'positiveInteger', 'type' => PiBX_Util_XsdType::POSITIVEINTEGER()), 1);
                 $node2_attribute->setNamespaces($namespaces);
 
             $node2_sequence->add($node2_element);

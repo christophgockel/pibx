@@ -37,7 +37,7 @@ require_once 'PiBX/AST/StructureType.php';
 require_once 'PiBX/AST/Type.php';
 require_once 'PiBX/AST/TypeAttribute.php';
 require_once 'PiBX/Runtime/Binding.php';
-require_once 'PiBX/ParseTree/BaseType.php';
+require_once 'PiBX/Util/XsdType.php';
 /**
  * The Marshaller is responsible to serialize a given object-structure into
  * a string representation.
@@ -148,7 +148,7 @@ class PiBX_Runtime_Unmarshaller {
                 throw new RuntimeException('Invalid <structure>.');
             }
         } else { // a structure with a type is a reference to the type
-            if (!PiBX_ParseTree_BaseType::isBaseType($type)) {
+            if (!PiBX_Util_XsdType::isBaseType($type)) {
                 
                 $structAst = $this->binding->getASTForClass($type);
                 $newObject = new $type();

@@ -28,7 +28,7 @@
  */
 require_once 'PiBX/AST/Collection.php';
 require_once 'PiBX/Binding/Names.php';
-require_once 'PiBX/ParseTree/BaseType.php';
+require_once 'PiBX/Util/XsdType.php';
 /**
  * When generating class-code, it is possible to add extended type checks
  * into the methods.
@@ -97,7 +97,7 @@ class PiBX_CodeGen_TypeCheckGenerator {
         
         $code = "\t\tforeach (\$" . $attributeName . " as &\$" . $iterationVar . ") {\n";
         
-        if (PiBX_ParseTree_BaseType::isBaseType($expectedType) ) {
+        if (PiBX_Util_XsdType::isBaseType($expectedType) ) {
             $code .= "\t\t\tif (!is_" . $expectedType . "(\$" . $iterationVar . ")) {\n";
         } else {
             $expectedType = PiBX_Binding_Names::createClassnameFor($expectedType);

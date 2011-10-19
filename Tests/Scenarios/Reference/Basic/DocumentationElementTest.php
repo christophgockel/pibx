@@ -29,7 +29,7 @@
 require_once dirname(__FILE__) . '/../../../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
 require_once 'Tests/Scenarios/Reference/TestCase.php';
-require_once 'PiBX/ParseTree/BaseType.php';
+require_once 'PiBX/Util/XsdType.php';
 require_once 'PiBX/ParseTree/Tree.php';
 require_once 'PiBX/ParseTree/RootNode.php';
 require_once 'PiBX/ParseTree/ElementNode.php';
@@ -93,7 +93,7 @@ class PiBX_Scenarios_Reference_Basic_DocumentationElementTest extends PiBX_Scena
             'soap11enc' => 'http://schemas.xmlsoap.org/soap/encoding/'
         );
 
-        $node1_element = new PiBX_ParseTree_ElementNode(array('name' => 'documentationElement', 'type' => PiBX_ParseTree_BaseType::STRING()), 0);
+        $node1_element = new PiBX_ParseTree_ElementNode(array('name' => 'documentationElement', 'type' => PiBX_Util_XsdType::STRING()), 0);
         $node1_element->setNamespaces($namespaces);
 
         $node2_element = new PiBX_ParseTree_ElementNode(array('name' => 'echoDocumentationElement'), 0);
