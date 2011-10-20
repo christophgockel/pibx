@@ -33,29 +33,6 @@ require_once 'PiBX/ParseTree/Tree.php';
  * @author Christoph Gockel
  */
 class PiBX_ParseTree_AttributeHelper {
-    protected $name;
-    protected $type;
-    protected $minOccurs;
-    protected $maxOccurs;
-
-    public function  __construct(SimpleXMLElement $xml, $level = 0) {
-        parent::__construct($xml, $level);
-        $attributes = $xml->attributes();
-
-        $this->name = (string)$attributes['name'];
-        $this->type = (string)$attributes['type'];
-        if (strpos($this->type, ':') !== false) {
-            // remove the namespace prefix
-            $parts = explode(':', $this->type);
-            $this->type = $parts[1];
-        }
-        $this->minOccurs = (string)$attributes['minOccurs'];
-        $this->maxOccurs = (string)$attributes['maxOccurs'];
-    }
-
-    public static function getAttributesForXML(SimpleXMLElement $xml) {
-        
-    }
 
     private static function getValue($array, $key) {
         return key_exists($key, $array) ? $array[$key] : '';
