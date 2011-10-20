@@ -35,7 +35,7 @@ require_once 'PiBX/ParseTree/Tree.php';
 class PiBX_ParseTree_ComplexTypeNode extends PiBX_ParseTree_Tree {
     public function  __construct($xmlOrOptions, $level = 0) {
         parent::__construct($xmlOrOptions, $level);
-        $this->options = PiBX_ParseTree_AttributeHelper::getSimpleTypeOptions($xmlOrOptions);
+        $this->options = PiBX_ParseTree_AttributeHelper::getComplexTypeOptions($xmlOrOptions);
     }
 
     public function getName() {

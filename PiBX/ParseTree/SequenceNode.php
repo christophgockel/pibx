@@ -37,7 +37,7 @@ class PiBX_ParseTree_SequenceNode extends PiBX_ParseTree_Tree {
 
     public function  __construct($xmlOrOptions, $level = 0) {
         parent::__construct($xmlOrOptions, $level);
-        $this->options = PiBX_ParseTree_AttributeHelper::getSimpleTypeOptions($xmlOrOptions);
+        $this->options = PiBX_ParseTree_AttributeHelper::getSequenceOptions($xmlOrOptions);
     }
 
     public function getMinOccurs() {
