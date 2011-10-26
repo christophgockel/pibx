@@ -26,29 +26,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once dirname(__FILE__) . '/bootstrap.php';
+require_once dirname(__FILE__) . '/../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
-require_once 'Tests/CodeGen/Suite.php';
-require_once 'Tests/ParseTree/Suite.php';
-require_once 'Tests/Runtime/Suite.php';
-require_once 'Tests/Scenarios/Suite.php';
-require_once 'Tests/Util/Suite.php';
+require_once 'Tests/ParseTree/AttributeHelperTest.php';
 /**
- * Test-Suite of PiBX.
+ * Test-Suite of package "ParseTree".
  *
  * @author Christoph Gockel
  */
-class PiBX_Suite extends PHPUnit_Framework_TestSuite {
-
+class PiBX_ParseTree_Suite extends PHPUnit_Framework_TestSuite {
+    
     public static function suite() {
         $suite = new PHPUnit_Framework_TestSuite();
-
-        $suite->addTestSuite('PiBX_CodeGen_Suite');
-        $suite->addTestSuite('PiBX_ParseTree_Suite');
-        $suite->addTestSuite('PiBX_Runtime_Suite');
-        $suite->addTestSuite('PiBX_Scenarios_Suite');
-        $suite->addTestSuite('PiBX_Util_Suite');
-
+        $suite->addTestSuite('PiBX_ParseTree_AttributeHelperTest');
+        
         return $suite;
     }
 }

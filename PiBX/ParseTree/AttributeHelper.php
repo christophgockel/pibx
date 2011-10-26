@@ -39,39 +39,71 @@ class PiBX_ParseTree_AttributeHelper {
     }
 
     public static function getElementOptions($objectOrArray) {
+        $defaultAttributes = array(
+            'id' => '',
+            'name' => '',
+            'ref' => '',
+            'type' => '',
+            'substitutionGroup' => '',
+            'default' => '',
+            'fixed' => '',
+            'form' => '',
+            'maxOccurs' => 1,
+            'minOccurs' => 1,
+            'nillable' => false,
+            'abstract' => false,
+            'block' => '',
+            'final' => ''
+        );
         $options = array();
 
         if ($objectOrArray instanceof SimpleXMLElement) {
-            $attributes = $objectOrArray->attributes();
-
-            $options['name'] = (string)$attributes['name'];
-            $options['type'] = (string)$attributes['type'];
-            if (empty($options['type'])) {
-                $options['type'] = (string)$attributes['ref'];
-            }
-            if (strpos($options['type'], ':') !== false) {
-                // remove the namespace prefix
-                $parts = explode(':', $options['type']);
-                $options['type'] = $parts[1];
-            }
-            $options['minOccurs'] = ((string)$attributes['minOccurs'] != '') ? (string)$attributes['minOccurs'] : 1;
-            $options['maxOccurs'] = ((string)$attributes['maxOccurs'] != '') ? (string)$attributes['maxOccurs'] : 1;
-            $options['nillable']  = ((string)$attributes['nillable'] == 'true') ? true : false;
-            $options['id']        = (string)$attributes['id'];
-            $options['abstract']  = ((string)$attributes['abstract'] == 'true') ? true : false;
-            $options['form']      = (string)$attributes['form'];
+            $options = self::convertSimpleXmlAttributesToStringArray($objectOrArray);
         } else {
-            $options['name'] = self::getValue($objectOrArray, 'name');
-            $options['type'] = self::getValue($objectOrArray, 'type');
-            $options['minOccurs'] = array_key_exists('minOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'minOccurs') : 1;
-            $options['maxOccurs'] = array_key_exists('maxOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'maxOccurs') : 1;
-            $options['nillable']  = array_key_exists('nillable', $objectOrArray) ? ($objectOrArray['nillable'] == 'true') : false;
-            $options['id']        = self::getValue($objectOrArray, 'id');
-            $options['abstract']  = array_key_exists('abstract', $objectOrArray) ? ($objectOrArray['abstract'] == 'true') : false;
-            $options['form']      = self::getValue($objectOrArray, 'form');
+            $options = $objectOrArray;
         }
+
+        $cleanedOptions = self::castAttributesToProperTypes($options);
+        $options = array_merge($defaultAttributes, $cleanedOptions);
         
         return $options;
+    }
+
+    private static function convertSimpleXmlAttributesToStringArray(SimpleXMLElement $simpleXml) {
+        $attributes = $simpleXml->attributes();
+        $array = array();
+
+        foreach ($attributes as $key => $val) {
+            $array[$key] = (string)$val;
+        }
+
+        return $array;
+    }
+
+    private static function castAttributesToProperTypes(array $attributes) {
+        foreach ($attributes as $key => $val) {
+            if ($key == 'minOccurs' || $key == 'maxOccurs') {
+                if (is_numeric((string)$val)) {
+                    $array[$key] = (int)$val;
+                } else {
+                    $array[$key] = (string)$val;
+                }
+            } else if (self::attributeHasBooleanValue($key)) {
+                if ((string)$val == 'true') {
+                    $array[$key] = true;
+                } else {
+                    $array[$key] = false;
+                }
+            } else {
+                $array[$key] = (string)$val;
+            }
+        }
+
+        return $array;        
+    }
+
+    private static function attributeHasBooleanValue($attribute) {
+        return $attribute == 'abstract' || $attribute == 'nillable';
     }
 
     public static function getSimpleTypeOptions($objectOrArray) {

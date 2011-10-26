@@ -26,29 +26,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once dirname(__FILE__) . '/bootstrap.php';
+require_once dirname(__FILE__) . '/../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
-require_once 'Tests/CodeGen/Suite.php';
-require_once 'Tests/ParseTree/Suite.php';
-require_once 'Tests/Runtime/Suite.php';
-require_once 'Tests/Scenarios/Suite.php';
-require_once 'Tests/Util/Suite.php';
-/**
- * Test-Suite of PiBX.
- *
- * @author Christoph Gockel
- */
-class PiBX_Suite extends PHPUnit_Framework_TestSuite {
+require_once 'PiBX/ParseTree/AttributeHelper.php';
 
-    public static function suite() {
-        $suite = new PHPUnit_Framework_TestSuite();
+class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
+    public function testElementOptionsWithSimpleXML() {
+        $simpleXML = simplexml_load_string('<element name="elementName" abstract="false" minOccurs="1"/>');
 
-        $suite->addTestSuite('PiBX_CodeGen_Suite');
-        $suite->addTestSuite('PiBX_ParseTree_Suite');
-        $suite->addTestSuite('PiBX_Runtime_Suite');
-        $suite->addTestSuite('PiBX_Scenarios_Suite');
-        $suite->addTestSuite('PiBX_Util_Suite');
+        $options = PiBX_ParseTree_AttributeHelper::getElementOptions($simpleXML);
 
-        return $suite;
+        $this->assertEquals('elementName', $options['name']);
+        $this->assertFalse($options['abstract']);
+        $this->assertFalse($options['nillable']);
+        $this->assertEquals(1, $options['minOccurs']);
+        $this->assertTrue(is_int($options['minOccurs']));
+    }
+
+    public function testElementOptionsWithArray() {
+        $elementOptions = array('name' => 'elementName', 'abstract' => false, 'minOccurs' => 1);
+        $options = PiBX_ParseTree_AttributeHelper::getElementOptions($elementOptions);
+
+        $this->assertEquals('elementName', $options['name']);
+        $this->assertFalse($options['abstract']);
+        $this->assertFalse($options['nillable']);
+        $this->assertEquals(1, $options['minOccurs']);
+        $this->assertTrue(is_int($options['minOccurs']));
     }
 }
