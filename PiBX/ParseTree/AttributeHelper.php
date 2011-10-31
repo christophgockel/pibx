@@ -55,74 +55,8 @@ class PiBX_ParseTree_AttributeHelper {
             'block' => '',
             'final' => ''
         );
-        $options = array();
-
-        if ($objectOrArray instanceof SimpleXMLElement) {
-            $options = self::convertSimpleXmlAttributesToStringArray($objectOrArray);
-        } else {
-            $options = $objectOrArray;
-        }
-
-        $cleanedOptions = self::castAttributesToProperTypes($options);
-        $cleanedOptions = self::removeNamespaces($cleanedOptions);
-        $options = array_merge($defaultAttributes, $cleanedOptions);
         
-        return $options;
-    }
-
-    private static function convertSimpleXmlAttributesToStringArray(SimpleXMLElement $simpleXml) {
-        $attributes = $simpleXml->attributes();
-        $array = array();
-
-        foreach ($attributes as $key => $val) {
-            $array[$key] = (string)$val;
-        }
-
-        return $array;
-    }
-
-    private static function castAttributesToProperTypes(array $attributes) {
-        foreach ($attributes as $key => $val) {
-            if ($key == 'minOccurs' || $key == 'maxOccurs') {
-                if (is_numeric((string)$val)) {
-                    $array[$key] = (int)$val;
-                } else {
-                    $array[$key] = (string)$val;
-                }
-            } else if (self::attributeHasBooleanValue($key)) {
-                if ((string)$val == 'true') {
-                    $array[$key] = true;
-                } else {
-                    $array[$key] = false;
-                }
-            } else {
-                $array[$key] = (string)$val;
-            }
-        }
-
-        return $array;        
-    }
-
-    private static function removeNamespaces(array $attributes) {
-        $newAttributes = $attributes;
-
-        // all parts of PiBX which handle ParseTree nodes, look at the type-attribute
-        // so referenced types, have no other semantically value within PiBX.
-        if (array_key_exists('ref', $newAttributes)) {
-            $newAttributes['type'] = $newAttributes['ref'];
-            unset($newAttributes['ref']);
-        }
-
-        if (array_key_exists('type', $newAttributes) && strpos($newAttributes['type'], ':') !== false) {
-            $parts = explode(':', $newAttributes['type']);
-            $newAttributes['type'] = $parts[1];
-        }
-
-        return $newAttributes;
-    }
-
-    private static function attributeHasBooleanValue($attribute) {
-        return $attribute == 'abstract' || $attribute == 'nillable';
+        return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
     public static function getSimpleTypeOptions($objectOrArray) {
@@ -130,84 +64,45 @@ class PiBX_ParseTree_AttributeHelper {
             'id' => '',
             'name' => '',
         );
-        $options = array();
-
-        if ($objectOrArray instanceof SimpleXMLElement) {
-            $options = self::convertSimpleXmlAttributesToStringArray($objectOrArray);
-        } else {
-            $options = $objectOrArray;
-        }
-
-        $cleanedOptions = self::castAttributesToProperTypes($options);
-        $options = array_merge($defaultAttributes, $cleanedOptions);
-
-        return $options;
+        
+        return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
     public static function getComplexTypeOptions($objectOrArray) {
-        $options = array();
-
-        if ($objectOrArray instanceof SimpleXMLElement) {
-            $attributes = $objectOrArray->attributes();
-
-            $options['name'] = (string)$attributes['name'];
-            $options['id']   = (string)$attributes['id'];
-            $options['abstract'] = ((string)$attributes['abstract'] == 'true') ? true : false;
-            $options['mixed'] = ((string)$attributes['mixed'] == 'true') ? true : false;
-        } else {
-            $options['name'] = self::getValue($objectOrArray, 'name');
-            $options['id']   = self::getValue($objectOrArray, 'id');
-            $options['abstract'] = array_key_exists('abstract', $objectOrArray) ? ($objectOrArray['abstract'] == 'true') : false;
-            $options['mixed'] = array_key_exists('mixed', $objectOrArray) ? ($objectOrArray['mixed'] == 'true') : false;
-        }
-
-        return $options;
+        $defaultAttributes = array(
+            'id' => '',
+            'name' => '',
+            'abstract' => false,
+            'mixed' => false,
+            'block' => '',
+            'final' => '',
+        );
+        
+        return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
     public static function getSequenceOptions($objectOrArray) {
-        $options = array();
-        if ($objectOrArray instanceof SimpleXMLElement) {
-            $attributes = $objectOrArray->attributes();
+        $defaultAttributes = array(
+            'id' => '',
+            'maxOccurs' => 1,
+            'minOccurs' => 1,
+        );
 
-            $options['minOccurs'] = ((string)$attributes['minOccurs'] != '') ? (string)$attributes['minOccurs'] : 1;
-            $options['id']        = (string)$attributes['id'];
-        } else {
-            $options['minOccurs'] = array_key_exists('minOccurs', $objectOrArray) ? self::getValue($objectOrArray, 'minOccurs') : 1;
-            $options['id']        = self::getValue($objectOrArray, 'id');
-        }
-
-        return $options;
+        return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
     public static function getAttributeOptions($objectOrArray) {
-        $options = array();
+        $defaultAttributes = array(
+            'default' => '',
+            'fixed' => '',
+            'form' => '',
+            'name' => '',
+            'ref' => '',
+            'type' => '',
+            'use' => '',
+        );
 
-        if ($objectOrArray instanceof SimpleXMLElement) {
-            $attributes = $objectOrArray->attributes();
-
-            $options['name'] = (string)$attributes['name'];
-            $options['type'] = (string)$attributes['type'];
-
-            if (empty($options['type'])) {
-                $options['type'] = (string)$attributes['ref'];
-            }
-
-            if (strpos($options['type'], ':') !== false) {
-                // remove the namespace prefix
-                $parts = explode(':', $options['type']);
-                $options['type'] = $parts[1];
-            }
-
-            $options['use'] = ((string)$attributes['use'] != '') ? (string)$attributes['use'] : 'optional';
-            $options['form'] = (string)$attributes['form'];
-        } else {
-            $options['name'] = self::getValue($objectOrArray, 'name');
-            $options['type'] = self::getValue($objectOrArray, 'type');
-            $options['use'] = array_key_exists('use', $objectOrArray) ? self::getValue($objectOrArray, 'use') : 'optional';
-            $options['form'] = self::getValue($objectOrArray, 'form');
-        }
-
-        return $options;
+        return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
     public static function getRestrictionOptions($objectOrArray) {
@@ -281,5 +176,77 @@ class PiBX_ParseTree_AttributeHelper {
         }
 
         return $options;
+    }
+
+    private static function createProperAttributes(array $defaultAttributes, $actualAttributes) {
+        $options = array();
+
+        if ($actualAttributes instanceof SimpleXMLElement) {
+            $options = self::convertSimpleXmlAttributesToStringArray($actualAttributes);
+        } else {
+            $options = $actualAttributes;
+        }
+
+        $cleanedOptions = self::castAttributesToProperTypes($options);
+        $cleanedOptions = self::removeNamespaces($cleanedOptions);
+
+        return array_merge($defaultAttributes, $cleanedOptions);
+    }
+
+    private static function convertSimpleXmlAttributesToStringArray(SimpleXMLElement $simpleXml) {
+        $attributes = $simpleXml->attributes();
+        $array = array();
+
+        foreach ($attributes as $key => $val) {
+            $array[$key] = (string)$val;
+        }
+
+        return $array;
+    }
+
+    private static function castAttributesToProperTypes(array $attributes) {
+        $array = array();
+
+        foreach ($attributes as $key => $val) {
+            if ($key == 'minOccurs' || $key == 'maxOccurs') {
+                if (is_numeric((string)$val)) {
+                    $array[$key] = (int)$val;
+                } else {
+                    $array[$key] = (string)$val;
+                }
+            } else if (self::attributeHasBooleanValue($key)) {
+                if ((string)$val == 'true') {
+                    $array[$key] = true;
+                } else {
+                    $array[$key] = false;
+                }
+            } else {
+                $array[$key] = (string)$val;
+            }
+        }
+
+        return $array;
+    }
+
+    private static function attributeHasBooleanValue($attribute) {
+        return $attribute == 'abstract' || $attribute == 'nillable' || $attribute == 'mixed';
+    }
+
+    private static function removeNamespaces(array $attributes) {
+        $newAttributes = $attributes;
+
+        // all parts of PiBX which handle ParseTree nodes, look at the type-attribute
+        // so referenced types, have no other semantically value within PiBX.
+        if (array_key_exists('ref', $newAttributes)) {
+            $newAttributes['type'] = $newAttributes['ref'];
+            unset($newAttributes['ref']);
+        }
+
+        if (array_key_exists('type', $newAttributes) && strpos($newAttributes['type'], ':') !== false) {
+            $parts = explode(':', $newAttributes['type']);
+            $newAttributes['type'] = $parts[1];
+        }
+
+        return $newAttributes;
     }
 }

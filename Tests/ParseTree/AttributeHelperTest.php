@@ -47,6 +47,18 @@ class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('anotherType', $options['type']);
     }
 
+    public function testTypeConversions() {
+        $simpleXML = simplexml_load_string('<element name="elementName" abstract="false" nillable="true" minOccurs="1" maxOccurs="unbounded"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getElementOptions($simpleXML);
+
+        $this->assertEquals('elementName', $options['name']);
+        $this->assertFalse($options['abstract']);
+        $this->assertTrue($options['nillable']);
+        $this->assertEquals(1, $options['minOccurs']);
+        $this->assertEquals("unbounded", $options['maxOccurs']);
+    }
+
     public function testElementOptionsWithSimpleXML() {
         $simpleXML = simplexml_load_string('<element name="elementName" abstract="false" minOccurs="1"/>');
 
@@ -86,5 +98,61 @@ class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals('simpleType', $options['name']);
         $this->assertEmpty($options['id']);
+    }
+
+    public function testComplexTypeWithSimpleXML() {
+        $simpleXML = simplexml_load_string('<complexType name="complexType" mixed="false"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getComplexTypeOptions($simpleXML);
+
+        $this->assertEquals('complexType', $options['name']);
+        $this->assertFalse($options['mixed']);
+        $this->assertFalse($options['abstract']);
+    }
+
+    public function testComplexTypeWithArray() {
+        $complexTypeOptions = array('name' => 'complexType', 'mixed' => false);
+
+        $options = PiBX_ParseTree_AttributeHelper::getComplexTypeOptions($complexTypeOptions);
+
+        $this->assertEquals('complexType', $options['name']);
+        $this->assertFalse($options['mixed']);
+        $this->assertFalse($options['abstract']);
+    }
+
+    public function testSequenceWithSimpleXML() {
+        $simpleXML = simplexml_load_string('<sequence id="SEQ001"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getSequenceOptions($simpleXML);
+
+        $this->assertEquals('SEQ001', $options['id']);
+        $this->assertEquals(1, $options['maxOccurs']);
+        $this->assertEquals(1, $options['minOccurs']);
+    }
+
+    public function testSequenceWithArray() {
+        $complexTypeOptions = array('id' => 'SEQ001', 'minOccurs' => '1');
+
+        $options = PiBX_ParseTree_AttributeHelper::getSequenceOptions($complexTypeOptions);
+
+        $this->assertEquals('SEQ001', $options['id']);
+        $this->assertEquals(1, $options['maxOccurs']);
+        $this->assertEquals(1, $options['minOccurs']);
+    }
+
+    public function testAttributeWithSimpleXML() {
+        $simpleXML = simplexml_load_string('<attribute name="attribute"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getAttributeOptions($simpleXML);
+
+        $this->assertEquals('attribute', $options['name']);
+    }
+
+    public function testAttributeWithArray() {
+        $attributeOptions = array('name' => 'attribute');
+
+        $options = PiBX_ParseTree_AttributeHelper::getAttributeOptions($attributeOptions);
+
+        $this->assertEquals('attribute', $options['name']);
     }
 }
