@@ -64,6 +64,7 @@ class PiBX_ParseTree_AttributeHelper {
         }
 
         $cleanedOptions = self::castAttributesToProperTypes($options);
+        $cleanedOptions = self::removeNamespaces($cleanedOptions);
         $options = array_merge($defaultAttributes, $cleanedOptions);
         
         return $options;
@@ -102,20 +103,43 @@ class PiBX_ParseTree_AttributeHelper {
         return $array;        
     }
 
+    private static function removeNamespaces(array $attributes) {
+        $newAttributes = $attributes;
+
+        // all parts of PiBX which handle ParseTree nodes, look at the type-attribute
+        // so referenced types, have no other semantically value within PiBX.
+        if (array_key_exists('ref', $newAttributes)) {
+            $newAttributes['type'] = $newAttributes['ref'];
+            unset($newAttributes['ref']);
+        }
+
+        if (array_key_exists('type', $newAttributes) && strpos($newAttributes['type'], ':') !== false) {
+            $parts = explode(':', $newAttributes['type']);
+            $newAttributes['type'] = $parts[1];
+        }
+
+        return $newAttributes;
+    }
+
     private static function attributeHasBooleanValue($attribute) {
         return $attribute == 'abstract' || $attribute == 'nillable';
     }
 
     public static function getSimpleTypeOptions($objectOrArray) {
+        $defaultAttributes = array(
+            'id' => '',
+            'name' => '',
+        );
         $options = array();
 
         if ($objectOrArray instanceof SimpleXMLElement) {
-            $attributes = $objectOrArray->attributes();
-
-            $options['name'] = (string)$attributes['name'];
+            $options = self::convertSimpleXmlAttributesToStringArray($objectOrArray);
         } else {
-            $options['name'] = self::getValue($objectOrArray, 'name');
+            $options = $objectOrArray;
         }
+
+        $cleanedOptions = self::castAttributesToProperTypes($options);
+        $options = array_merge($defaultAttributes, $cleanedOptions);
 
         return $options;
     }

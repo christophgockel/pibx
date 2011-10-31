@@ -31,6 +31,22 @@ require_once 'PHPUnit/Autoload.php';
 require_once 'PiBX/ParseTree/AttributeHelper.php';
 
 class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
+    public function testTypeAttributeWithNamespace() {
+        $simpleXML = simplexml_load_string('<element name="elementName" abstract="false" minOccurs="1" type="ns1:anotherType"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getElementOptions($simpleXML);
+
+        $this->assertEquals('anotherType', $options['type']);
+    }
+
+    public function testRefAttributeShouldBeTypeOption() {
+        $simpleXML = simplexml_load_string('<element name="elementName" abstract="false" minOccurs="1" ref="ns1:anotherType"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getElementOptions($simpleXML);
+
+        $this->assertEquals('anotherType', $options['type']);
+    }
+
     public function testElementOptionsWithSimpleXML() {
         $simpleXML = simplexml_load_string('<element name="elementName" abstract="false" minOccurs="1"/>');
 
@@ -52,5 +68,23 @@ class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($options['nillable']);
         $this->assertEquals(1, $options['minOccurs']);
         $this->assertTrue(is_int($options['minOccurs']));
+    }
+
+    public function testSimpleTypeWithSimpleXML() {
+        $simpleXML = simplexml_load_string('<simpleType name="simpleType" id="ST0001"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getSimpleTypeOptions($simpleXML);
+
+        $this->assertEquals('simpleType', $options['name']);
+        $this->assertEquals('ST0001', $options['id']);
+        $this->assertTrue(!array_key_exists('invalidAttribute', $options));
+    }
+
+    public function testSimpleTypeWithArray() {
+        $simpleTypeOptions = array('name' => 'simpleType');
+        $options = PiBX_ParseTree_AttributeHelper::getSimpleTypeOptions($simpleTypeOptions);
+
+        $this->assertEquals('simpleType', $options['name']);
+        $this->assertEmpty($options['id']);
     }
 }
