@@ -106,23 +106,12 @@ class PiBX_ParseTree_AttributeHelper {
     }
 
     public static function getRestrictionOptions($objectOrArray) {
-        $options = array();
+        $defaultAttributes = array(
+            'id' => '',
+            'base' => '',
+        );
 
-        if ($objectOrArray instanceof SimpleXMLElement) {
-            $attributes = $objectOrArray->attributes();
-            
-            $options['base'] = (string)$attributes['base'];
-
-            if (strpos($options['base'], ':') !== false) {
-                // remove the namespace prefix
-                $parts = explode(':', $options['base']);
-                $options['base'] = $parts[1];
-            }
-        } else {
-            $options['base'] = self::getValue($objectOrArray, 'base');
-        }
-
-        return $options;
+        return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
     public static function getEnumerationOptions($objectOrArray) {

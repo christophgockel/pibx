@@ -155,4 +155,21 @@ class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals('attribute', $options['name']);
     }
+
+    public function testRestrictionWithSimpleXML() {
+        $simpleXML = simplexml_load_string('<restriction id="res1" base="otherType"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getRestrictionOptions($simpleXML);
+
+        $this->assertEquals('res1', $options['id']);
+        $this->assertEquals('otherType', $options['base']);
+    }
+
+    public function testRestrictionWithArray() {
+        $restrictionOptions = array('base' => 'otherType');
+
+        $options = PiBX_ParseTree_AttributeHelper::getRestrictionOptions($restrictionOptions);
+
+        $this->assertEquals('otherType', $options['base']);
+    }
 }
