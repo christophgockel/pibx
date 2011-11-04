@@ -172,4 +172,20 @@ class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals('otherType', $options['base']);
     }
+
+    public function testEnumerationWithSimpleXML() {
+        $simpleXML = simplexml_load_string('<enumeration value="value"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getEnumerationOptions($simpleXML);
+
+        $this->assertEquals('value', $options['value']);
+    }
+
+    public function testEnumerationWithArray() {
+        $enumerationOptions = array('value' => 'value');
+
+        $options = PiBX_ParseTree_AttributeHelper::getEnumerationOptions($enumerationOptions);
+
+        $this->assertEquals('value', $options['value']);
+    }
 }
