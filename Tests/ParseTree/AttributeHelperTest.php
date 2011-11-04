@@ -188,4 +188,22 @@ class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals('value', $options['value']);
     }
+
+    public function testComplexContentWithSimpleXML() {
+        $simpleXML = simplexml_load_string('<complexContent id="cc1" mixed="true"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getComplexContentOptions($simpleXML);
+
+        $this->assertEquals('cc1', $options['id']);
+        $this->assertTrue($options['mixed']);
+    }
+
+    public function testComplexContentWithArray() {
+        $complexContentOptions = array('id' => 'cc1');
+
+        $options = PiBX_ParseTree_AttributeHelper::getComplexContentOptions($complexContentOptions);
+
+        $this->assertEquals('cc1', $options['id']);
+        $this->assertFalse($options['mixed']);
+    }
 }

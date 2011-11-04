@@ -116,26 +116,19 @@ class PiBX_ParseTree_AttributeHelper {
 
     public static function getEnumerationOptions($objectOrArray) {
         $defaultAttributes = array(
-            'value' => '',
+            'value' => ''
         );
 
         return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
     public static function getComplexContentOptions($objectOrArray) {
-        $options = array();
+        $defaultAttributes = array(
+            'id' => '',
+            'mixed' => false
+        );
 
-        if ($objectOrArray instanceof SimpleXMLElement) {
-            $attributes = $objectOrArray->attributes();
-
-            $options['mixed'] = (string)$attributes['mixed'];
-            $options['id']    = (string)$attributes['id'];
-        } else {
-            $options['mixed'] = self::getValue($objectOrArray, 'mixed');
-            $options['id']    = self::getValue($objectOrArray, 'id');
-        }
-
-        return $options;
+        return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
     public static function getExtensionOptions($objectOrArray) {
