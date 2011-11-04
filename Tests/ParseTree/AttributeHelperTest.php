@@ -206,4 +206,21 @@ class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('cc1', $options['id']);
         $this->assertFalse($options['mixed']);
     }
+
+    public function testExtensionWithSimpleXML() {
+        $simpleXML = simplexml_load_string('<extension id="cc1" base="baseType"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getExtensionOptions($simpleXML);
+
+        $this->assertEquals('cc1', $options['id']);
+        $this->assertEquals('baseType', $options['base']);
+    }
+
+    public function testExtensionWithArray() {
+        $extensionOptions = array('base' => 'baseType');
+
+        $options = PiBX_ParseTree_AttributeHelper::getExtensionOptions($extensionOptions);
+
+        $this->assertEquals('baseType', $options['base']);
+    }
 }

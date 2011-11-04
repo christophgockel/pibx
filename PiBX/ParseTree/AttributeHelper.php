@@ -132,26 +132,12 @@ class PiBX_ParseTree_AttributeHelper {
     }
 
     public static function getExtensionOptions($objectOrArray) {
-        $options = array();
+        $defaultAttributes = array(
+            'id' => '',
+            'base' => ''
+        );
 
-        if ($objectOrArray instanceof SimpleXMLElement) {
-            $attributes = $objectOrArray->attributes();
-
-            $options['base'] = (string)$attributes['base'];
-
-            if (strpos($options['base'], ':') !== false) {
-                // remove the namespace prefix
-                $parts = explode(':', $options['base']);
-                $options['base'] = $parts[1];
-            }
-
-            $options['id']    = (string)$attributes['id'];
-        } else {
-            $options['base'] = self::getValue($objectOrArray, 'base');
-            $options['id']    = self::getValue($objectOrArray, 'id');
-        }
-
-        return $options;
+        return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
     private static function createProperAttributes(array $defaultAttributes, $actualAttributes) {
