@@ -39,6 +39,14 @@ class PiBX_ParseTree_AttributeHelperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('anotherType', $options['type']);
     }
 
+    public function testBaseAttributeWithNamespace() {
+        $simpleXML = simplexml_load_string('<restriction id="res1" base="ns1:otherType"/>');
+
+        $options = PiBX_ParseTree_AttributeHelper::getRestrictionOptions($simpleXML);
+
+        $this->assertEquals('otherType', $options['base']);
+    }
+
     public function testRefAttributeShouldBeTypeOption() {
         $simpleXML = simplexml_load_string('<element name="elementName" abstract="false" minOccurs="1" ref="ns1:anotherType"/>');
 

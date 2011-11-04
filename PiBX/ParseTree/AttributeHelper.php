@@ -200,11 +200,25 @@ class PiBX_ParseTree_AttributeHelper {
             unset($newAttributes['ref']);
         }
 
-        if (array_key_exists('type', $newAttributes) && strpos($newAttributes['type'], ':') !== false) {
-            $parts = explode(':', $newAttributes['type']);
-            $newAttributes['type'] = $parts[1];
+        if (array_key_exists('type', $newAttributes)) {
+            $newAttributes['type'] = self::removeNamespace($newAttributes['type']);
+        }
+
+        if (array_key_exists('base', $newAttributes)) {
+            $newAttributes['base'] = self::removeNamespace($newAttributes['base']);
         }
 
         return $newAttributes;
+    }
+
+    private static function removeNamespace($stringWithNamespace) {
+        $cleanedString = $stringWithNamespace;
+        
+        if (strpos($cleanedString, ':') !== false) {
+            $parts = explode(':', $cleanedString);
+            $cleanedString = $parts[1];
+        }
+        
+        return $cleanedString;
     }
 }
