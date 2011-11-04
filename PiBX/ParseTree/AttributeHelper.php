@@ -34,10 +34,6 @@ require_once 'PiBX/ParseTree/Tree.php';
  */
 class PiBX_ParseTree_AttributeHelper {
 
-    private static function getValue($array, $key) {
-        return key_exists($key, $array) ? $array[$key] : '';
-    }
-
     public static function getElementOptions($objectOrArray) {
         $defaultAttributes = array(
             'id' => '',
@@ -62,7 +58,7 @@ class PiBX_ParseTree_AttributeHelper {
     public static function getSimpleTypeOptions($objectOrArray) {
         $defaultAttributes = array(
             'id' => '',
-            'name' => '',
+            'name' => ''
         );
         
         return self::createProperAttributes($defaultAttributes, $objectOrArray);
@@ -75,7 +71,7 @@ class PiBX_ParseTree_AttributeHelper {
             'abstract' => false,
             'mixed' => false,
             'block' => '',
-            'final' => '',
+            'final' => ''
         );
         
         return self::createProperAttributes($defaultAttributes, $objectOrArray);
@@ -85,7 +81,7 @@ class PiBX_ParseTree_AttributeHelper {
         $defaultAttributes = array(
             'id' => '',
             'maxOccurs' => 1,
-            'minOccurs' => 1,
+            'minOccurs' => 1
         );
 
         return self::createProperAttributes($defaultAttributes, $objectOrArray);
@@ -99,7 +95,7 @@ class PiBX_ParseTree_AttributeHelper {
             'name' => '',
             'ref' => '',
             'type' => '',
-            'use' => '',
+            'use' => ''
         );
 
         return self::createProperAttributes($defaultAttributes, $objectOrArray);
@@ -108,7 +104,7 @@ class PiBX_ParseTree_AttributeHelper {
     public static function getRestrictionOptions($objectOrArray) {
         $defaultAttributes = array(
             'id' => '',
-            'base' => '',
+            'base' => ''
         );
 
         return self::createProperAttributes($defaultAttributes, $objectOrArray);
