@@ -69,7 +69,7 @@ class PiBX_Binding_Names {
                 
                 return 'get' . self::getCollectionName($name);
             }
-        } elseif ($tree instanceof PiBX_AST_TypeAttribute) {
+        } elseif ($tree instanceof PiBX_AST_TypeAttribute || $tree instanceof PiBX_AST_Structure) {
             if ($tree->getName() != '') {
                 $getterName = $tree->getName();
             } else {
@@ -113,7 +113,7 @@ class PiBX_Binding_Names {
 
                 return 'set' . self::getCollectionName($name);
             }
-        } elseif ($tree instanceof PiBX_AST_TypeAttribute) {
+        } elseif ($tree instanceof PiBX_AST_TypeAttribute || $tree instanceof PiBX_AST_Structure) {
             if ($tree->getName() != '') {
                 $getterName = $tree->getName();
             } else {

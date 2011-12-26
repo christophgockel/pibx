@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="LocalElementComplexTypeEmptyExtension" name="localElementComplexTypeEmptyExtension">
+    <structure map-as="ExtensionType" get-method="getExtensionElement" set-method="setExtensionElement" name="extensionElement"/>
+  </mapping>
+  <mapping class="ExtensionType" abstract="true" type-name="ExtensionType">
+    <value style="element" name="element1" get-method="getElement1" set-method="setElement1"/>
+    <value style="element" name="element2" get-method="getElement2" set-method="setElement2"/>
+  </mapping>
+  <mapping class="EchoLocalElementComplexTypeEmptyExtension" name="echoLocalElementComplexTypeEmptyExtension">
+    <structure type="LocalElementComplexTypeEmptyExtension" get-method="getLocalElementComplexTypeEmptyExtension" set-method="setLocalElementComplexTypeEmptyExtension"/>
+  </mapping>
+</binding>

@@ -120,7 +120,7 @@ class PiBX_CodeGen_ASTConstructor {
         } else {
             if ($element->hasChildren()) {
                 // an element with children is a local type definition
-                $structure = new PiBX_AST_Structure($element->getName());
+                $structure = new PiBX_AST_Structure($element->getName(), $this->currentBaseType);
 
                 if ($this->hasTemporaryNodes()) {
                     $reversedSubnodes = new ArrayIterator(array_reverse($this->temporarySubnodeStack));
@@ -133,6 +133,7 @@ class PiBX_CodeGen_ASTConstructor {
 
                 $this->temporarySubnodeStack = array();
                 $this->temporarySubnodeStack[] = $structure;
+                $this->clearCurrentBaseType();
             } else {
                 $elementIsOptional = $element->isOptional();
                 $typeAttribute = new PiBX_AST_TypeAttribute($element->getName(), $element->getType(), $elementIsOptional);

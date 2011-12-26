@@ -161,9 +161,21 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         $structureName = $tree->getName();
 
         if ($structureName !== '') {
-            $this->xml .= '<structure';
-            $this->xml .= ' name="' . $structureName . '"';
-            $this->xml .= '>';
+            if ($tree->hasChildren()) {
+                $this->xml .= '<structure';
+                $this->xml .= ' name="' . $structureName . '"';
+                $this->xml .= '>';
+            } else {
+                $getMethod = PiBX_Binding_Names::createGetterNameFor($tree);
+                $setMethod = PiBX_Binding_Names::createSetterNameFor($tree);
+
+                $this->xml .= '<structure';
+                $this->xml .= ' map-as="' . $tree->getType() . '"';
+                $this->xml .= ' get-method="' . $getMethod . '"';
+                $this->xml .= ' set-method="' . $setMethod . '"';
+                $this->xml .= ' name="' . $structureName . '"';
+                $this->xml .= '>';                
+            }
         } elseif ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
             $this->xml .= '<structure ordered="false" choice="true">';
         }
