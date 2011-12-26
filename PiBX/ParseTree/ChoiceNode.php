@@ -33,8 +33,9 @@ require_once 'PiBX/ParseTree/Tree.php';
  * @author Christoph Gockel
  */
 class PiBX_ParseTree_ChoiceNode extends PiBX_ParseTree_Tree {
-    public function  __construct(SimpleXMLElement $xml, $level = 0) {
-        parent::__construct($xml, $level);
+    public function  __construct($xmlOrOptions, $level = 0) {
+        parent::__construct($xmlOrOptions, $level);
+        $this->options = PiBX_ParseTree_AttributeHelper::getChoiceOptions($xmlOrOptions);
     }
 
     public function  accept(PiBX_ParseTree_Visitor_VisitorAbstract $v) {

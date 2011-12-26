@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<binding>
+  <namespace uri="http://www.w3.org/2002/ws/databinding/examples/6/09/" default="elements"/>
+  <mapping class="Fruit" name="fruit">
+    <structure map-as="Fruit"/>
+  </mapping>
+  <mapping class="Fruit" abstract="true" type-name="Fruit">
+    <structure ordered="false" choice="true">
+      <value style="element" name="apple" test-method="ifApple" get-method="getApple" set-method="setApple" usage="optional"/>
+      <value style="element" name="orange" test-method="ifOrange" get-method="getOrange" set-method="setOrange" usage="optional"/>
+      <value style="element" name="banana" test-method="ifBanana" get-method="getBanana" set-method="setBanana" usage="optional"/>
+    </structure>
+  </mapping>
+  <mapping class="EchoComplexTypeChoice" name="echoComplexTypeChoice">
+    <structure map-as="Fruit" get-method="getFruit" set-method="setFruit" name="fruit"/>
+  </mapping>
+</binding>

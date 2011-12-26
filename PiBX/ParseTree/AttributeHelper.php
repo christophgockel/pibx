@@ -136,6 +136,16 @@ class PiBX_ParseTree_AttributeHelper {
         return self::createProperAttributes($defaultAttributes, $objectOrArray);
     }
 
+    public static function getChoiceOptions($objectOrArray) {
+        $defaultAttributes = array(
+            'id' => '',
+            'maxOccurs' => 1,
+            'minOccurs' => 1
+        );
+
+        return self::createProperAttributes($defaultAttributes, $objectOrArray);
+    }
+
     private static function createProperAttributes(array $defaultAttributes, $actualAttributes) {
         $options = array();
 

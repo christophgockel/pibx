@@ -72,13 +72,13 @@ class PiBX_AST_Structure extends PiBX_AST_Tree {
         // Normally a Structure itself does not have a name.
         // But it can have a name when the current AST-composite
         // is built off the binding.xml
-        if ($this->name !== '') {
+//        if ($this->name !== '') {
             // Binding -> AST
             return $this->name;
-        } else {
+//        } else {
             // XSD -> AST
-            return $this->getParent()->getName();
-        }
+//            return $this->getParent()->getName();
+//        }
     }
 
     public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {

@@ -29,6 +29,7 @@
 require_once dirname(__FILE__) . '/../../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
 require_once 'Tests/Scenarios/Reference/Basic/Suite.php';
+require_once 'Tests/Scenarios/Reference/Advanced/Suite.php';
 /**
  * Scenarios Test-Suite.
  *
@@ -40,6 +41,7 @@ class PiBX_Scenarios_Suite extends PHPUnit_Framework_TestSuite {
         $suite = new PHPUnit_Framework_TestSuite();
         
         $suite->addTestSuite('PiBX_Scenarios_Reference_Basic_Suite');
+        $suite->addTestSuite('PiBX_Scenarios_Reference_Advanced_Suite');
         
         return $suite;
     }

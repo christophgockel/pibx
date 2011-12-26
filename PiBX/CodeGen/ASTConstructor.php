@@ -56,6 +56,7 @@ class PiBX_CodeGen_ASTConstructor {
     private $currentAST;
     private $temporarySubnodeStack;
     private $currentBaseType;
+    private $lastAddedNode;
 
     public function __construct(array $stackOfParseTreeElements) {
         if (count($stackOfParseTreeElements) == 0) {
@@ -65,6 +66,7 @@ class PiBX_CodeGen_ASTConstructor {
         $this->stackOfElements = $stackOfParseTreeElements;
         $this->temporarySubnodeStack = array();
         $this->currentBaseType = '';
+        $this->lastAddedNode = null;
     }
 
     public function construct() {
@@ -97,6 +99,8 @@ class PiBX_CodeGen_ASTConstructor {
             $this->handleExtensionNode($tree);
         } elseif ($tree instanceof PiBX_ParseTree_ComplexContentNode) {
             $this->handleComplexContentNode($tree);
+        } elseif ($tree instanceof PiBX_ParseTree_ChoiceNode) {
+            $this->handleChoiceNode($tree);
         } else {
             throw new RuntimeException(get_class($tree) . ' not supported yet for constructing an AST');
         }
@@ -224,7 +228,22 @@ class PiBX_CodeGen_ASTConstructor {
     }
 
     private function handleComplexContentNode(PiBX_ParseTree_ComplexContentNode $extension) {
+        //TODO
+    }
 
+    private function handleChoiceNode(PiBX_ParseTree_ChoiceNode $choice) {
+        $structure = new PiBX_AST_Structure();
+        $structure->setStructureType(PiBX_AST_StructureType::CHOICE());
+
+        $reversedSubnodes = new ArrayIterator(array_reverse($this->temporarySubnodeStack));
+
+        foreach ($reversedSubnodes as &$node) {
+            $structureElement = new PiBX_AST_StructureElement($node->getName(), $node->getType());
+            $structure->add($structureElement);
+        }
+
+        $this->temporarySubnodeStack = array();
+        $this->temporarySubnodeStack[] = $structure;
     }
 
     private function hasTemporaryNodes() {

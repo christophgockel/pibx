@@ -158,19 +158,27 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
     }
 
     public function visitStructureEnter(PiBX_AST_Tree $tree) {
-        $this->xml .= '<structure';
-        $this->xml .= ' name="'.$tree->getName().'"';
-        $this->xml .= '>';
-        if ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
+        $structureName = $tree->getName();
+
+        if ($structureName !== '') {
+            $this->xml .= '<structure';
+            $this->xml .= ' name="' . $structureName . '"';
+            $this->xml .= '>';
+        } elseif ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
             $this->xml .= '<structure ordered="false" choice="true">';
         }
+
         return true;
     }
     public function visitStructureLeave(PiBX_AST_Tree $tree) {
-        if ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
+        $structureName = $tree->getName();
+
+        if ($structureName !== '') {
+            $this->xml .= '</structure>';
+        } elseif ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
             $this->xml .= '</structure>';
         }
-        $this->xml .= "</structure>";
+
         return true;
     }
 
