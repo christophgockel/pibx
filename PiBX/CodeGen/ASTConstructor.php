@@ -56,7 +56,6 @@ class PiBX_CodeGen_ASTConstructor {
     private $currentAST;
     private $temporarySubnodeStack;
     private $currentBaseType;
-    private $lastAddedNode;
 
     public function __construct(array $stackOfParseTreeElements) {
         if (count($stackOfParseTreeElements) == 0) {
@@ -66,7 +65,6 @@ class PiBX_CodeGen_ASTConstructor {
         $this->stackOfElements = $stackOfParseTreeElements;
         $this->temporarySubnodeStack = array();
         $this->currentBaseType = '';
-        $this->lastAddedNode = null;
     }
 
     public function construct() {
