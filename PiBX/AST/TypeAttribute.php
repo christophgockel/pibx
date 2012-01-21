@@ -28,7 +28,7 @@
  */
 require_once 'PiBX/AST/Tree.php';
 /**
- * Represents a class attribute/member. It's not an XML-Attribute, it's a class-member.
+ * A scalar class attribute/member. It's not an XML-Attribute, it's a class-member.
  *
  * @author Christoph Gockel
  */

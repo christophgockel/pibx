@@ -95,7 +95,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
     }
 
     public function visitCollectionItem(PiBX_AST_Tree $tree) {
-        if ($tree->getParent() instanceof PiBX_AST_TypeAttribute) {
+        if ($tree->getParent() instanceof PiBX_AST_Type/*Attribute*/) {
             // a sequence of items (not a named list)
             $name = $tree->getParent()->getName();
 
@@ -202,13 +202,15 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         $getMethod = PiBX_Binding_Names::createGetterNameFor($tree);
         $setMethod = PiBX_Binding_Names::createSetterNameFor($tree);
 
-        if ($tree->getParent()->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
+        $parent = $tree->getParent();
+
+        if (($parent instanceof PiBX_AST_Structure) && $parent->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
             $testMethod = PiBX_Binding_Names::createTestFunctionFor($tree);
             $this->xml .= ' test-method="'.$testMethod.'"';
             $this->xml .= ' get-method="'.$getMethod.'"';
             $this->xml .= ' set-method="'.$setMethod.'"';
             $this->xml .= ' usage="optional"';
-        } elseif ($tree->getParent()->getStructureType() == PiBX_AST_StructureType::ORDERED()) {
+        } elseif (($parent instanceof PiBX_AST_Structure) && $parent->getStructureType() == PiBX_AST_StructureType::ORDERED()) {
 
         } else {
             $this->xml .= ' get-method="'.$getMethod.'"';

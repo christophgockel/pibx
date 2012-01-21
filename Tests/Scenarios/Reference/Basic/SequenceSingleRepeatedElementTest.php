@@ -70,11 +70,11 @@ class PiBX_Scenarios_Reference_Basic_SequenceSingleRepeatedElementTest extends P
         $type2 = new PiBX_AST_Type('SequenceSingleRepeatedElement');
         $type2->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $type2->setNamespaces($namespaces);
-            $type2_attribute = new PiBX_AST_TypeAttribute('element', 'string');
+//            $type2_attribute = new PiBX_AST_TypeAttribute('element', 'string');
                 $type2_attribute_collectionItem = new PiBX_AST_CollectionItem('element', 'string');
 
-            $type2_attribute->add($type2_attribute_collectionItem);
-        $type2->add($type2_attribute);
+//            $type2_attribute->add($type2_attribute_collectionItem);
+        $type2->add($type2_attribute_collectionItem);
 
 
         $type3 = new PiBX_AST_Type('echoSequenceSingleRepeatedElement');

@@ -64,9 +64,9 @@ class PiBX_Binding_Names {
         } elseif ($tree instanceof PiBX_AST_CollectionItem) {
             // a CollectionItem in a TypeAttribute is a list of the CollectionItems
             // without a parenting Collection-node
-            if ($tree->getParent() instanceof PiBX_AST_TypeAttribute) {
+            if ($tree->getParent() instanceof PiBX_AST_Type) {
                 $name = self::getCamelCasedName( $tree->getName() );
-                
+
                 return 'get' . self::getCollectionName($name);
             }
         } elseif ($tree instanceof PiBX_AST_TypeAttribute || $tree instanceof PiBX_AST_Structure) {
@@ -108,7 +108,7 @@ class PiBX_Binding_Names {
         } elseif ($tree instanceof PiBX_AST_CollectionItem) {
             // a CollectionItem in a TypeAttribute is a list of the CollectionItems
             // without a parenting Collection-node
-            if ($tree->getParent() instanceof PiBX_AST_TypeAttribute) {
+            if ($tree->getParent() instanceof PiBX_AST_Type) {
                 $name = self::getCamelCasedName( $tree->getName() );
 
                 return 'set' . self::getCollectionName($name);

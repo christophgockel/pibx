@@ -70,11 +70,9 @@ class PiBX_Scenarios_Reference_Basic_ElementMinOccurs1MaxOccursUnboundedTest ext
         $type2 = new PiBX_AST_Type('AgeList');
         $type2->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $type2->setNamespaces($namespaces);
-            $type2_attribute = new PiBX_AST_TypeAttribute('ageValue', 'short');
-                $type2_attribute_collectionItem = new PiBX_AST_CollectionItem('ageValue', 'short');
+            $type2_collectionItem = new PiBX_AST_CollectionItem('ageValue', 'short');
 
-            $type2_attribute->add($type2_attribute_collectionItem);
-        $type2->add($type2_attribute);
+        $type2->add($type2_collectionItem);
 
 
         $type3 = new PiBX_AST_Type('echoElementMinOccurs1MaxOccursUnbounded');

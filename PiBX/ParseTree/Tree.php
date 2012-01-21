@@ -117,6 +117,13 @@ abstract class PiBX_ParseTree_Tree {
         return true;
     }
 
+    public function get($index) {
+        if (!isset($this->children[$index])) {
+            throw new RuntimeException('Invalid child index "' . $index . '"');
+        }
+        return $this->children[$index];
+    }
+
     public function hasChildren() {
         return count($this->children) > 0;
     }

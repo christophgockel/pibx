@@ -70,21 +70,17 @@ class PiBX_Scenarios_Reference_Basic_NestedSequenceElementListTest extends PiBX_
         $type2 = new PiBX_AST_Type('NestedItem');
         $type2->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $type2->setNamespaces($namespaces);        
-            $type2_attribute = new PiBX_AST_TypeAttribute('item', 'string', true);
-                $type2_attribute_collectionItem = new PiBX_AST_CollectionItem('item', 'string');
+            $type2_collectionItem = new PiBX_AST_CollectionItem('item', 'string');
 
-            $type2_attribute->add($type2_attribute_collectionItem);
-        $type2->add($type2_attribute);
+        $type2->add($type2_collectionItem);
 
 
         $type3 = new PiBX_AST_Type('NestedSequenceElementList');
         $type3->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $type3->setNamespaces($namespaces);
-            $type3_attribute = new PiBX_AST_TypeAttribute('nestedItem', 'NestedItem', true);
-                $type3_attribute_collectionItem = new PiBX_AST_CollectionItem('nestedItem', 'NestedItem');
+            $type3_collectionItem = new PiBX_AST_CollectionItem('nestedItem', 'NestedItem');
 
-            $type3_attribute->add($type3_attribute_collectionItem);
-        $type3->add($type3_attribute);
+        $type3->add($type3_collectionItem);
         
 
         $type4 = new PiBX_AST_Type('echoNestedSequenceElementList');

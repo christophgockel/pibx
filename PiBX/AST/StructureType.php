@@ -28,7 +28,9 @@
  */
 require_once 'PiBX/AST/Tree.php';
 /**
- * A StructureType is an enumeration of available structure types.
+ * An enumeration of available structure types.
+ *
+ * There are three possible structure types: ordered, choice and a default or "none".
  *
  * It's a PHP adaption of the "Typesafe enum pattern".
  * (@see <link>http://java.sun.com/developer/Books/shiftintojava/page1.html#replaceenums</link>)
@@ -40,6 +42,7 @@ require_once 'PiBX/AST/Tree.php';
 class PiBX_AST_StructureType {
     private static $ordered;
     private static $choice;
+    private static $none;
 
     private $value;
     private static $alreadyInitialized = false;
@@ -52,7 +55,8 @@ class PiBX_AST_StructureType {
 
         if (!self::$alreadyInitialized) {
             self::$ordered = new PiBX_AST_StructureType('ordered');
-            self::$choice = new PiBX_AST_StructureType('choice');
+            self::$choice  = new PiBX_AST_StructureType('choice');
+            self::$none    = new PiBX_AST_StructureType('');
 
             self::$alreadyInitialized = true;
         }
@@ -64,6 +68,10 @@ class PiBX_AST_StructureType {
 
     public static function CHOICE() {
         return self::$choice;
+    }
+
+    public static function NONE() {
+        return self::$none;
     }
 }
 

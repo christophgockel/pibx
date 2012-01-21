@@ -69,7 +69,7 @@ class PiBX_Scenarios_Reference_Basic_AttributeTypeReferenceTest extends PiBX_Sce
 
         $type2 = new PiBX_AST_Type('SimpleType', '');
         $type2->setAsRoot();
-//        $type2->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
+        $type2->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $type2->setNamespaces($namespaces);
             $type2_enumeration = new PiBX_AST_Enumeration();
                 $type2_enumeration_value1 = new PiBX_AST_EnumerationValue('value1', 'string');

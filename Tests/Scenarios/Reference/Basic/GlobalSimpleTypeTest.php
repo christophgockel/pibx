@@ -68,7 +68,7 @@ class PiBX_Scenarios_Reference_Basic_GlobalSimpleTypeTest extends PiBX_Scenarios
 
         $typeElement = new PiBX_AST_Type('GlobalSimpleType');
         $typeElement->setAsRoot();
-//TODO:        $typeElement->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
+        $typeElement->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $typeElement->setNamespaces($namespaces);
             $enumeration = new PiBX_AST_Enumeration();
                 $enum = new PiBX_AST_EnumerationValue('foo', 'string');

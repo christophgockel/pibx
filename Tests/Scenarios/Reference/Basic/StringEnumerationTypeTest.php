@@ -68,6 +68,7 @@ class PiBX_Scenarios_Reference_Basic_StringEnumerationTypeTest extends PiBX_Scen
 
         $typeElement = new PiBX_AST_Type('Beatle');
         $typeElement->setAsRoot();
+        $typeElement->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $typeElement->setNamespaces($namespaces);
             $enumeration = new PiBX_AST_Enumeration();
                 $enum = new PiBX_AST_EnumerationValue('John', 'string');

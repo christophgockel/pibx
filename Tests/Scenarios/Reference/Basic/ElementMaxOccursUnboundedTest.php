@@ -69,9 +69,7 @@ class PiBX_Scenarios_Reference_Basic_ElementMaxOccursUnboundedTest extends PiBX_
         $typeElement = new PiBX_AST_Type('Publications');
         $typeElement->setTargetNamespace('http://www.w3.org/2002/ws/databinding/examples/6/09/');
         $typeElement->setNamespaces($namespaces);
-            $typeElementAttribute1 = new PiBX_AST_TypeAttribute('day', 'string');
-                $collectionItem = new PiBX_AST_CollectionItem('day', 'string');
-            $typeElementAttribute1->add($collectionItem);
+            $collectionItem = new PiBX_AST_CollectionItem('day', 'string');
 
         $typeEchoElement = new PiBX_AST_Type('echoElementMaxOccursUnbounded');
         $typeEchoElement->setAsRoot();
@@ -81,7 +79,7 @@ class PiBX_Scenarios_Reference_Basic_ElementMaxOccursUnboundedTest extends PiBX_
             $typeEchoElementAttribute1->setStyle('element');
         
 
-        $typeElement->add($typeElementAttribute1);
+        $typeElement->add($collectionItem);
 
         $typeEchoElement->add($typeEchoElementAttribute1);
         

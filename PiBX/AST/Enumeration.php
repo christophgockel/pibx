@@ -34,11 +34,6 @@ require_once 'PiBX/AST/Tree.php';
  * @author Christoph Gockel
  */
 class PiBX_AST_Enumeration extends PiBX_AST_Tree {
-    public function getName() {
-        // A Enumeration itself does not have a name
-        return $this->getParent()->getName();
-    }
-    
     public function accept(PiBX_AST_Visitor_VisitorAbstract $v) {
 
         if ($v->visitEnumerationEnter($this)) {
