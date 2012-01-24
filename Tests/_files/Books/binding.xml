@@ -12,7 +12,7 @@
     <collection name="authors" get-method="getAuthorNames" set-method="setAuthorNames">
       <value style="element" name="authorName" type="string"/>
     </collection>
-    <value style="element" name="description" get-method="getDescription" set-method="setDescription"/>
+    <value style="element" name="description" get-method="getDescription" set-method="setDescription" usage="optional"/>
     <structure name="promotion">
       <structure ordered="false" choice="true">
         <value style="element" name="Discount" test-method="ifPromotionDiscount" get-method="getPromotionDiscount" set-method="setPromotionDiscount" usage="optional"/>
@@ -21,6 +21,6 @@
     </structure>
     <value style="element" name="publicationDate" get-method="getPublicationDate" set-method="setPublicationDate"/>
     <value style="element" name="bookCategory" get-method="getBookCategory" set-method="setBookCategory"/>
-    <value style="attribute" name="itemId" get-method="getItemId" set-method="setItemId"/>
+    <value style="attribute" name="itemId" get-method="getItemId" set-method="setItemId" usage="optional"/>
   </mapping>
 </binding>
