@@ -87,6 +87,13 @@ class PiBX_ParseTree_ElementNode extends PiBX_ParseTree_Tree {
         return $this->options['form'];
     }
 
+    public function hasReferencedElement() {
+        return $this->options['ref'] != '';
+    }
+    public function getRef() {
+        return $this->options['ref'];
+    }
+
     public function isOptional() {
         return $this->getMinOccurs() == 0 || $this->isNillable();
     }

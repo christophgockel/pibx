@@ -110,7 +110,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     }
 
     public function visitCollectionEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getParent()->getName();
+        $name = $tree->getName();
         
         $this->currentClassAttributes .= "\tprivate \$" . $name . ";\n";
         
@@ -215,7 +215,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $structureType = $tree->getStructureType();
         
         if ($structureType === PiBX_AST_StructureType::CHOICE()) {
-            $name = $tree->getParent()->getName();
+            $name = $tree->getName();
             $attributeName = $name . 'Select';
             $this->currentClassAttributes .= "\tprivate \$" . $attributeName . " = -1;\n";
             

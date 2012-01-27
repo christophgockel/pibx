@@ -38,418 +38,488 @@ require_once 'PiBX/AST/Type.php';
 require_once 'PiBX/AST/TypeAttribute.php';
 require_once 'PiBX/AST/Visitor/VisitorAbstract.php';
 require_once 'PiBX/Binding/Names.php';
+require_once 'PiBX/CodeGen/TypeUsage.php';
 require_once 'PiBX/Util/XsdType.php';
 /**
- * An Binding_Creator is a Visitor of a AST.
- * It traverses a abstract-syntax-tree-structure to produce an xml output of the
- * corresponding binding.
- *
+ * Traverses the AST as a Visitor to produce a binding definition.
+ * 
  * @author Christoph Gockel
  */
 class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
-    private $xml;
-
-    private $astNodes;
-
-    private $namespaceLine;
+    private $dom;
+    private $bindingRoot;
+    private $nodeStack;
 
     private $typeList;
 
-    public function  __construct(array $typeList) {
-        $this->xml = '';
-        
-        $this->astNodes = array();
-        $this->namespaceLine = '';
+    private $namespaceHasBeenAdded;
+    
+    public function __construct(array $typeList) {
         $this->typeList = $typeList;
-    }
-
-    public function getXml() {
-        $this->xml = '<binding>'
-                   . $this->namespaceLine
-                   . $this->xml
-                   . '</binding>';
-        $dom = new DomDocument();
-        $dom->loadXML($this->xml);
-        $dom->formatOutput = true;
-        $formattedXml = $dom->saveXML();
-
-        return $formattedXml;
-    }
-
-    public function visitCollectionEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getParent()->getName();
+        $this->nodeStack = array();
+        $this->namespaceHasBeenAdded = false;
         
-        $this->xml .= '<collection name="'.$name.'"';
+        $this->dom = new DomDocument('1.0');
+        $this->dom->preserveWhiteSpace = false;
+        $this->dom->formatOutput = true;
+        
+        $this->bindingRoot = $this->dom->createElement('binding');
+        
+        $this->dom->appendChild($this->bindingRoot);
+        array_push($this->nodeStack, $this->bindingRoot);
+    }
+    
+    public function getXml() {
+        return $this->dom->saveXML();
+    }
+    public function visitCollectionEnter(PiBX_AST_Tree $tree) {
+        $name = $tree->getName();
         $getter = PiBX_Binding_Names::createGetterNameFor($tree);
         $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-        $this->xml .= ' get-method="'.$getter.'"';
-        $this->xml .= ' set-method="'.$setter.'"';
-        $this->xml .= '>';
+        $node = $this->dom->createElement('collection');
+        
+        $node->setAttribute('name', $name);
+        $node->setAttribute('get-method', $getter);
+        $node->setAttribute('set-method', $setter);
+        
+        $lastNode = $this->nodeStack[ count($this->nodeStack) - 1 ];
+            $lastNode->appendChild($node);
+        array_push($this->nodeStack, $node);
         
         return true;
     }
     public function visitCollectionLeave(PiBX_AST_Tree $tree) {
-        $this->xml .= "</collection>";
+        array_pop($this->nodeStack);
         
         return true;
     }
 
     public function visitCollectionItem(PiBX_AST_Tree $tree) {
-        if ($tree->getParent() instanceof PiBX_AST_Type/*Attribute*/) {
-            // a sequence of items (not a named list)
-            $name = $tree->getParent()->getName();
+        $name = $tree->getName();
+        $type = $tree->getType();
 
-            $this->xml .= '<collection';
+        if (PiBX_Util_XsdType::isBaseType($type)) {
+            $node = $this->dom->createElement('value');
+            $node->setAttribute('style', 'element');
+            $node->setAttribute('name', $name);
+            $node->setAttribute('type', $type);
+        } else {
+            $node = $this->dom->createElement('structure');
+            $node->setAttribute('map-as', $type);
+            $node->setAttribute('name', $name);
+        }
+
+        if ( !($tree->getParent() instanceof PiBX_AST_Collection) ) {
+            // create an anonymous collection whenever there is no parent Collection
+            // which would handle this
+            $parentNode = $this->dom->createElement('collection');
             $getter = PiBX_Binding_Names::createGetterNameFor($tree);
             $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-            $this->xml .= ' get-method="'.$getter.'"';
-            $this->xml .= ' set-method="'.$setter.'"';
-            $this->xml .= '>';
 
-            $usedTypeHasToBeMapped = false;
-
-            if (!PiBX_Util_XsdType::isBaseType($tree->getType())) {
-                $usedTypeHasToBeMapped = true;
-            }
-
-            if ($usedTypeHasToBeMapped) {
-                $this->xml .= '<structure map-as="'.$tree->getType().'" name="'.$tree->getName().'"/>';
-            } else {
-                $this->xml .= '<value style="element" name="'.$tree->getName().'" type="'.$tree->getType().'"/>';
-            }
-
-            $this->xml .= "</collection>";
-            
-        } elseif ($tree->getParent()->countChildren() == 1) {
-            if (PiBX_Util_XsdType::isBaseType($tree->getType())) {
-                $this->xml .= '<value style="element" name="'.$tree->getName().'" type="'.$tree->getType().'"/>';
-            } else {
-                $this->xml .= '<structure map-as="'.$tree->getType().'" name="'.$tree->getName().'"/>';
-            }
-        } else {
-            throw new RuntimeException('Collections with > 1 children are currently not supported');
+            $parentNode->setAttribute('get-method', $getter);
+            $parentNode->setAttribute('set-method', $setter);
+            $parentNode->appendChild($node);
+            // the parent node gets inserted on-the-fly
+            $node = $parentNode;
         }
+
+        $lastNode = $this->nodeStack[ count($this->nodeStack) - 1 ];
+        $lastNode->appendChild($node);
         
         return true;
     }
 
     public function visitEnumerationEnter(PiBX_AST_Tree $tree) {
-        $parent = $tree->getParent();
+        $name = $tree->getName();
+        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
 
-        if ($parent instanceof PiBX_AST_TypeAttribute) {
-            $this->xml .= '<value style="element" name="'.$parent->getName().'"';
-            $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-            $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-            $this->xml .= ' get-method="'.$getter.'"';
-            $this->xml .= ' set-method="'.$setter.'"';
-            $this->xml .= '/>';
-            return false;
-        }
-        
+        $node = $this->dom->createElement('value');
+        $node->setAttribute('style', 'element');
+        $node->setAttribute('name', $name);
+        $node->setAttribute('get-method', $getter);
+        $node->setAttribute('set-method', $setter);
+
+        $lastNode = $this->nodeStack[ count($this->nodeStack) - 1 ];
+        $lastNode->appendChild($node);
+
+        array_push($this->nodeStack, $node);
+
+
         return true;
     }
     public function visitEnumerationLeave(PiBX_AST_Tree $tree) {
+        array_pop($this->nodeStack);
         return true;
     }
     public function visitEnumeration(PiBX_AST_Tree $tree) {
+        return true;
     }
 
     public function visitEnumerationValue(PiBX_AST_Tree $tree) {
+        return true;
     }
 
     public function visitStructureEnter(PiBX_AST_Tree $tree) {
-        $structureName = $tree->getName();
+        $name = $tree->getName();
+        $type = $tree->getType();
+        
+        $node = $this->dom->createElement('structure');
+        $node->setAttribute('name', $name);
+        $subnode = null;
 
-        if ($structureName !== '') {
-            if ($tree->hasChildren()) {
-                $this->xml .= '<structure';
-                $this->xml .= ' name="' . $structureName . '"';
-                $this->xml .= '>';
-            } else {
-                $getMethod = PiBX_Binding_Names::createGetterNameFor($tree);
-                $setMethod = PiBX_Binding_Names::createSetterNameFor($tree);
-
-                $this->xml .= '<structure';
-                $this->xml .= ' map-as="' . $tree->getType() . '"';
-                $this->xml .= ' get-method="' . $getMethod . '"';
-                $this->xml .= ' set-method="' . $setMethod . '"';
-                $this->xml .= ' name="' . $structureName . '"';
-                $this->xml .= '>';                
-            }
-        } elseif ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
-            $this->xml .= '<structure ordered="false" choice="true">';
+        if ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
+            $subnode = $this->dom->createElement('structure');
+            
+            $subnode->setAttribute('ordered', 'false');
+            $subnode->setAttribute('choice', 'true');
+            $node->appendChild($subnode);
+        } elseif ($tree->getStructureType() == null ) {//TODO: implement "null case" with PiBX_AST_StructureType::NONE()
         }
+        
+        $lastNode = $this->nodeStack[ count($this->nodeStack) - 1 ];
+        
+        $lastNode->appendChild($node);
+        
 
+        if ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
+            array_push($this->nodeStack, $node, $subnode);
+        } else {
+            array_push($this->nodeStack, $node);
+        }
         return true;
     }
     public function visitStructureLeave(PiBX_AST_Tree $tree) {
-        $structureName = $tree->getName();
+        array_pop($this->nodeStack);
 
-        if ($structureName !== '') {
-            $this->xml .= '</structure>';
-        } elseif ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
-            $this->xml .= '</structure>';
+        if ($tree->getStructureType() !== null) {//TODO: implement "null case" with PiBX_AST_StructureType::NONE()
+            // on every non-default structure, a second level has been added,
+            // which has to be removed as well
+            array_pop($this->nodeStack);
         }
-
+        
         return true;
     }
 
     public function visitStructureElementEnter(PiBX_AST_Tree $tree) {
-        $this->xml .= '<value';
-        $this->xml .= ' style="element"';
-        $this->xml .= ' name="'.$tree->getName().'"';
+        $name = $tree->getName();
+        $type = $tree->getType();
+        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+        $tester = PiBX_Binding_Names::createTestFunctionFor($tree);
 
-        $getMethod = PiBX_Binding_Names::createGetterNameFor($tree);
-        $setMethod = PiBX_Binding_Names::createSetterNameFor($tree);
+        $node = $this->dom->createElement('value');
+
+        $node->setAttribute('style', 'element');
+        $node->setAttribute('name', $name);
 
         $parent = $tree->getParent();
-
-        if (($parent instanceof PiBX_AST_Structure) && $parent->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
-            $testMethod = PiBX_Binding_Names::createTestFunctionFor($tree);
-            $this->xml .= ' test-method="'.$testMethod.'"';
-            $this->xml .= ' get-method="'.$getMethod.'"';
-            $this->xml .= ' set-method="'.$setMethod.'"';
-            $this->xml .= ' usage="optional"';
-        } elseif (($parent instanceof PiBX_AST_Structure) && $parent->getStructureType() == PiBX_AST_StructureType::ORDERED()) {
-
-        } else {
-            $this->xml .= ' get-method="'.$getMethod.'"';
-            $this->xml .= ' set-method="'.$setMethod.'"';
+        if ($parent instanceof PiBX_AST_Structure) {
+            if ($parent->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
+                $node->setAttribute('test-method', $tester);
+                $node->setAttribute('get-method', $getter);
+                $node->setAttribute('set-method', $setter);
+                $node->setAttribute('usage', 'optional');
+            } else {
+                $node->setAttribute('get-method', $getter);
+                $node->setAttribute('set-method', $setter);
+            }
         }
-
-        $this->xml .= '/>';
-
+        
+        $lastNode = $this->nodeStack[ count($this->nodeStack) - 1 ];
+        $lastNode->appendChild($node);
+        array_push($this->nodeStack, $node);
+        
         return true;
     }
     public function visitStructureElementLeave(PiBX_AST_Tree $tree) {
+        array_pop($this->nodeStack);
         return true;
     }
 
     public function visitTypeEnter(PiBX_AST_Tree $tree) {
-        // root types can define a default target namespace
-        // which has to be included in the binding
-        if ($tree->isRoot()) {
-            $targetNamespace = $tree->getTargetNamespace();
-            
-            if ($targetNamespace != '' && $this->namespaceLine == '') {
-                $availableNamespaces = $tree->getNamespaces();
-                $key = array_search($targetNamespace, $availableNamespaces);
-                
-                $this->namespaceLine .= '<namespace uri="' . $targetNamespace . '"';
-                $this->namespaceLine .= ' default="elements"';
-                if ($key !== false && $key != '') {
-                    $this->namespaceLine .= ' prefix="' . $key . '"';
-                }
-                $this->namespaceLine .= '/>';
+        $name = $tree->getName();
+        $type = $tree->getType();
+        $className = PiBX_Binding_Names::createClassnameFor($name);
+
+        $this->checkAndAddNamespace($tree);
+
+        if ($tree->isEnumerationType()) {
+            $label = PiBX_Binding_Names::createClassnameFor($name);
+            $typeName = $label;
+            $nameUsage = $this->getNameUsagesRegardlessOfCase($label);
+
+            if ($nameUsage > 1) {
+                $typeName = $typeName . ($nameUsage - 1);
             }
+            
+            $node = $this->dom->createElement('format');
+            $node->setAttribute('label', $label);
+            $node->setAttribute('type', $typeName);
+            $node->setAttribute('enum-value-method', 'toString');
+            $this->bindingRoot->appendChild($node);
+            // children are irrelevant for the binding defintion
+            return false;
+        }
+        
+        $node = $this->dom->createElement('mapping');
+        
+        $node->setAttribute('class', $className);
+        
+        if ($tree->isRoot()) {
+            $node->setAttribute('name', $name);
+        } else {
+            $node->setAttribute('abstract', 'true');
+            $node->setAttribute('type-name', PiBX_Binding_Names::createClassnameFor($name));
         }
 
-        if ($tree->isStandardType()) {
-            $className = PiBX_Binding_Names::createClassnameFor($tree);
-            $this->xml .= '<mapping class="' . $className . '"';
+        if ($tree->hasBaseType()) {
+            // when a base-type is available, the "inheritance" hierarchy is
+            // expressed via a mapped structure
+            $subnode = $this->dom->createElement('structure');
+            $subnode->setAttribute('map-as', $tree->getBaseType());
+            $node->appendChild($subnode);
+        }
+        
+        if ($type != '') {
+            $referencedType = $this->getTypeByName($type);
+            
+            // a base-type will be mapped directly
+            if (PiBX_Util_XsdType::isBaseType($type)) {
+                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+                
+                $subnode = $this->dom->createElement('value');
 
-            if ($tree->isRoot()) {
-                $this->xml .= ' name="'.$tree->getName().'"';
-            } else {
-                $this->xml .= ' abstract="true"';
-                $this->xml .= ' type-name="' . $className . '"';
-            }
-
-            $this->xml .= '>';
-
-            if ($tree->hasBaseType()) {
-                $this->xml .= '<structure map-as="' . $tree->getBaseType() . '"/>';
-            }
-
-            if ( !PiBX_Util_XsdType::isBaseType($tree->getType()) && !$tree->hasChildren()) {
-                $usedType = $tree->getType();
-                $referencedType = $this->getTypeByName($usedType);
-
-                if ($referencedType == null) {
-                    // an empty type. not common but possible
-                    return true;
-                }
-
-                if ($referencedType->isEnumerationType()) {
-                    $this->xml .= '<value style="text"';
-
-                    $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-                    $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-
-                    $this->xml .= ' get-method="'.$getter.'"';
-                    $this->xml .= ' set-method="'.$setter.'"';
-                    $this->xml .= ' format="' . $usedType . '"';
-                    $this->xml .= '/>';
-                } else {
-                    $this->xml .= '<structure map-as="';
-                    $this->xml .= $tree->getType();
-                    $this->xml .= '"/>';
-                }
-            } elseif ( !$tree->hasChildren() ) {
+                $style = 'text';
                 if ($tree->getValueStyle() == 'attribute') {
-                    $this->xml .= '<value style="attribute"';
-                } else {
-                    $this->xml .= '<value style="text"';
+                    $style = 'attribute';
                 }
-
+                $subnode->setAttribute('style',      $style);
+                $subnode->setAttribute('get-method', $getter);
+                $subnode->setAttribute('set-method', $setter);
+                
+                $node->appendChild($subnode);
+            } elseif ( !$tree->hasChildren() && (/*!PiBX_Util_XsdType::isBaseType($type) ||*/ $referencedType->isEnumerationType()) ) {
                 $getter = PiBX_Binding_Names::createGetterNameFor($tree);
                 $setter = PiBX_Binding_Names::createSetterNameFor($tree);
 
-                $this->xml .= ' get-method="'.$getter.'"';
-                $this->xml .= ' set-method="'.$setter.'"';
-                $this->xml .= '/>';
-            }
-        } elseif ($tree->isEnumerationType()) {
-            $labelName = PiBX_Binding_Names::createClassnameFor($tree);
-            $className = $labelName;
-            $nameUsage = $this->getNameUsagesRegardlessOfCase($labelName);
+                $subnode = $this->dom->createElement('value');
 
-            if ($nameUsage > 1) {
-                $className = $labelName . ($nameUsage - 1);
+                $subnode->setAttribute('style', 'text');
+                $subnode->setAttribute('get-method', $getter);
+                $subnode->setAttribute('set-method', $setter);
+
+                $subnode->setAttribute('format', $type);
+
+                $node->appendChild($subnode);
+            } else {
+                // another complex-type has to be referenced
+                $referencedType = PiBX_Binding_Names::createClassnameFor($type);
+
+                $subnode = $this->dom->createElement('structure');
+
+                $subnode->setAttribute('map-as', $referencedType);
+                
+                $node->appendChild($subnode);
             }
-            
-            $this->xml .= '<format';
-            $this->xml .= ' label="' . $labelName . '"';
-            $this->xml .= ' type="' . $className . '"';
-            $this->xml .= ' enum-value-method="toString"';
-            $this->xml .= '/>';
         }
         
+        $this->bindingRoot->appendChild($node);
+        array_push($this->nodeStack, $node);
+
         return true;
     }
     public function visitTypeLeave(PiBX_AST_Tree $tree) {
-        if ($tree->isStandardType()) {
-            $this->xml .= "</mapping>";
-        }
-        
+        array_pop($this->nodeStack);
         return true;
+    }
+
+    private function checkAndAddNamespace(PiBX_AST_Type $type) {
+        if ($this->namespaceHasBeenAdded) {
+            return;
+        }
+
+        $targetNamespace = $type->getTargetNamespace();
+        
+        if ($targetNamespace != '') {
+            $node = $this->dom->createElement('namespace');
+            $node->setAttribute('uri', $targetNamespace);
+            $node->setAttribute('default', 'elements');
+            
+            $availableNamespaces = $type->getNamespaces();
+            $prefixKey = array_search($targetNamespace, $availableNamespaces);
+            
+            if ($prefixKey !== false && $prefixKey != '') {
+                $node->setAttribute('prefix', $prefixKey);
+            }
+            
+            $this->bindingRoot->appendChild($node);
+            
+            $this->namespaceHasBeenAdded = true;
+        }
     }
 
     public function visitTypeAttributeEnter(PiBX_AST_Tree $tree) {
-        if ($tree->countChildren() == 0) {
+        $name = $tree->getName();
+        $type = $tree->getType();
+        $style = $tree->getStyle();
+        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
 
-            $usedType = $this->getTypeByName($tree->getType());
+        if ($name == '') {
+            $node = $this->dom->createElement('structure');
+            $referencedType = $tree->getParent();
+            $typeOfReferencedType = $type;
+            $nameOfReferencedType = PiBX_Binding_Names::createClassnameFor($type);
+            $referencedType = $this->getTypeByName($type);
 
-            if (PiBX_Util_XsdType::isBaseType($tree->getType()) || ($usedType->isEnumerationType())) {
-                $this->xml .= '<value style="'.$tree->getStyle().'"';
-                $this->xml .= ' name="'.$tree->getName().'"';
+            $deep = $this->getDeepestReferencedType($tree);
+            
+            $shouldBeMapped = $this->anonymTypeAttributeShouldBeMapped($type);
 
-                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+            if ($referencedType->getValueStyle() == 'attribute') {
+                $node->setAttribute('get-method', $getter);
+                $node->setAttribute('set-method', $setter);
+                $node->setAttribute('usage', 'optional');
+                    $subnode = $this->dom->createElement('value');
+                    $subnode->setAttribute('style', 'attribute');
+                    $subnode->setAttribute('name', $type);
+                    $subnode->setAttribute('ns', $referencedType->getTargetNamespace());
+                    $subnode->setAttribute('get-method', $getter);
+                    $subnode->setAttribute('set-method', $setter);
+                    $subnode->setAttribute('usage', 'optional');
+                $node->appendChild($subnode);
 
-                $this->xml .= ' get-method="'.$getter.'"';
-                $this->xml .= ' set-method="'.$setter.'"';
-
-                if ($tree->isOptional()) {
-                    $this->xml .= ' usage="optional"';
-                }
-
-                if ($usedType !== null && $usedType->isEnumerationType()) {
-                    $this->xml .= ' format="' . $usedType->getName() . '"';
-                }
-
-                $this->xml .= '/>';
             } else {
-                $usedTypeHasToBeMapped = true;
-                $name = PiBX_Binding_Names::createClassnameFor($tree->getType());
-                
-                $currentType = $tree;
-                do {
-                    // following the path of used types to get information about the "leaf type"
-                    // based on the leaf type it's decided whether the type has to be mapped or not
-                    $referencedType = $this->getTypeByName($currentType->getType());
+                if ($shouldBeMapped == false) {
+                    // base types do not need to be mapped via a structure
+                    $node->setAttribute('type', $nameOfReferencedType);
+                    $node->setAttribute('get-method', $getter);
+                    $node->setAttribute('set-method', $setter);
+                } else {
+                    $node->setAttribute('map-as', $nameOfReferencedType);
+                    $node->setAttribute('get-method', $getter);
+                    $node->setAttribute('set-method', $setter);
+                    $node->setAttribute('name', $type);
+                }
+            }
+        } else {
+            if ($type == '' || PiBX_Util_XsdType::isBaseType($type) || $tree->getStyle() == 'attribute') {
+                $node = $this->dom->createElement('value');
 
-                    if ($currentType === $referencedType) {
-                        break;
-                    }
 
-                    if ($referencedType == null) {
-                        if ($currentType instanceof PiBX_AST_Type && $currentType->isRoot()) {
-                            $usedTypeHasToBeMapped = false;
-                        }
-                        break;
-                    }
-
-                    if (PiBX_Util_XsdType::isBaseType($referencedType->getType())) {
-                        $usedTypeHasToBeMapped = false;
-                    } else {
-                        $usedTypeHasToBeMapped = true;
-                    }
-                    
-                    $currentType = $referencedType;
-                } while ($referencedType != null);
-
+                $node->setAttribute('style', $style);
+                $node->setAttribute('name', $name);
+                $node->setAttribute('get-method', $getter);
+                $node->setAttribute('set-method', $setter);
+            } else {
                 $getter = PiBX_Binding_Names::createGetterNameFor($tree);
                 $setter = PiBX_Binding_Names::createSetterNameFor($tree);
 
-                $this->xml .= '<structure';
-
-                if ($usedTypeHasToBeMapped) {
-                    $this->xml .= ' map-as="' . $name . '"';
-                    $this->xml .= ' get-method="'.$getter.'"';
-                    $this->xml .= ' set-method="'.$setter.'"';
-
-                    if ($tree->getName() !== '') {
-                        $this->xml .= ' name="' . $tree->getName() . '"';
-                    } else {
-                        $this->xml .= ' name="' . $tree->getType() . '"';
-                    }
-                } else {
-                    if ($tree->getStyle() == 'attribute') {
-                        $this->xml .= ' get-method="'.$getter.'"';
-                        $this->xml .= ' set-method="'.$setter.'"';
-
-                        if ($tree->isOptional()) {
-                            $this->xml .= ' usage="optional"';
-                        }
-                        
-                        if (!PiBX_Util_XsdType::isBaseType($tree->getType())) {
-                            $usedType = $this->getTypeByName($tree->getType());
-                            $this->xml .= '>';
-                            $this->xml .= '<value';
-                            $this->xml .= ' style="attribute"';
-                            $this->xml .= ' name="' . $usedType->getName() . '"';
-
-                            if ($usedType->getTargetNamespace() != '') {
-                                $this->xml .= ' ns="' . $usedType->getTargetNamespace() . '"';
-                            }
-
-                            $this->xml .= ' get-method="' . $getter . '"';
-                            $this->xml .= ' set-method="' . $setter . '"';
-
-                            if ($tree->isOptional()) {
-                                $this->xml .= ' usage="optional"';
-                            }
-
-                            $this->xml .= '/>';
-                            $this->xml .= '</structure>';
-
-                            return false;
-                        }
-                    } else {
-                        $this->xml .= ' type="' . $name . '"';
-                        $this->xml .= ' get-method="' . $getter . '"';
-                        $this->xml .= ' set-method="' . $setter . '"';
-                    }
-                }
-
-                $this->xml .= '/>';
+                $node = $this->dom->createElement('structure');
+                $node->setAttribute('map-as', $type);
+                $node->setAttribute('get-method', $getter);
+                $node->setAttribute('set-method', $setter);
+                $node->setAttribute('name', $name);
             }
-            return false;
-        } else {
-            return true;
+
+            if ($tree->isOptional()) {
+                $node->setAttribute('usage', 'optional');
+            }
+
+            $referencedType = $this->getTypeByName($type);
+            if ($referencedType && !$referencedType->isStandardType()) {
+                $node->setAttribute('format', $type);
+            }
         }
+        
+        $lastNode = $this->nodeStack[ count($this->nodeStack) - 1 ];
+        $lastNode->appendChild($node);
+        array_push($this->nodeStack, $lastNode);
+        
+        return true;
     }
     public function visitTypeAttributeLeave(PiBX_AST_Tree $tree) {
+        array_pop($this->nodeStack);
+        
         return true;
     }
 
-    private function getTypeByName($typeName) {
+    private function anonymTypeAttributeShouldBeMapped($name) {
+        if (PiBX_Util_XsdType::isBaseType($name)) {
+            $shouldBeMapped = false;
+            return false;
+        }
+
+        $type = $this->getTypeByName($name);
+        
+        do {
+            $typeName = $type->getType();
+            $name = $type->getName();
+            
+            if ($typeName == '' || PiBX_Util_XsdType::isBaseType($typeName)) {
+                return false;
+            }
+
+            $test = $this->getTypeByName($typeName);
+            
+            if ($test && $test->isEnumerationType()) {
+                return false;
+            }
+            
+            $type = $this->getTypeByTypeName($typeName);
+        } while ($type && $typeName != '');
+
+        return true;
+    }
+
+    /**
+     * Walks down the type-list and returns the last element of chained types.
+     * @return string
+     */
+    private function getDeepestReferencedType(PiBX_AST_Tree $type) {
+        if (PiBX_Util_XsdType::isBaseType($type->getType())) {
+            return $type;
+        }
+
+        $nextType = $this->getRootTypeByName($type->getType());
+        if ($nextType == null) {
+            return $type;
+        }
+        if ($nextType->getType() == '') {
+            return $nextType;
+        }
+
+        return $this->getDeepestType($nextType);
+    }
+
+    private function getDeepestType(PiBX_AST_Tree $tree) {
+        if (PiBX_Util_XsdType::isBaseType($tree->getType())) {
+            return $tree;
+        }
+
+        $nextType = $this->getNonRootTypeByName($tree->getType());
+
+        if ($nextType == null) {
+            return $tree;
+        }
+        if ($nextType == null || $nextType->getType() == '') {
+            return $nextType;
+        }
+
+        return $this->getDeepestType($nextType);
+    }
+
+    private function getRootTypeByName($typeName) {
         if ($typeName == '') {
             return null;
         }
-        
         foreach ($this->typeList as &$type) {
+            if (!$type->isRoot()) {
+                continue;
+            }
+
             if ($type->getName() == $typeName) {
                 return $type;
             }
@@ -457,7 +527,59 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         
         return null;
     }
+    private function getNonRootTypeByName($typeName) {
+        if ($typeName == '') {
+            return null;
+        }
+        foreach ($this->typeList as &$type) {
+            if ($type->isRoot()) {
+                continue;
+            }
 
+            if ($type->getName() == $typeName) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+
+    private function getTypeByName($typeName) {
+        if ($typeName == '') {
+            return null;
+        }
+        foreach ($this->typeList as &$type) {
+//            if (!$type->isRoot()) {
+//                continue;
+//            }
+            
+            if ($type->getName() == $typeName) {
+                return $type;
+            }
+        }
+//        return $type;
+        return null;
+    }
+
+    private function getTypeByTypeName($typeName) {
+        if ($typeName == '') {
+            return null;
+        }
+
+        foreach ($this->typeList as &$type) {
+            if ( $type->isRoot() ) {
+                continue;
+            }
+
+            if ($type->getType() == $typeName) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+    
     private function getNameUsagesRegardlessOfCase($typeName) {
         $lowerCaseTypeName = strtolower($typeName);
         $usage = 0;
