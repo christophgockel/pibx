@@ -7,14 +7,14 @@
     <collection get-method="getLineItems" set-method="setLineItems">
       <structure map-as="line-item" name="line-item"/>
     </collection>
-    <structure map-as="shipper" get-method="getShipper" set-method="setShipper" name="shipper"/>
+    <structure map-as="shipper" get-method="getShipper" set-method="setShipper" name="shipper" usage="optional"/>
   </mapping>
   <mapping class="Customer" abstract="true" type-name="customer">
     <value style="element" name="name" get-method="getName" set-method="setName"/>
     <value style="element" name="address" get-method="getAddress" set-method="setAddress"/>
-    <value style="attribute" name="age" get-method="getAge" set-method="setAge"/>
-    <value style="attribute" name="moo" get-method="getMoo" set-method="setMoo"/>
-    <value style="attribute" name="poo" get-method="getPoo" set-method="setPoo"/>
+    <value style="attribute" name="age" get-method="getAge" set-method="setAge" usage="optional"/>
+    <value style="attribute" name="moo" get-method="getMoo" set-method="setMoo" usage="optional"/>
+    <value style="attribute" name="poo" get-method="getPoo" set-method="setPoo" usage="optional"/>
   </mapping>
   <mapping class="LineItem" abstract="true" type-name="line-item">
     <value style="element" name="description" get-method="getDescription" set-method="setDescription"/>

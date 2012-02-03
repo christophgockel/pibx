@@ -66,10 +66,10 @@ class PiBX_Scenarios_EasyPO_ClassGeneratorTest extends PHPUnit_Framework_TestCas
         $usages = $typeUsage->getTypeUsages();
 
         $optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
-        $typeList = $optimizer->optimize();
+//        $typeList = $optimizer->optimize();
 
         // phase 4
-        $b = new PiBX_Binding_Creator();
+        $b = new PiBX_Binding_Creator($typeList);
 
         foreach ($typeList as &$type) {
             $type->accept($b);
@@ -118,10 +118,10 @@ class PiBX_Scenarios_EasyPO_ClassGeneratorTest extends PHPUnit_Framework_TestCas
         $usages = $typeUsage->getTypeUsages();
 
         $optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
-        $typeList = $optimizer->optimize();
+//        $typeList = $optimizer->optimize();
 
         // phase 4
-        $b = new PiBX_Binding_Creator();
+        $b = new PiBX_Binding_Creator($typeList);
 
         foreach ($typeList as &$type) {
             $type->accept($b);

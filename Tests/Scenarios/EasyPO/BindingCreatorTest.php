@@ -56,10 +56,10 @@ class PiBX_Scenarios_EasyPO_BindingCreatorTest extends PHPUnit_Framework_TestCas
 
         $usages = $typeUsage->getTypeUsages();
 
-        $optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
-        $typeList = $optimizer->optimize();
+//        $optimizer = new PiBX_CodeGen_ASTOptimizer($typeList, $typeUsage);
+//        $typeList = $optimizer->optimize();
 
-        $b = new PiBX_Binding_Creator();
+        $b = new PiBX_Binding_Creator($typeList);
 
         foreach ($typeList as &$type) {
             $type->accept($b);

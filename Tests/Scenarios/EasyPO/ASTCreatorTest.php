@@ -58,12 +58,12 @@ class PiBX_Scenarios_EasyPO_ASTCreatorTest extends PHPUnit_Framework_TestCase {
         $expectedType1->setNamespaces($namespaces);
         $expectedType1->add(new PiBX_AST_TypeAttribute('customer', 'customer'));
         $expectedType1->add(new PiBX_AST_TypeAttribute('date', 'dateTime'));
-        $ta = new PiBX_AST_TypeAttribute('line-item', 'line-item');
-        $ta->add(new PiBX_AST_CollectionItem('line-item', 'line-item'));
-        $expectedType1->add($ta);
-        $expectedType1->add(new PiBX_AST_TypeAttribute('shipper', 'shipper'));
+        $expectedType1->add(new PiBX_AST_CollectionItem('line-item', 'line-item'));
+        $expectedType1->add(new PiBX_AST_TypeAttribute('shipper', 'shipper', true));
 
         $expectedType2 = new PiBX_AST_Type('customer');
+        $expectedType2->setTargetNamespace('http://openuri.org/easypo');
+        $expectedType2->setNamespaces($namespaces);
         $expectedType2->add(new PiBX_AST_TypeAttribute('name', 'string'));
         $expectedType2->add(new PiBX_AST_TypeAttribute('address', 'string'));
         $ta = new PiBX_AST_TypeAttribute('age', 'int');
@@ -77,12 +77,16 @@ class PiBX_Scenarios_EasyPO_ASTCreatorTest extends PHPUnit_Framework_TestCase {
         $expectedType2->add($ta);
 
         $expectedType3 = new PiBX_AST_Type('line-item');
+        $expectedType3->setTargetNamespace('http://openuri.org/easypo');
+        $expectedType3->setNamespaces($namespaces);
         $expectedType3->add(new PiBX_AST_TypeAttribute('description', 'string'));
         $expectedType3->add(new PiBX_AST_TypeAttribute('per-unit-ounces', 'decimal'));
         $expectedType3->add(new PiBX_AST_TypeAttribute('price', 'decimal'));
         $expectedType3->add(new PiBX_AST_TypeAttribute('quantity', 'integer'));
 
         $expectedType4 = new PiBX_AST_Type('shipper');
+        $expectedType4->setTargetNamespace('http://openuri.org/easypo');
+        $expectedType4->setNamespaces($namespaces);
         $expectedType4->add(new PiBX_AST_TypeAttribute('name', 'string'));
         $expectedType4->add(new PiBX_AST_TypeAttribute('per-ounce-rate', 'decimal'));
 

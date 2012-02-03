@@ -81,19 +81,8 @@ class PiBX_CodeGen_TypeCheckGenerator {
             throw new RuntimeException('Not valid list AST given.');
         }
 
-        if ($ast instanceof PiBX_AST_CollectionItem) {
-            $ast = $ast->getParent();
-        }
-
         $iterationVar = strtolower(substr($attributeName, 0, 1));
         $expectedType = $ast->getType();
-        
-        if ($ast->countChildren() == 1) {
-            $childAst = $ast->get(0);
-            $expectedType = $childAst->getType();
-        } else {
-            throw new RuntimeException('Currently not supported.');
-        }
         
         $code = "\t\tforeach (\$" . $attributeName . " as &\$" . $iterationVar . ") {\n";
         
