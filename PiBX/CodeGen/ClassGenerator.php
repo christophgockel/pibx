@@ -109,13 +109,13 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $this->doTypeChecks = false;
     }
 
-    public function visitCollectionEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getName();
+    public function visitCollectionEnter(PiBX_AST_Collection $collection) {
+        $name = $collection->getName();
         
         $this->currentClassAttributes .= "\tprivate \$" . $name . ";\n";
         
-        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+        $setter = PiBX_Binding_Names::createSetterNameFor($collection);
+        $getter = PiBX_Binding_Names::createGetterNameFor($collection);
         
         $this->currentClassMethods .= "\tpublic function " . $setter . "(array \$" . $name . ") {\n";
         if ($this->doTypeChecks) {
@@ -129,26 +129,26 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         
         return true;
     }
-    public function visitCollectionLeave(PiBX_AST_Tree $tree) {
+    public function visitCollectionLeave(PiBX_AST_Collection $collection) {
         return true;
     }
 
-    public function visitCollectionItem(PiBX_AST_Tree $tree) {
-        if ($tree->getParent() instanceof PiBX_AST_Collection) {
+    public function visitCollectionItem(PiBX_AST_CollectionItem $collectionItem) {
+        if ($collectionItem->getParent() instanceof PiBX_AST_Collection) {
             // the collection-node already did add everything necessary for the collection and its items
             return false;
         }
         
-        $name = PiBX_Binding_Names::getAttributeName($tree->getName()) . 'list';
+        $name = PiBX_Binding_Names::getAttributeName($collectionItem->getName()) . 'list';
 
         $this->currentClassAttributes .= "\tprivate \$" . $name . ";\n";
 
-        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+        $setter = PiBX_Binding_Names::createSetterNameFor($collectionItem);
+        $getter = PiBX_Binding_Names::createGetterNameFor($collectionItem);
 
         $this->currentClassMethods .= "\tpublic function " . $setter . "(array \$" . $name . ") {\n";
         if ($this->doTypeChecks) {
-            $this->currentClassMethods .= $this->typeChecks->getListTypeCheckFor($tree, $name);
+            $this->currentClassMethods .= $this->typeChecks->getListTypeCheckFor($collectionItem, $name);
         }
         $this->currentClassMethods .= "\t\t\$this->" . $name . " = \$" . $name . ";\n"
                                     . "\t}\n"
@@ -158,28 +158,28 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         return true;
     }
     
-    public function visitEnumerationEnter(PiBX_AST_Tree $tree) {
-        $enumName = $tree->getName();
+    public function visitEnumerationEnter(PiBX_AST_Enumeration $enumeration) {
+        $enumName = $enumeration->getName();
 
-        if ($tree->getParent() == null) {
+        if ($enumeration->getParent() == null) {
             // at the moment separate enums are not supported, yet.
             //$this->classAppendix .= 'class b_' . $this->currentClassName . '_' . ucfirst($enumName) . " {\n";
             return false;
         }
 
-        $attributeName = PiBX_Binding_Names::getAttributeName($tree->getName());
-        $methodName = PiBX_Binding_Names::getCamelCasedName($tree->getName());
+        $attributeName = PiBX_Binding_Names::getAttributeName($enumeration->getName());
+        $methodName = PiBX_Binding_Names::getCamelCasedName($enumeration->getName());
 
         $this->currentClassAttributes .= "\tprivate \$".$attributeName.";\n";
         $methods = "\tpublic function set".$methodName."(\$".$attributeName.") {\n";
         if ($this->doTypeChecks) {
             // to do a type check for enums
             // all possible values have to be fetched
-            $valueCount = $tree->countChildren();
+            $valueCount = $enumeration->countChildren();
             $conditionValues = array();
             
             for ($i = 0; $i < $valueCount; $i++) {
-                $valueAst = $tree->get($i);
+                $valueAst = $enumeration->get($i);
                 $conditionValues[] = $valueAst->getName();
             }
             
@@ -201,28 +201,26 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
 
         return true;
     }
-    public function visitEnumerationLeave(PiBX_AST_Tree $tree) {
-        if ($tree->getParent() == null) {
+    public function visitEnumerationLeave(PiBX_AST_Enumeration $enumeration) {
+        if ($enumeration->getParent() == null) {
             //$this->classAppendix .= "}";
             return false;
         }
         return true;
     }
-    public function visitEnumeration(PiBX_AST_Tree $tree) {
-    }
-
-    public function visitEnumerationValue(PiBX_AST_Tree $tree) {
+    
+    public function visitEnumerationValue(PiBX_AST_EnumerationValue $enumerationValue) {
     }
     
-    public function visitStructureEnter(PiBX_AST_Tree $tree) {
-        $structureType = $tree->getStructureType();
+    public function visitStructureEnter(PiBX_AST_Structure $structure) {
+        $structureType = $structure->getStructureType();
         
         if ($structureType === PiBX_AST_StructureType::CHOICE()) {
-            $name = $tree->getName();
+            $name = $structure->getName();
             $attributeName = $name . 'Select';
             $this->currentClassAttributes .= "\tprivate \$" . $attributeName . " = -1;\n";
             
-            $constantNames = PiBX_Binding_Names::createChoiceConstantsFor($tree);
+            $constantNames = PiBX_Binding_Names::createChoiceConstantsFor($structure);
             $i = 0;
             foreach ($constantNames as $constant) {
                 $this->currentClassAttributes .= "\tprivate \${$constant} = $i;\n";
@@ -247,17 +245,19 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         
         return true;
     }
-    public function visitStructureLeave(PiBX_AST_Tree $tree) {
-        if ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
+    public function visitStructureLeave(PiBX_AST_Structure $structure) {
+        if ($structure->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
             $this->xml .= '</structure>';
         }
+
         $this->xml .= "</structure>";
+        
         return true;
     }
     
-    public function visitStructureElementEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getName();
-        $parentName = $tree->getParent()->getName();
+    public function visitStructureElementEnter(PiBX_AST_StructureElement $structureElement) {
+        $name = $structureElement->getName();
+        $parentName = $structureElement->getParent()->getName();
 
         $attributeName = $parentName . $name;
         
@@ -268,8 +268,8 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $choiceConstant = $parentName . '_' . $name . '_CHOICE';
         $choiceConstant = strtoupper($choiceConstant);
 
-        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+        $setter = PiBX_Binding_Names::createSetterNameFor($structureElement);
+        $getter = PiBX_Binding_Names::createGetterNameFor($structureElement);
 
         $methodName = ucfirst($attributeName);
 
@@ -280,7 +280,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
                   . "\t\t\$this->set{$selectName}(\$this->{$choiceConstant});\n";
         
         if ($this->doTypeChecks) {
-            $methods .= $this->typeChecks->getTypeCheckFor($tree->getType(), $attributeName);
+            $methods .= $this->typeChecks->getTypeCheckFor($structureElement->getType(), $attributeName);
         }
         
         $methods .= "\t\t\$this->{$attributeName} = \${$attributeName};\n"
@@ -293,17 +293,17 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         
         return true;
     }
-    public function visitStructureElementLeave(PiBX_AST_Tree $tree) {
+    public function visitStructureElementLeave(PiBX_AST_StructureElement $structureElement) {
         return true;
     }
     
-    public function visitTypeEnter(PiBX_AST_Tree $tree) {
-        $this->currentClassName = PiBX_Binding_Names::createClassnameFor($tree);
+    public function visitTypeEnter(PiBX_AST_Type $type) {
+        $this->currentClassName = PiBX_Binding_Names::createClassnameFor($type);
         $this->currentClass = 'class ' . $this->currentClassName . " {\n";
         
         return true;
     }
-    public function visitTypeLeave(PiBX_AST_Tree $tree) {
+    public function visitTypeLeave(PiBX_AST_Type $type) {
         $this->currentClass .= $this->currentClassAttributes;
         $this->currentClass .= "\n";
         $this->currentClass .= $this->currentClassMethods;
@@ -321,14 +321,14 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         return true;
     }
 
-    public function visitTypeAttributeEnter(PiBX_AST_Tree $tree) {
-        if ($tree->countChildren() == 0) {
+    public function visitTypeAttributeEnter(PiBX_AST_TypeAttribute $typeAttribute) {
+        if ($typeAttribute->countChildren() == 0) {
             // base type attribute
-            $attributeName = PiBX_Binding_Names::getAttributeName($tree->getName());
-            $methodName = PiBX_Binding_Names::getCamelCasedName($tree->getName());
+            $attributeName = PiBX_Binding_Names::getAttributeName($typeAttribute->getName());
+            $methodName = PiBX_Binding_Names::getCamelCasedName($typeAttribute->getName());
             
             $this->currentClassAttributes .= "\tprivate \$".$attributeName.";\n";
-            $type = $tree->getType();
+            $type = $typeAttribute->getType();
 
             $methods = "\tpublic function set".$methodName."(";
             if (!PiBX_Util_XsdType::isBaseType($type)) {
@@ -340,7 +340,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
             $methods .= "\$".$attributeName.") {\n";
             
             if ($this->doTypeChecks) {
-                $methods .= $this->typeChecks->getTypeCheckFor($tree->getType(), $attributeName);
+                $methods .= $this->typeChecks->getTypeCheckFor($typeAttribute->getType(), $attributeName);
             }
             
             $methods .= "\t\t\$this->". $attributeName . " = \$".$attributeName.";\n"
@@ -356,7 +356,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
             return true;
         }
     }
-    public function visitTypeAttributeLeave(PiBX_AST_Tree $tree) {
+    public function visitTypeAttributeLeave(PiBX_AST_TypeAttribute $typeAttribute) {
         return true;
     }
 }

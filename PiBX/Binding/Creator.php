@@ -72,10 +72,10 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
     public function getXml() {
         return $this->dom->saveXML();
     }
-    public function visitCollectionEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getName();
-        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+    public function visitCollectionEnter(PiBX_AST_Collection $collection) {
+        $name = $collection->getName();
+        $getter = PiBX_Binding_Names::createGetterNameFor($collection);
+        $setter = PiBX_Binding_Names::createSetterNameFor($collection);
         $node = $this->dom->createElement('collection');
         
         $node->setAttribute('name', $name);
@@ -88,15 +88,15 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         
         return true;
     }
-    public function visitCollectionLeave(PiBX_AST_Tree $tree) {
+    public function visitCollectionLeave(PiBX_AST_Collection $collection) {
         array_pop($this->nodeStack);
         
         return true;
     }
 
-    public function visitCollectionItem(PiBX_AST_Tree $tree) {
-        $name = $tree->getName();
-        $type = $tree->getType();
+    public function visitCollectionItem(PiBX_AST_CollectionItem $collectionItem) {
+        $name = $collectionItem->getName();
+        $type = $collectionItem->getType();
 
         if (PiBX_Util_XsdType::isBaseType($type)) {
             $node = $this->dom->createElement('value');
@@ -109,12 +109,12 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
             $node->setAttribute('name', $name);
         }
 
-        if ( !($tree->getParent() instanceof PiBX_AST_Collection) ) {
+        if ( !($collectionItem->getParent() instanceof PiBX_AST_Collection) ) {
             // create an anonymous collection whenever there is no parent Collection
             // which would handle this
             $parentNode = $this->dom->createElement('collection');
-            $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-            $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+            $getter = PiBX_Binding_Names::createGetterNameFor($collectionItem);
+            $setter = PiBX_Binding_Names::createSetterNameFor($collectionItem);
 
             $parentNode->setAttribute('get-method', $getter);
             $parentNode->setAttribute('set-method', $setter);
@@ -129,10 +129,10 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         return true;
     }
 
-    public function visitEnumerationEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getName();
-        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+    public function visitEnumerationEnter(PiBX_AST_Enumeration $enumeration) {
+        $name = $enumeration->getName();
+        $getter = PiBX_Binding_Names::createGetterNameFor($enumeration);
+        $setter = PiBX_Binding_Names::createSetterNameFor($enumeration);
 
         $node = $this->dom->createElement('value');
         $node->setAttribute('style', 'element');
@@ -148,32 +148,30 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
         return true;
     }
-    public function visitEnumerationLeave(PiBX_AST_Tree $tree) {
+    public function visitEnumerationLeave(PiBX_AST_Enumeration $enumeration) {
         array_pop($this->nodeStack);
-        return true;
-    }
-    public function visitEnumeration(PiBX_AST_Tree $tree) {
-        return true;
-    }
-
-    public function visitEnumerationValue(PiBX_AST_Tree $tree) {
+        
         return true;
     }
 
-    public function visitStructureEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getName();
-        $type = $tree->getType();
+    public function visitEnumerationValue(PiBX_AST_EnumerationValue $enumerationValue) {
+        return true;
+    }
+
+    public function visitStructureEnter(PiBX_AST_Structure $structure) {
+        $name = $structure->getName();
+        $type = $structure->getType();
 
         $node = $this->dom->createElement('structure');
 
-        if ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
+        if ($structure->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
             $node->setAttribute('ordered', 'false');
             $node->setAttribute('choice', 'true');
-        } elseif ($tree->getStructureType() == PiBX_AST_StructureType::STANDARD()) {
+        } elseif ($structure->getStructureType() == PiBX_AST_StructureType::STANDARD()) {
             if ($type != '') {
                 // // a standard structure with a given type is a reference to that type
-                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+                $getter = PiBX_Binding_Names::createGetterNameFor($structure);
+                $setter = PiBX_Binding_Names::createSetterNameFor($structure);
 
                 $node->setAttribute('map-as', $type);
                 $node->setAttribute('get-method', $getter);
@@ -186,7 +184,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
         $lastNode = $this->nodeStack[ count($this->nodeStack) - 1 ];
 
-        if ($name != '' && $tree->getStructureType() != PiBX_AST_StructureType::STANDARD()) {
+        if ($name != '' && $structure->getStructureType() != PiBX_AST_StructureType::STANDARD()) {
             $parentNode = $this->dom->createElement('structure');
             $parentNode->setAttribute('name', $name);
             $parentNode->appendChild($node);
@@ -202,25 +200,25 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         
         return true;
     }
-    public function visitStructureLeave(PiBX_AST_Tree $tree) {
+    public function visitStructureLeave(PiBX_AST_Structure $structure) {
         array_pop($this->nodeStack);
         
         return true;
     }
 
-    public function visitStructureElementEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getName();
-        $type = $tree->getType();
-        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
-        $tester = PiBX_Binding_Names::createTestFunctionFor($tree);
+    public function visitStructureElementEnter(PiBX_AST_StructureElement $structureElement) {
+        $name = $structureElement->getName();
+        $type = $structureElement->getType();
+        $getter = PiBX_Binding_Names::createGetterNameFor($structureElement);
+        $setter = PiBX_Binding_Names::createSetterNameFor($structureElement);
+        $tester = PiBX_Binding_Names::createTestFunctionFor($structureElement);
 
         $node = $this->dom->createElement('value');
 
         $node->setAttribute('style', 'element');
         $node->setAttribute('name', $name);
 
-        $parent = $tree->getParent();
+        $parent = $structureElement->getParent();
         if ($parent instanceof PiBX_AST_Structure) {
             if ($parent->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
                 $node->setAttribute('test-method', $tester);
@@ -239,19 +237,19 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         
         return true;
     }
-    public function visitStructureElementLeave(PiBX_AST_Tree $tree) {
+    public function visitStructureElementLeave(PiBX_AST_StructureElement $structureElement) {
         array_pop($this->nodeStack);
         return true;
     }
 
-    public function visitTypeEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getName();
-        $type = $tree->getType();
+    public function visitTypeEnter(PiBX_AST_Type $type) {
+        $name = $type->getName();
+        $typesType = $type->getType();
         $className = PiBX_Binding_Names::createClassnameFor($name);
 
-        $this->checkAndAddNamespace($tree);
+        $this->checkAndAddNamespace($type);
 
-        if ($tree->isEnumerationType()) {
+        if ($type->isEnumerationType()) {
             $label = PiBX_Binding_Names::createClassnameFor($name);
             $typeName = $label;
             $nameUsage = $this->getNameUsagesRegardlessOfCase($label);
@@ -273,38 +271,38 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         
         $node->setAttribute('class', $className);
         
-        if ($tree->isRoot()) {
+        if ($type->isRoot()) {
             $node->setAttribute('name', $name);
         } else {
             $node->setAttribute('abstract', 'true');
             
-            if ($tree->getValueStyle() == 'attribute') {
+            if ($type->getValueStyle() == 'attribute') {
                 $node->setAttribute('type-name', PiBX_Binding_Names::createClassnameFor($name));
             } else {
                 $node->setAttribute('type-name', $name);
             }
         }
 
-        if ($tree->hasBaseType()) {
+        if ($type->hasBaseType()) {
             // when a base-type is available, the "inheritance" hierarchy is
             // expressed via a mapped structure
             $subnode = $this->dom->createElement('structure');
-            $subnode->setAttribute('map-as', $tree->getBaseType());
+            $subnode->setAttribute('map-as', $type->getBaseType());
             $node->appendChild($subnode);
         }
         
-        if ($type != '') {
-            $referencedType = $this->getTypeByName($type);
+        if ($typesType != '') {
+            $referencedType = $this->getTypeByName($typesType);
             
             // a base-type will be mapped directly
-            if (PiBX_Util_XsdType::isBaseType($type)) {
-                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+            if (PiBX_Util_XsdType::isBaseType($typesType)) {
+                $getter = PiBX_Binding_Names::createGetterNameFor($type);
+                $setter = PiBX_Binding_Names::createSetterNameFor($type);
                 
                 $subnode = $this->dom->createElement('value');
 
                 $style = 'text';
-                if ($tree->getValueStyle() == 'attribute') {
+                if ($type->getValueStyle() == 'attribute') {
                     $style = 'attribute';
                 }
                 $subnode->setAttribute('style',      $style);
@@ -312,9 +310,9 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $subnode->setAttribute('set-method', $setter);
                 
                 $node->appendChild($subnode);
-            } elseif ( !$tree->hasChildren() && $referencedType->isEnumerationType()) {
-                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+            } elseif ( !$type->hasChildren() && $referencedType->isEnumerationType()) {
+                $getter = PiBX_Binding_Names::createGetterNameFor($type);
+                $setter = PiBX_Binding_Names::createSetterNameFor($type);
 
                 $subnode = $this->dom->createElement('value');
 
@@ -322,7 +320,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $subnode->setAttribute('get-method', $getter);
                 $subnode->setAttribute('set-method', $setter);
 
-                $subnode->setAttribute('format', $type);
+                $subnode->setAttribute('format', $typesType);
 
                 $node->appendChild($subnode);
             } else {
@@ -342,7 +340,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
 
         return true;
     }
-    public function visitTypeLeave(PiBX_AST_Tree $tree) {
+    public function visitTypeLeave(PiBX_AST_Type $type) {
         array_pop($this->nodeStack);
         return true;
     }
@@ -372,21 +370,21 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         }
     }
 
-    public function visitTypeAttributeEnter(PiBX_AST_Tree $tree) {
-        $name = $tree->getName();
-        $type = $tree->getType();
-        $style = $tree->getStyle();
-        $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-        $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+    public function visitTypeAttributeEnter(PiBX_AST_TypeAttribute $typeAttribute) {
+        $name = $typeAttribute->getName();
+        $type = $typeAttribute->getType();
+        $style = $typeAttribute->getStyle();
+        $getter = PiBX_Binding_Names::createGetterNameFor($typeAttribute);
+        $setter = PiBX_Binding_Names::createSetterNameFor($typeAttribute);
 
         if ($name == '') {
             $node = $this->dom->createElement('structure');
-            $referencedType = $tree->getParent();
+            $referencedType = $typeAttribute->getParent();
             $typeOfReferencedType = $type;
             $nameOfReferencedType = PiBX_Binding_Names::createClassnameFor($type);
             $referencedType = $this->getTypeByName($type);
 
-            $deep = $this->getDeepestReferencedType($tree);
+            $deep = $this->getDeepestReferencedType($typeAttribute);
             
             $shouldBeMapped = $this->anonymTypeAttributeShouldBeMapped($type);
 
@@ -417,7 +415,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 }
             }
         } else {
-            if ($type == '' || PiBX_Util_XsdType::isBaseType($type) || $tree->getStyle() == 'attribute') {
+            if ($type == '' || PiBX_Util_XsdType::isBaseType($type) || $typeAttribute->getStyle() == 'attribute') {
                 $node = $this->dom->createElement('value');
 
 
@@ -426,8 +424,8 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $node->setAttribute('get-method', $getter);
                 $node->setAttribute('set-method', $setter);
             } else {
-                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
-                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+                $getter = PiBX_Binding_Names::createGetterNameFor($typeAttribute);
+                $setter = PiBX_Binding_Names::createSetterNameFor($typeAttribute);
 
                 $node = $this->dom->createElement('structure');
                 $node->setAttribute('map-as', $type);
@@ -436,7 +434,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $node->setAttribute('name', $name);
             }
 
-            if ($tree->isOptional()) {
+            if ($typeAttribute->isOptional()) {
                 $node->setAttribute('usage', 'optional');
             }
 
@@ -452,7 +450,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
         
         return true;
     }
-    public function visitTypeAttributeLeave(PiBX_AST_Tree $tree) {
+    public function visitTypeAttributeLeave(PiBX_AST_TypeAttribute $typeAttribute) {
         array_pop($this->nodeStack);
         
         return true;

@@ -39,26 +39,25 @@ require_once 'PiBX/AST/Tree.php';
  * @author Christoph Gockel
  */
 interface PiBX_AST_Visitor_VisitorAbstract {
-    public function visitCollectionEnter(PiBX_AST_Tree $tree);
-    public function visitCollectionLeave(PiBX_AST_Tree $tree);
+    public function visitCollectionEnter(PiBX_AST_Collection $collection);
+    public function visitCollectionLeave(PiBX_AST_Collection $collection);
 
-    public function visitCollectionItem(PiBX_AST_Tree $tree);
+    public function visitCollectionItem(PiBX_AST_CollectionItem $collectionItem);
 
-    public function visitEnumerationEnter(PiBX_AST_Tree $tree);
-    public function visitEnumerationLeave(PiBX_AST_Tree $tree);
-    public function visitEnumeration(PiBX_AST_Tree $tree);
+    public function visitEnumerationEnter(PiBX_AST_Enumeration $enumeration);
+    public function visitEnumerationLeave(PiBX_AST_Enumeration $enumeration);
 
-    public function visitEnumerationValue(PiBX_AST_Tree $tree);
+    public function visitEnumerationValue(PiBX_AST_EnumerationValue $enumerationValue);
 
-    public function visitStructureEnter(PiBX_AST_Tree $tree);
-    public function visitStructureLeave(PiBX_AST_Tree $tree);
+    public function visitStructureEnter(PiBX_AST_Structure $structure);
+    public function visitStructureLeave(PiBX_AST_Structure $structure);
 
-    public function visitStructureElementEnter(PiBX_AST_Tree $tree);
-    public function visitStructureElementLeave(PiBX_AST_Tree $tree);
+    public function visitStructureElementEnter(PiBX_AST_StructureElement $structureElement);
+    public function visitStructureElementLeave(PiBX_AST_StructureElement $structureElement);
 
-    public function visitTypeEnter(PiBX_AST_Tree $tree);
-    public function visitTypeLeave(PiBX_AST_Tree $tree);
+    public function visitTypeEnter(PiBX_AST_Type $type);
+    public function visitTypeLeave(PiBX_AST_Type $type);
 
-    public function visitTypeAttributeEnter(PiBX_AST_Tree $tree);
-    public function visitTypeAttributeLeave(PiBX_AST_Tree $tree);
+    public function visitTypeAttributeEnter(PiBX_AST_TypeAttribute $typeAttribute);
+    public function visitTypeAttributeLeave(PiBX_AST_TypeAttribute $typeAttribute);
 }
