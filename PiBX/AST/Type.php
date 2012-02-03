@@ -74,13 +74,6 @@ class PiBX_AST_Type extends PiBX_AST_Tree {
         return $this->isRootType;
     }
 
-    public function setAttributeCount($count) {
-        //$this->attributeCount = $count;
-    }
-    public function getAttributeCount() {
-
-    }
-    
     public function setTargetNamespace($targetNamespace) {
         $this->targetNamespace = $targetNamespace;
     }

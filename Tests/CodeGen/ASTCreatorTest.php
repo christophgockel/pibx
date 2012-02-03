@@ -102,7 +102,6 @@ XML;
 
         $expectedType = new PiBX_AST_Type('Collection');
         $expectedType->setAsRoot();
-        $expectedType->setAttributeCount(1);
         $expectedType->setNamespaces(array('xs' => 'http://www.w3.org/2001/XMLSchema'));
         $c = new PiBX_AST_Collection('books');
             $ci = new PiBX_AST_CollectionItem('book', 'bookType');
@@ -141,7 +140,6 @@ XML;
 XML;
 
         $expectedType = new PiBX_AST_Type('complexTypeWithElements');
-        $expectedType->setAttributeCount(5);
         $expectedType->setNamespaces(array('xs' => 'http://www.w3.org/2001/XMLSchema'));
         $attr = new PiBX_AST_TypeAttribute('element1');
         $attr->setType('string');
@@ -198,7 +196,6 @@ XML;
 XML;
 
         $expectedType = new PiBX_AST_Type('complexTypeWithElements');
-        $expectedType->setAttributeCount(6);
         $expectedType->setNamespaces(array('xs' => 'http://www.w3.org/2001/XMLSchema'));
         $attr = new PiBX_AST_TypeAttribute('element1');
         $attr->setType('string');
