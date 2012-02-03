@@ -31,11 +31,11 @@ require_once 'PHPUnit/Autoload.php';
 require_once 'Tests/Scenarios/Reference/Basic/Suite.php';
 require_once 'Tests/Scenarios/Reference/Advanced/Suite.php';
 /**
- * Scenarios Test-Suite.
+ * Scenarios Reference Test-Suite.
  *
  * @author Christoph Gockel
  */
-class PiBX_Scenarios_Suite extends PHPUnit_Framework_TestSuite {
+class PiBX_Scenarios_Reference_Suite extends PHPUnit_Framework_TestSuite {
 
     public static function suite() {
         $suite = new PHPUnit_Framework_TestSuite();

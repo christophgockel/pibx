@@ -35,7 +35,7 @@ require_once 'Tests/Scenarios/EasyPo/MarshallerTest.php';
 require_once 'Tests/Scenarios/EasyPo/SchemaParserTest.php';
 require_once 'Tests/Scenarios/EasyPo/UnmarshallerTest.php';
 /**
- * Test-Suite of package "Runtime".
+ * Test-Suite of package "EasyPO".
  *
  * @author Christoph Gockel
  */
