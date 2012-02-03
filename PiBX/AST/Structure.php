@@ -44,6 +44,7 @@ class PiBX_AST_Structure extends PiBX_AST_Tree {
 
     public function  __construct($name = '', $type = '') {
         parent::__construct($name, $type);
+        $this->setStructureType(PiBX_AST_StructureType::STANDARD());
     }
 
     public function setStructureType(PiBX_AST_StructureType $type) {

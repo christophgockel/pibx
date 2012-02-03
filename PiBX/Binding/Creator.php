@@ -163,40 +163,47 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
     public function visitStructureEnter(PiBX_AST_Tree $tree) {
         $name = $tree->getName();
         $type = $tree->getType();
-        
+
         $node = $this->dom->createElement('structure');
-        $node->setAttribute('name', $name);
-        $subnode = null;
 
         if ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
-            $subnode = $this->dom->createElement('structure');
-            
-            $subnode->setAttribute('ordered', 'false');
-            $subnode->setAttribute('choice', 'true');
-            $node->appendChild($subnode);
-        } elseif ($tree->getStructureType() == null ) {//TODO: implement "null case" with PiBX_AST_StructureType::NONE()
+            $node->setAttribute('ordered', 'false');
+            $node->setAttribute('choice', 'true');
+        } elseif ($tree->getStructureType() == PiBX_AST_StructureType::STANDARD()) {
+            if ($type != '') {
+                // // a standard structure with a given type is a reference to that type
+                $getter = PiBX_Binding_Names::createGetterNameFor($tree);
+                $setter = PiBX_Binding_Names::createSetterNameFor($tree);
+
+                $node->setAttribute('map-as', $type);
+                $node->setAttribute('get-method', $getter);
+                $node->setAttribute('set-method', $setter);
+                $node->setAttribute('name', $name);
+            } else {
+                $node->setAttribute('name', $name);
+            }
         }
-        
+
         $lastNode = $this->nodeStack[ count($this->nodeStack) - 1 ];
-        
-        $lastNode->appendChild($node);
-        
 
-        if ($tree->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
-            array_push($this->nodeStack, $node, $subnode);
-        } else {
-            array_push($this->nodeStack, $node);
+        if ($name != '' && $tree->getStructureType() != PiBX_AST_StructureType::STANDARD()) {
+            $parentNode = $this->dom->createElement('structure');
+            $parentNode->setAttribute('name', $name);
+            $parentNode->appendChild($node);
+
+            $lastNode->appendChild($parentNode);
+            $lastNode = $parentNode;
         }
+
+        $lastNode->appendChild($node);
+
+
+        array_push($this->nodeStack, $node);
+        
         return true;
     }
     public function visitStructureLeave(PiBX_AST_Tree $tree) {
         array_pop($this->nodeStack);
-
-        if ($tree->getStructureType() !== null) {//TODO: implement "null case" with PiBX_AST_StructureType::NONE()
-            // on every non-default structure, a second level has been added,
-            // which has to be removed as well
-            array_pop($this->nodeStack);
-        }
         
         return true;
     }
@@ -270,7 +277,12 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
             $node->setAttribute('name', $name);
         } else {
             $node->setAttribute('abstract', 'true');
-            $node->setAttribute('type-name', PiBX_Binding_Names::createClassnameFor($name));
+            
+            if ($tree->getValueStyle() == 'attribute') {
+                $node->setAttribute('type-name', PiBX_Binding_Names::createClassnameFor($name));
+            } else {
+                $node->setAttribute('type-name', $name);
+            }
         }
 
         if ($tree->hasBaseType()) {
@@ -300,7 +312,7 @@ class PiBX_Binding_Creator implements PiBX_AST_Visitor_VisitorAbstract {
                 $subnode->setAttribute('set-method', $setter);
                 
                 $node->appendChild($subnode);
-            } elseif ( !$tree->hasChildren() && (/*!PiBX_Util_XsdType::isBaseType($type) ||*/ $referencedType->isEnumerationType()) ) {
+            } elseif ( !$tree->hasChildren() && $referencedType->isEnumerationType()) {
                 $getter = PiBX_Binding_Names::createGetterNameFor($tree);
                 $setter = PiBX_Binding_Names::createSetterNameFor($tree);
 

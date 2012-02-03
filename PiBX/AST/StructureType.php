@@ -42,7 +42,7 @@ require_once 'PiBX/AST/Tree.php';
 class PiBX_AST_StructureType {
     private static $ordered;
     private static $choice;
-    private static $none;
+    private static $standard;
 
     private $value;
     private static $alreadyInitialized = false;
@@ -54,9 +54,9 @@ class PiBX_AST_StructureType {
     public static function init() {
 
         if (!self::$alreadyInitialized) {
-            self::$ordered = new PiBX_AST_StructureType('ordered');
-            self::$choice  = new PiBX_AST_StructureType('choice');
-            self::$none    = new PiBX_AST_StructureType('');
+            self::$ordered  = new PiBX_AST_StructureType('ordered');
+            self::$choice   = new PiBX_AST_StructureType('choice');
+            self::$standard = new PiBX_AST_StructureType('');
 
             self::$alreadyInitialized = true;
         }
@@ -70,8 +70,8 @@ class PiBX_AST_StructureType {
         return self::$choice;
     }
 
-    public static function NONE() {
-        return self::$none;
+    public static function STANDARD() {
+        return self::$standard;
     }
 }
 

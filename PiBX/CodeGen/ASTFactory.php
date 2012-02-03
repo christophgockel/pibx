@@ -276,14 +276,14 @@ class PiBX_CodeGen_ASTFactory {
 
     private function lookupStructureType(PiBX_ParseTree_ElementNode $element) {
         if (!$element->hasChildren()) {
-            return PiBX_AST_StructureType::NONE();
+            return PiBX_AST_StructureType::STANDARD();
         }
 
         $firstChild = $element->get(0);
 
         if ($firstChild instanceof PiBX_ParseTree_ComplexTypeNode) {
             if (!$firstChild->hasChildren()) {
-                return PiBX_AST_StructureType::NONE();
+                return PiBX_AST_StructureType::STANDARD();
             }
 
             $firstChildOfFirstChild = $firstChild->get(0);
@@ -293,7 +293,7 @@ class PiBX_CodeGen_ASTFactory {
             }
         }
 
-        return PiBX_AST_StructureType::NONE();
+        return PiBX_AST_StructureType::STANDARD();
     }
 
     private function inspectElementNodeWithoutChildren(PiBX_ParseTree_ElementNode $element) {
