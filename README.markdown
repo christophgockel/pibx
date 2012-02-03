@@ -15,11 +15,11 @@ Requirements
 Installation
 ------------
 
-After you downloaded PiBX, the base directory should be available in PHP's include path.
+After downloading PiBX, the base directory should be available in PHP's include path.
 
 It's up to you and your project's requirements and dependencies, whether you include the "Tests" directory and CodeGen.php (the command line program) or not. These parts of PiBX are not required at runtime.
 
 License
 -------
-Since PiBX started as a port of JiBX, it's licensed under the simplified BSD license as well.
-You can find and view the license in the LICENSE file located in the PiBX root.
+PiBX started as a port of JiBX, so it's licensed under the simplified BSD license as well.
+You can find and view the license in the LICENSE file located in the PiBX root or under http://www.opensource.org/licenses/BSD-3-Clause.
