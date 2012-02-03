@@ -29,7 +29,6 @@
 require_once dirname(__FILE__) . '/../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
 require_once 'Tests/CodeGen/SchemaParserTest.php';
-require_once 'Tests/CodeGen/ClassGeneratorTest.php';
 require_once 'Tests/CodeGen/ASTCreatorTest.php';
 /**
  * Test-Suite of package "CodeGen".
@@ -41,7 +40,6 @@ class PiBX_CodeGen_Suite extends PHPUnit_Framework_TestSuite {
     public static function suite() {
         $suite = new PHPUnit_Framework_TestSuite();
         $suite->addTestSuite('PiBX_CodeGen_ASTCreatorTest');
-        $suite->addTestSuite('PiBX_CodeGen_ClassGeneratorTest');
         $suite->addTestSuite('PiBX_CodeGen_SchemaParserTest');
         
         return $suite;
