@@ -35,7 +35,7 @@ require_once 'PiBX/CodeGen/SchemaParser.php';
  *
  * @author Christoph Gockel
  */
-class PiBX_Scenarios_Books_ASTreatorTest extends PHPUnit_Framework_TestCase {
+class PiBX_Scenarios_Books_ASTCreatorTest extends PHPUnit_Framework_TestCase {
     public function testBooksXSD() {
         $filepath = dirname(__FILE__) . '/../../_files/Books';
         $schemaFile = 'books.xsd';
