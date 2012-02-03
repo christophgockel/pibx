@@ -28,6 +28,7 @@
  */
 require_once dirname(__FILE__) . '/../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
+require_once 'Tests/Scenarios/Books/Suite.php';
 require_once 'Tests/Scenarios/EasyPo/Suite.php';
 /**
  * Scenarios Test-Suite.
@@ -38,7 +39,8 @@ class PiBX_Scenarios_Suite extends PHPUnit_Framework_TestSuite {
 
     public static function suite() {
         $suite = new PHPUnit_Framework_TestSuite();
-        
+
+        $suite->addTestSuite('PiBX_Scenarios_Books_Suite');
         $suite->addTestSuite('PiBX_Scenarios_EasyPO_Suite');
         
         return $suite;

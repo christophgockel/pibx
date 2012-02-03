@@ -134,6 +134,11 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     }
 
     public function visitCollectionItem(PiBX_AST_Tree $tree) {
+        if ($tree->getParent() instanceof PiBX_AST_Collection) {
+            // the collection-node already did add everything necessary for the collection and its items
+            return false;
+        }
+        
         $name = PiBX_Binding_Names::getAttributeName($tree->getName()) . 'list';
 
         $this->currentClassAttributes .= "\tprivate \$" . $name . ";\n";
