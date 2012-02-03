@@ -68,90 +68,90 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
         return $this->asts;
     }
     
-    public function visitAttributeNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitAttributeNode(PiBX_ParseTree_AttributeNode $attribute) {
+        $this->currentLevel = $attribute->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
-        $ast = $this->factory->createFromAttributeNode($tree);
+        $ast = $this->factory->createFromAttributeNode($attribute);
 
         $this->addSubtreeToAST($ast);
         $this->lastLevel = $this->currentLevel;
     }
     
-    public function visitElementNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitElementNode(PiBX_ParseTree_ElementNode $element) {
+        $this->currentLevel = $element->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
         
-        $ast = $this->factory->createFromElementNode($tree);
+        $ast = $this->factory->createFromElementNode($element);
         
         $this->addSubtreeToAST($ast);
         
         $this->lastLevel = $this->currentLevel;
     }
 
-    public function visitSimpleTypeNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitSimpleTypeNode(PiBX_ParseTree_SimpleTypeNode $simpleType) {
+        $this->currentLevel = $simpleType->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
-        $ast = $this->factory->createFromSimpleTypeNode($tree);
+        $ast = $this->factory->createFromSimpleTypeNode($simpleType);
         if ($ast != null) {
             $this->addSubtreeToAST($ast);
         }
         $this->lastLevel = $this->currentLevel;
     }
     
-    public function visitComplexTypeNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitComplexTypeNode(PiBX_ParseTree_ComplexTypeNode $complexType) {
+        $this->currentLevel = $complexType->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
 
-        $ast = $this->factory->createFromComplexTypeNode($tree);
+        $ast = $this->factory->createFromComplexTypeNode($complexType);
         if ($ast != null) {
             $this->addSubtreeToAST($ast);
         }
         $this->lastLevel = $this->currentLevel;
     }
 
-    public function visitSequenceNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitSequenceNode(PiBX_ParseTree_SequenceNode $sequence) {
+        $this->currentLevel = $sequence->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
         $this->lastLevel = $this->currentLevel;
     }
 
-    public function visitGroupNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitGroupNode(PiBX_ParseTree_Tree $group) {
+        $this->currentLevel = $group->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
         $this->lastLevel = $this->currentLevel;
     }
 
-    public function visitAllNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitAllNode(PiBX_ParseTree_Tree $all) {
+        $this->currentLevel = $all->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
         $this->lastLevel = $this->currentLevel;
     }
 
-    public function visitChoiceNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitChoiceNode(PiBX_ParseTree_ChoiceNode $choice) {
+        $this->currentLevel = $choice->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
-        $ast = $this->factory->createFromChoiceNode($tree);
+        $ast = $this->factory->createFromChoiceNode($choice);
         if ($ast !== null) {
             $this->addSubtreeToAST($ast);
         }
         $this->lastLevel = $this->currentLevel;
     }
     
-    public function visitRestrictionNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitRestrictionNode(PiBX_ParseTree_RestrictionNode $restriction) {
+        $this->currentLevel = $restriction->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
-        $ast = $this->factory->createFromRestrictionNode($tree);
+        $ast = $this->factory->createFromRestrictionNode($restriction);
         if ($ast !== null) {
             $this->addSubtreeToAST($ast);
         }
         $this->lastLevel = $this->currentLevel;
     }
 
-    public function visitEnumerationNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitEnumerationNode(PiBX_ParseTree_EnumerationNode $enumeration) {
+        $this->currentLevel = $enumeration->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
 
-        $ast = $this->factory->createFromEnumerationNode($tree);
+        $ast = $this->factory->createFromEnumerationNode($enumeration);
         if ($ast !== null) {
             $this->addSubtreeToAST($ast);
         }
@@ -159,14 +159,14 @@ class PiBX_CodeGen_ASTCreator implements PiBX_ParseTree_Visitor_VisitorAbstract 
         $this->lastLevel = $this->currentLevel;
     }
 
-    public function visitComplexContentNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitComplexContentNode(PiBX_ParseTree_ComplexContentNode $complexType) {
+        $this->currentLevel = $complexType->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
         $this->lastLevel = $this->currentLevel;
     }
 
-    public function visitExtensionNode(PiBX_ParseTree_Tree $tree) {
-        $this->currentLevel = $tree->getLevel();
+    public function visitExtensionNode(PiBX_ParseTree_ExtensionNode $extension) {
+        $this->currentLevel = $extension->getLevel();
         $this->handleTypeCreationForLevel($this->currentLevel);
         $this->lastLevel = $this->currentLevel;
     }

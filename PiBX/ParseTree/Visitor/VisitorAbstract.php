@@ -33,16 +33,16 @@ require_once 'PiBX/ParseTree/Tree.php';
  * @author Christoph Gockel
  */
 interface PiBX_ParseTree_Visitor_VisitorAbstract {
-    public function visitAttributeNode(PiBX_ParseTree_Tree $tree);
-    public function visitElementNode(PiBX_ParseTree_Tree $tree);
-    public function visitSimpleTypeNode(PiBX_ParseTree_Tree $tree);
-    public function visitComplexTypeNode(PiBX_ParseTree_Tree $tree);
-    public function visitSequenceNode(PiBX_ParseTree_Tree $tree);
-    public function visitGroupNode(PiBX_ParseTree_Tree $tree);
-    public function visitAllNode(PiBX_ParseTree_Tree $tree);
-    public function visitChoiceNode(PiBX_ParseTree_Tree $tree);
-    public function visitRestrictionNode(PiBX_ParseTree_Tree $tree);
-    public function visitEnumerationNode(PiBX_ParseTree_Tree $tree);
-    public function visitComplexContentNode(PiBX_ParseTree_Tree $tree);
-    public function visitExtensionNode(PiBX_ParseTree_Tree $tree);
+    public function visitAttributeNode(PiBX_ParseTree_AttributeNode $attribute);
+    public function visitElementNode(PiBX_ParseTree_ElementNode $element);
+    public function visitSimpleTypeNode(PiBX_ParseTree_SimpleTypeNode $simpleType);
+    public function visitComplexTypeNode(PiBX_ParseTree_ComplexTypeNode $complexType);
+    public function visitSequenceNode(PiBX_ParseTree_SequenceNode $sequence);
+    public function visitGroupNode(PiBX_ParseTree_Tree $group);
+    public function visitAllNode(PiBX_ParseTree_Tree $all);
+    public function visitChoiceNode(PiBX_ParseTree_ChoiceNode $choice);
+    public function visitRestrictionNode(PiBX_ParseTree_RestrictionNode $restriction);
+    public function visitEnumerationNode(PiBX_ParseTree_EnumerationNode $enumeration);
+    public function visitComplexContentNode(PiBX_ParseTree_ComplexContentNode $complexContent);
+    public function visitExtensionNode(PiBX_ParseTree_ExtensionNode $extension);
 }
