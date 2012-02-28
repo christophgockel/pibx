@@ -45,6 +45,11 @@ require_once 'PiBX/Binding/Creator.php';
 abstract class PiBX_Scenarios_Reference_TestCase extends PHPUnit_Framework_TestCase {
     protected $pathToTestFiles;
     protected $schemaFile;
+    protected $classFiles;
+
+    public function setUp() {
+        $this->classFiles = array();
+    }
 
     abstract function getASTs();
     abstract function getParseTree();
@@ -105,5 +110,4 @@ abstract class PiBX_Scenarios_Reference_TestCase extends PHPUnit_Framework_TestC
 
         $this->assertEquals($bindingFile, $b->getXml());
     }
-
 }

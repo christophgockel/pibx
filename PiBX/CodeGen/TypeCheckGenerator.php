@@ -39,10 +39,6 @@ require_once 'PiBX/Util/XsdType.php';
  * @author Christoph Gockel
  */
 class PiBX_CodeGen_TypeCheckGenerator {
-    public function __construct() {
-        
-    }
-    
     /**
      * Returns the PHP code for a type check.
      * 
@@ -84,19 +80,19 @@ class PiBX_CodeGen_TypeCheckGenerator {
         $iterationVar = strtolower(substr($attributeName, 0, 1));
         $expectedType = $ast->getType();
         
-        $code = "\t\tforeach (\$" . $attributeName . " as &\$" . $iterationVar . ") {\n";
+        $code = "foreach (\$" . $attributeName . " as &\$" . $iterationVar . ") {";
         
         if (PiBX_Util_XsdType::isBaseType($expectedType) ) {
-            $code .= "\t\t\tif (!is_" . $expectedType . "(\$" . $iterationVar . ")) {\n";
+            $code .= "if (!is_" . $expectedType . "(\$" . $iterationVar . ")) {";
         } else {
             $expectedType = PiBX_Binding_Names::createClassnameFor($expectedType);
-            $code .= "\t\t\tif (get_class(\$" . $iterationVar . ") !== '" . $expectedType . "') {\n";
+            $code .= "if (get_class(\$" . $iterationVar . ") !== '" . $expectedType . "') {";
         }
         
-        $code .= "\t\t\t\tthrow new InvalidArgumentException('Invalid list. "
-               . "All containing elements have to be of type \"" . $expectedType . "\".');\n"
-               . "\t\t\t}\n"
-               . "\t\t}\n";
+        $code .= "throw new InvalidArgumentException('Invalid list. "
+               . "All containing elements have to be of type \"" . $expectedType . "\".');"
+               . "}"
+               . "}";
         
         return $code;
     }
@@ -108,12 +104,12 @@ class PiBX_CodeGen_TypeCheckGenerator {
      * @return string 
      */
     private function getDateCheck($attributeName) {
-        $code = "\t\tif (!preg_match('/\d{4}-\d{2}-\d{2}/ism')) {\n"
-              . "\t\t\tthrow new InvalidArgumentException('Unexpected date "
-              . "format:' . \$" . $attributeName . " . '. Expected is: yyyy-mm-dd.');\n"
-              . "\t\t}\n";
+        $code = 'if (!preg_match(\'/\d{4}-\d{2}-\d{2}/ism\')) {'
+              . 'throw new InvalidArgumentException(\'Unexpected date '
+              . 'format:\' . $%1$s . \'. Expected is: yyyy-mm-dd.\');'
+              . '}';
         
-        return $code;
+        return sprintf($code, $attributeName);
     }
 
     /**
@@ -135,11 +131,11 @@ class PiBX_CodeGen_TypeCheckGenerator {
      * @return string 
      */
     private function getSimpleTypeCheck($type, $attributeName) {
-        $code = "\t\tif (!is_" . $type . "(\$" . $attributeName . ")) {\n"
-              . "\t\t\tthrow new InvalidArgumentException('\"' . \$" . $attributeName . " . '\" is not a valid " . $type . ".');\n"
-              . "\t\t}\n";
+        $code = 'if (!is_%1$s($%2$s)) {'
+              .     'throw new InvalidArgumentException(\'"\' . $%2$s . \'" is not a valid %1$s.\');'
+              . '}';
         
-        return $code;
+        return sprintf($code, $type, $attributeName);
     }
 
     /**
@@ -160,5 +156,25 @@ class PiBX_CodeGen_TypeCheckGenerator {
      */
     private function getLongCheck($attributeName) {
         return $this->getSimpleTypeCheck('long', $attributeName);
+    }
+
+    public function getEnumerationTypeCheckFor(PiBX_AST_Enumeration $enumeration, $attributeName) {
+        $code = '';
+        $valueCount = $enumeration->countChildren();
+        $conditionValues = array();
+
+        for ($i = 0; $i < $valueCount; $i++) {
+            $valueAst = $enumeration->get($i);
+            $conditionValues[] = $valueAst->getName();
+        }
+
+        $ifConditions = "(\$" . $attributeName . " != '" . implode("') || (\$".$attributeName." != '", $conditionValues) . "')";
+        $listOfValues = '"' . implode('", "', $conditionValues) . '"';
+
+        $code = 'if (' . $ifConditions . ') {'
+              . 'throw new InvalidArgumentException(\'Unexpected value "\' . $' . $attributeName . ' . \'". Expected is one of the following: ' . $listOfValues . '.\');'
+              . '}';
+
+        return $code;
     }
 }

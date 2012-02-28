@@ -47,4 +47,8 @@ class PiBX_CodeGen_SchemaParserTest extends PHPUnit_Framework_TestCase {
         $parser = new PiBX_CodeGen_SchemaParser('');
         $this->assertTrue($parser instanceof PiBX_CodeGen_SchemaParser);
     }
+
+    public function testMalformedSchemaShouldThrowException() {
+        
+    }
 }

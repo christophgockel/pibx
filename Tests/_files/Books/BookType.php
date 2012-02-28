@@ -1,18 +1,18 @@
 <?php
 class BookType {
 	private $name;
-	private $isbn;
+	private $ISBN;
 	private $price;
-	private $authors;
+	private $authorNameList;
 	private $description;
 	private $promotionSelect = -1;
 	private $PROMOTION_DISCOUNT_CHOICE = 0;
 	private $PROMOTION_NONE_CHOICE = 1;
 	private $promotionDiscount;
 	private $promotionNone;
-	private $publicationdate;
-	private $bookcategory;
-	private $itemid;
+	private $publicationDate;
+	private $bookCategory;
+	private $itemId;
 
 	public function setName($name) {
 		$this->name = $name;
@@ -20,11 +20,11 @@ class BookType {
 	public function getName() {
 		return $this->name;
 	}
-	public function setISBN($isbn) {
-		$this->isbn = $isbn;
+	public function setISBN($ISBN) {
+		$this->ISBN = $ISBN;
 	}
 	public function getISBN() {
-		return $this->isbn;
+		return $this->ISBN;
 	}
 	public function setPrice($price) {
 		$this->price = $price;
@@ -32,24 +32,17 @@ class BookType {
 	public function getPrice() {
 		return $this->price;
 	}
-	public function setAuthorNames(array $authors) {
-		$this->authors = $authors;
+	public function setAuthorNames(array $authorNameList) {
+		$this->authorNameList = $authorNameList;
 	}
 	public function getAuthorNames() {
-		return $this->authors;
+		return $this->authorNameList;
 	}
 	public function setDescription($description) {
 		$this->description = $description;
 	}
 	public function getDescription() {
 		return $this->description;
-	}
-	private function setPromotionSelect($choice) {
-		if ($this->promotionSelect == -1) {
-			$this->promotionSelect = $choice;
-		} elseif ($this->promotionSelect != $choice) {
-			throw new RuntimeException('Need to call clearPromotionSelect() before changing existing choice');
-		}
 	}
 	public function clearPromotionSelect() {
 		$this->promotionSelect = -1;
@@ -74,22 +67,29 @@ class BookType {
 	public function getPromotionNone() {
 		return $this->promotionNone;
 	}
-	public function setPublicationDate($publicationdate) {
-		$this->publicationdate = $publicationdate;
+	public function setPublicationDate($publicationDate) {
+		$this->publicationDate = $publicationDate;
 	}
 	public function getPublicationDate() {
-		return $this->publicationdate;
+		return $this->publicationDate;
 	}
-	public function setBookCategory($bookcategory) {
-		$this->bookcategory = $bookcategory;
+	public function setBookCategory($bookCategory) {
+		$this->bookCategory = $bookCategory;
 	}
 	public function getBookCategory() {
-		return $this->bookcategory;
+		return $this->bookCategory;
 	}
-	public function setItemId($itemid) {
-		$this->itemid = $itemid;
+	public function setItemId($itemId) {
+		$this->itemId = $itemId;
 	}
 	public function getItemId() {
-		return $this->itemid;
+		return $this->itemId;
+	}
+	private function setPromotionSelect($choice) {
+		if ($this->promotionSelect == -1) {
+			$this->promotionSelect = $choice;
+		} elseif ($this->promotionSelect != $choice) {
+			throw new RuntimeException('Need to call clearPromotionSelect() before changing existing choice');
+		}
 	}
 }

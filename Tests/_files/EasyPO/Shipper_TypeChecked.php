@@ -1,7 +1,7 @@
 <?php
 class Shipper {
 	private $name;
-	private $perouncerate;
+	private $perOunceRate;
 
 	public function setName($name) {
 		if (!is_string($name)) {
@@ -12,10 +12,10 @@ class Shipper {
 	public function getName() {
 		return $this->name;
 	}
-	public function setPerOunceRate($perouncerate) {
-		$this->perouncerate = $perouncerate;
+	public function setPerOunceRate($perOunceRate) {
+		$this->perOunceRate = $perOunceRate;
 	}
 	public function getPerOunceRate() {
-		return $this->perouncerate;
+		return $this->perOunceRate;
 	}
 }

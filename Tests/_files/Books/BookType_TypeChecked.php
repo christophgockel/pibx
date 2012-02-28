@@ -1,18 +1,18 @@
 <?php
 class BookType {
 	private $name;
-	private $isbn;
+	private $ISBN;
 	private $price;
-	private $authors;
+	private $authorNameList;
 	private $description;
 	private $promotionSelect = -1;
 	private $PROMOTION_DISCOUNT_CHOICE = 0;
 	private $PROMOTION_NONE_CHOICE = 1;
 	private $promotionDiscount;
 	private $promotionNone;
-	private $publicationdate;
-	private $bookcategory;
-	private $itemid;
+	private $publicationDate;
+	private $bookCategory;
+	private $itemId;
 
 	public function setName($name) {
 		if (!is_string($name)) {
@@ -23,14 +23,14 @@ class BookType {
 	public function getName() {
 		return $this->name;
 	}
-	public function setISBN($isbn) {
-		if (!is_long($isbn)) {
-			throw new InvalidArgumentException('"' . $isbn . '" is not a valid long.');
+	public function setISBN($ISBN) {
+		if (!is_long($ISBN)) {
+			throw new InvalidArgumentException('"' . $ISBN . '" is not a valid long.');
 		}
-		$this->isbn = $isbn;
+		$this->ISBN = $ISBN;
 	}
 	public function getISBN() {
-		return $this->isbn;
+		return $this->ISBN;
 	}
 	public function setPrice($price) {
 		if (!is_string($price)) {
@@ -41,16 +41,16 @@ class BookType {
 	public function getPrice() {
 		return $this->price;
 	}
-	public function setAuthorNames(array $authors) {
-		foreach ($authors as &$a) {
+	public function setAuthorNames(array $authorNameList) {
+		foreach ($authorNameList as &$a) {
 			if (!is_string($a)) {
 				throw new InvalidArgumentException('Invalid list. All containing elements have to be of type "string".');
 			}
 		}
-		$this->authors = $authors;
+		$this->authorNameList = $authorNameList;
 	}
 	public function getAuthorNames() {
-		return $this->authors;
+		return $this->authorNameList;
 	}
 	public function setDescription($description) {
 		if (!is_string($description)) {
@@ -60,13 +60,6 @@ class BookType {
 	}
 	public function getDescription() {
 		return $this->description;
-	}
-	private function setPromotionSelect($choice) {
-		if ($this->promotionSelect == -1) {
-			$this->promotionSelect = $choice;
-		} elseif ($this->promotionSelect != $choice) {
-			throw new RuntimeException('Need to call clearPromotionSelect() before changing existing choice');
-		}
 	}
 	public function clearPromotionSelect() {
 		$this->promotionSelect = -1;
@@ -97,31 +90,38 @@ class BookType {
 	public function getPromotionNone() {
 		return $this->promotionNone;
 	}
-	public function setPublicationDate($publicationdate) {
+	public function setPublicationDate($publicationDate) {
 		if (!preg_match('/\d{4}-\d{2}-\d{2}/ism')) {
-			throw new InvalidArgumentException('Unexpected date format:' . $publicationdate . '. Expected is: yyyy-mm-dd.');
+			throw new InvalidArgumentException('Unexpected date format:' . $publicationDate . '. Expected is: yyyy-mm-dd.');
 		}
-		$this->publicationdate = $publicationdate;
+		$this->publicationDate = $publicationDate;
 	}
 	public function getPublicationDate() {
-		return $this->publicationdate;
+		return $this->publicationDate;
 	}
-	public function setBookCategory($bookcategory) {
-		if (($bookcategory != 'magazine') || ($bookcategory != 'novel') || ($bookcategory != 'fiction') || ($bookcategory != 'other')) {
-			throw new InvalidArgumentException('Unexpected value "' . $bookcategory . '". Expected is one of the following: "magazine", "novel", "fiction", "other".');
+	public function setBookCategory($bookCategory) {
+		if (($bookCategory != 'magazine') || ($bookCategory != 'novel') || ($bookCategory != 'fiction') || ($bookCategory != 'other')) {
+			throw new InvalidArgumentException('Unexpected value "' . $bookCategory . '". Expected is one of the following: "magazine", "novel", "fiction", "other".');
 		}
-		$this->bookcategory = $bookcategory;
+		$this->bookCategory = $bookCategory;
 	}
 	public function getBookCategory() {
-		return $this->bookcategory;
+		return $this->bookCategory;
 	}
-	public function setItemId($itemid) {
-		if (!is_string($itemid)) {
-			throw new InvalidArgumentException('"' . $itemid . '" is not a valid string.');
+	public function setItemId($itemId) {
+		if (!is_string($itemId)) {
+			throw new InvalidArgumentException('"' . $itemId . '" is not a valid string.');
 		}
-		$this->itemid = $itemid;
+		$this->itemId = $itemId;
 	}
 	public function getItemId() {
-		return $this->itemid;
+		return $this->itemId;
+	}
+	private function setPromotionSelect($choice) {
+		if ($this->promotionSelect == -1) {
+			$this->promotionSelect = $choice;
+		} elseif ($this->promotionSelect != $choice) {
+			throw new RuntimeException('Need to call clearPromotionSelect() before changing existing choice');
+		}
 	}
 }

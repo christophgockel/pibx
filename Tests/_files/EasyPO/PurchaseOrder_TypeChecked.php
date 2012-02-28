@@ -2,7 +2,7 @@
 class PurchaseOrder {
 	private $customer;
 	private $date;
-	private $lineitemlist;
+	private $lineItemList;
 	private $shipper;
 
 	public function setCustomer(Customer $customer) {
@@ -17,16 +17,16 @@ class PurchaseOrder {
 	public function getDate() {
 		return $this->date;
 	}
-	public function setLineItems(array $lineitemlist) {
-		foreach ($lineitemlist as &$l) {
+	public function setLineItems(array $lineItemList) {
+		foreach ($lineItemList as &$l) {
 			if (get_class($l) !== 'LineItem') {
 				throw new InvalidArgumentException('Invalid list. All containing elements have to be of type "LineItem".');
 			}
 		}
-		$this->lineitemlist = $lineitemlist;
+		$this->lineItemList = $lineItemList;
 	}
 	public function getLineItems() {
-		return $this->lineitemlist;
+		return $this->lineItemList;
 	}
 	public function setShipper(Shipper $shipper) {
 		$this->shipper = $shipper;

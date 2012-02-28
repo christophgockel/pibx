@@ -1,7 +1,7 @@
 <?php
 class LineItem {
 	private $description;
-	private $perunitounces;
+	private $perUnitOunces;
 	private $price;
 	private $quantity;
 
@@ -11,11 +11,11 @@ class LineItem {
 	public function getDescription() {
 		return $this->description;
 	}
-	public function setPerUnitOunces($perunitounces) {
-		$this->perunitounces = $perunitounces;
+	public function setPerUnitOunces($perUnitOunces) {
+		$this->perUnitOunces = $perUnitOunces;
 	}
 	public function getPerUnitOunces() {
-		return $this->perunitounces;
+		return $this->perUnitOunces;
 	}
 	public function setPrice($price) {
 		$this->price = $price;

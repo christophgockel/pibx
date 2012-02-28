@@ -1,11 +1,11 @@
 <?php
 class Collection {
-	private $books;
+	private $bookList;
 
-	public function setBooks(array $books) {
-		$this->books = $books;
+	public function setBooks(array $bookList) {
+		$this->bookList = $bookList;
 	}
 	public function getBooks() {
-		return $this->books;
+		return $this->bookList;
 	}
 }

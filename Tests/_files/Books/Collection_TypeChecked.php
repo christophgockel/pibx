@@ -1,16 +1,16 @@
 <?php
 class Collection {
-	private $books;
+	private $bookList;
 
-	public function setBooks(array $books) {
-		foreach ($books as &$b) {
+	public function setBooks(array $bookList) {
+		foreach ($bookList as &$b) {
 			if (get_class($b) !== 'BookType') {
 				throw new InvalidArgumentException('Invalid list. All containing elements have to be of type "BookType".');
 			}
 		}
-		$this->books = $books;
+		$this->bookList = $bookList;
 	}
 	public function getBooks() {
-		return $this->books;
+		return $this->bookList;
 	}
 }

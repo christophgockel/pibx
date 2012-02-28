@@ -45,25 +45,11 @@ require_once 'PiBX/Util/XsdType.php';
  * of the AST.
  * 
  * After visiting, the code can be retrieved with <code>getClasses()</code>.
- * So, the actual file writing has to be done separately.
+ * The actual file writing has to be done separately.
  *
  * @author Christoph Gockel
  */
 class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
-    private $xml;
-
-    /**
-     * @var string[] hash with generated class-code
-     */
-    private $classes;
-    private $currentClass;
-    private $currentClassName;
-    private $currentClassAttributes;
-    private $currentClassMethods;
-    /**
-     * @var string Used for additional class-code. Content will be added after the closing "}".
-     */
-    private $classAppendix;
     /**
      * @var PiBX_CodeGen_TypeCheckGenerator
      */
@@ -72,25 +58,140 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
      * @var boolean Flag if type-check code should be included in the generated methods.
      */
     private $doTypeChecks;
+
+    /**
+     * List of class attributes. Separated by class-name => public/protected/private.
+     * @var array
+     */
+    private $attributes;
+    private $methods;
+    private $TYPEHINT_ARRAY = '#array#';
+    private $localClasses;
+    private $indentationString;
     
-    public function  __construct() {
-        $this->classes = array();
-
-        $this->currentClassName = '';
-        $this->currentClass = '';
-        $this->currentClassAttributes = '';
-        $this->currentClassMethods = '';
-        $this->classAppendix = '';
-
+    public function  __construct($indentationString = "\t") {
         $this->typeChecks = new PiBX_CodeGen_TypeCheckGenerator();
+        $this->attributes = array();
+        $this->methods = array();
+        $this->localClasses = array();
+        $this->indentationString = $indentationString;
     }
 
     /**
-     * 
      * @return string[] hash with class-name => class-code
      */
-    public function getClasses() {        
+    public function getClasses() {
+        return $this->buildClasses();
         return $this->classes;
+    }
+
+    private function buildClasses() {
+        $classNames = array_keys($this->attributes);
+        $classes = array();
+        
+        foreach ($classNames as $className) {
+            $code = 'class ' . $className . ' {';
+            $code .= $this->buildPrivateAttributesForClass($className);
+            $code .= $this->buildPublicMethodsForClass($className);
+            $code .= '}';
+            
+            $code = $this->prettyPrint($code);
+            
+            $classes[$className] = $code;
+        }
+
+        return $classes;
+    }
+
+    private function buildPrivateAttributesForClass($className) {
+        $code = '';
+
+        foreach ($this->attributes[$className]['private'] as $attribute) {
+            list($attributeName, $attributeValue) = $attribute;
+            $code .= 'private $' . $attributeName;
+            if ($attributeValue !== '') {
+                $code .= ' = ' . $attributeValue;
+            }
+            $code .= ';';
+        }
+
+        return $code;
+    }
+
+    private function buildPublicMethodsForClass($className) {
+        $code = '';
+
+        foreach ($this->methods[$className] as $scope => $methods) {
+            foreach ($methods as $method) {
+                $code .= $scope . ' function ';
+                $code .= $method['name'];
+                $code .= '(';
+                    $code .= $this->getParameterListString($method);
+                $code .= ')';
+                $code .= ' {';
+                    $code .= $method['body'];
+                $code .= '}';
+            }
+        }
+
+        return $code;
+    }
+
+    private function getParameterListString(array $method) {
+        $parameterString = '';
+        
+        foreach ($method['parameter'] as $parameter) {
+            $parameterName = key($parameter);
+            $parameterType = $parameter[$parameterName];
+
+            if ( !PiBX_Util_XsdType::isBaseType($parameterType) ) { // enable type hinting
+                if ($parameterType == $this->TYPEHINT_ARRAY) {
+                    $parameterString .= 'array ';
+                } else {
+                    $parameterString .= PiBX_Binding_Names::createClassnameFor($parameterType) . ' ';
+                }
+            }
+            $parameterString .= '$' . key($parameter);
+        }
+
+        return $parameterString;
+    }
+
+    private function prettyPrint($code) {
+        $indentation = 0;
+        $prettyCode = '';
+        $length = strlen($code);
+        $currentChar = $previousChar = '';
+        $quoted = false;
+
+        for ($i = 0; $i < $length; $i++) {
+            $currentChar = mb_substr($code, $i, 1);
+            
+            if ($currentChar == "'" || $currentChar == '"') {
+                $quoted = !$quoted;
+            } elseif ($currentChar == '}') {
+                $indentation--;
+            } elseif ($previousChar == '{') {
+                $indentation++;
+            }
+            
+            if ($indentation < 0) {
+                $indentation = 0;
+            }
+            
+            if (!$quoted && ($previousChar == '{' || $previousChar == ';' || ($previousChar == '}' && $currentChar != ' '))) {
+                $prettyCode .= "\n";
+                $prettyCode .= str_repeat($this->indentationString, $indentation);
+            }
+            
+            $prettyCode .= $currentChar;
+            $previousChar = $currentChar;
+        }
+        
+        // for cosmetic reasons, add a separating newline between class-attributes and its methods
+        $prettyCode = preg_replace('/^(\s*(?:private|protected|public) function)/im', "\n$1", $prettyCode, 1);
+        
+        return $prettyCode;
     }
 
     /**
@@ -110,102 +211,40 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     }
 
     public function visitCollectionEnter(PiBX_AST_Collection $collection) {
-        $name = $collection->getName();
-        
-        $this->currentClassAttributes .= "\tprivate \$" . $name . ";\n";
-        
-        $setter = PiBX_Binding_Names::createSetterNameFor($collection);
-        $getter = PiBX_Binding_Names::createGetterNameFor($collection);
-        
-        $this->currentClassMethods .= "\tpublic function " . $setter . "(array \$" . $name . ") {\n";
-        if ($this->doTypeChecks) {
-            $this->currentClassMethods .= $this->typeChecks->getListTypeCheckFor($tree, $name);
-        }
-        $this->currentClassMethods .= "\t\t\$this->" . $name . " = \$" . $name . ";\n"
-                                    . "\t}\n"
-                                    . "\tpublic function " . $getter . "() {\n"
-                                    . "\t\treturn \$this->" . $name . ";\n"
-                                    . "\t}\n";
-        
+        // Collection informations are used when CollectionItem-nodes are traversed
         return true;
     }
     public function visitCollectionLeave(PiBX_AST_Collection $collection) {
         return true;
     }
 
-    public function visitCollectionItem(PiBX_AST_CollectionItem $collectionItem) {
-        if ($collectionItem->getParent() instanceof PiBX_AST_Collection) {
-            // the collection-node already did add everything necessary for the collection and its items
-            return false;
-        }
+    public function visitCollectionItem(PiBX_AST_CollectionItem $collectionItem) {        
+        $name = PiBX_Binding_Names::getAttributeName($collectionItem->getName()) . 'List';
+
+        $this->addPrivateMember($name);
+        $this->addSetterFor($collectionItem);//TODO: add parameter $name, to pass pre-defined name?
+        $this->addGetterFor($collectionItem);
         
-        $name = PiBX_Binding_Names::getAttributeName($collectionItem->getName()) . 'list';
-
-        $this->currentClassAttributes .= "\tprivate \$" . $name . ";\n";
-
-        $setter = PiBX_Binding_Names::createSetterNameFor($collectionItem);
-        $getter = PiBX_Binding_Names::createGetterNameFor($collectionItem);
-
-        $this->currentClassMethods .= "\tpublic function " . $setter . "(array \$" . $name . ") {\n";
-        if ($this->doTypeChecks) {
-            $this->currentClassMethods .= $this->typeChecks->getListTypeCheckFor($collectionItem, $name);
-        }
-        $this->currentClassMethods .= "\t\t\$this->" . $name . " = \$" . $name . ";\n"
-                                    . "\t}\n"
-                                    . "\tpublic function " . $getter . "() {\n"
-                                    . "\t\treturn \$this->" . $name . ";\n"
-                                    . "\t}\n";
-        return true;
+        return;
     }
     
     public function visitEnumerationEnter(PiBX_AST_Enumeration $enumeration) {
-        $enumName = $enumeration->getName();
+        $name = $enumeration->getName();
+        $parent = $enumeration->getParent();
 
-        if ($enumeration->getParent() == null) {
-            // at the moment separate enums are not supported, yet.
-            //$this->classAppendix .= 'class b_' . $this->currentClassName . '_' . ucfirst($enumName) . " {\n";
-            return false;
-        }
+        $this->addPrivateMember($name);
 
-        $attributeName = PiBX_Binding_Names::getAttributeName($enumeration->getName());
-        $methodName = PiBX_Binding_Names::getCamelCasedName($enumeration->getName());
-
-        $this->currentClassAttributes .= "\tprivate \$".$attributeName.";\n";
-        $methods = "\tpublic function set".$methodName."(\$".$attributeName.") {\n";
-        if ($this->doTypeChecks) {
-            // to do a type check for enums
-            // all possible values have to be fetched
-            $valueCount = $enumeration->countChildren();
-            $conditionValues = array();
-            
-            for ($i = 0; $i < $valueCount; $i++) {
-                $valueAst = $enumeration->get($i);
-                $conditionValues[] = $valueAst->getName();
-            }
-            
-            $ifConditions = "(\$" . $attributeName . " != '".implode("') || (\$".$attributeName." != '", $conditionValues) . "')";
-            $listOfValues = '"' . implode('", "', $conditionValues) . '"';
-            
-            $methods .= "\t\tif (";
-            $methods .= $ifConditions . ") {\n"
-                      . "\t\t\tthrow new InvalidArgumentException('Unexpected value \"' . \$" . $attributeName . " . '\". Expected is one of the following: " . $listOfValues . ".');\n"
-                      . "\t\t}\n";
-        }
-        $methods .= "\t\t\$this->".  $attributeName . " = \$".$attributeName.";\n"
-                  . "\t}\n"
-                  . "\tpublic function get".$methodName."() {\n"
-                  . "\t\treturn \$this->" . $attributeName . ";\n"
-                  . "\t}\n";
-
-        $this->currentClassMethods .= $methods;
-
+        $this->addSetterFor($enumeration);
+        $this->addGetterFor($enumeration);
+        
         return true;
     }
+
     public function visitEnumerationLeave(PiBX_AST_Enumeration $enumeration) {
         if ($enumeration->getParent() == null) {
-            //$this->classAppendix .= "}";
             return false;
         }
+        
         return true;
     }
     
@@ -213,84 +252,76 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     }
     
     public function visitStructureEnter(PiBX_AST_Structure $structure) {
+        $name = $structure->getName();
         $structureType = $structure->getStructureType();
-        
+
         if ($structureType === PiBX_AST_StructureType::CHOICE()) {
-            $name = $structure->getName();
-            $attributeName = $name . 'Select';
-            $this->currentClassAttributes .= "\tprivate \$" . $attributeName . " = -1;\n";
-            
-            $constantNames = PiBX_Binding_Names::createChoiceConstantsFor($structure);
-            $i = 0;
-            foreach ($constantNames as $constant) {
-                $this->currentClassAttributes .= "\tprivate \${$constant} = $i;\n";
-                ++$i;
+            $selectionAttribute = $name . 'Select';
+            $this->addPrivateMember($selectionAttribute, '-1');
+            $childrenCount = $structure->countChildren();
+            for ($i = 0; $i < $childrenCount; $i++) {
+                $child = $structure->get($i);
+
+                $childName = $child->getName();
+                $attributeName = $name . '_' . $childName . '_CHOICE';
+                $attributeName = strtoupper($attributeName);
+
+                $this->addPrivateMember($attributeName, $i);
             }
 
-            $methodName = ucfirst($attributeName);
-            $methods = "\tprivate function set{$methodName}(\$choice) {\n"
-                     . "\t\tif (\$this->{$attributeName} == -1) {\n"
-                     . "\t\t\t\$this->{$attributeName} = \$choice;\n"
-                     . "\t\t} elseif (\$this->{$attributeName} != \$choice) {\n"
-                     . "\t\t\tthrow new RuntimeException('Need to call clear{$methodName}() before changing existing choice');\n"
-                     . "\t\t}\n"
-                     . "\t}\n";
-
-            $methods .= "\tpublic function clear{$methodName}() {\n"
-                      . "\t\t\$this->{$attributeName} = -1;\n"
-                      . "\t}\n";
-
-            $this->currentClassMethods .= $methods;
+            $methodName = ucfirst($name) . 'Select';
+            $parameter = array(array('choice' => 'string'));
+            $body = 'if ($this->' . $selectionAttribute . ' == -1) {';
+                $body .= '$this->' . $selectionAttribute . ' = $choice;';
+            $body .= '} elseif ($this->' . $selectionAttribute . ' != $choice) {';
+                $body .= 'throw new RuntimeException(\'Need to call clear' . $methodName . '() before changing existing choice\');';
+            $body .= '}';
+            $this->addPrivateMethod('set'.$methodName, $parameter, $body);
+            $body = '$this->' . $selectionAttribute . ' = -1;';
+            $this->addPublicMethod('clear'.$methodName, array(), $body);
         }
         
         return true;
     }
     public function visitStructureLeave(PiBX_AST_Structure $structure) {
-        if ($structure->getStructureType() == PiBX_AST_StructureType::CHOICE()) {
-            $this->xml .= '</structure>';
-        }
-
-        $this->xml .= "</structure>";
-        
         return true;
     }
     
     public function visitStructureElementEnter(PiBX_AST_StructureElement $structureElement) {
         $name = $structureElement->getName();
-        $parentName = $structureElement->getParent()->getName();
+        $parent = $structureElement->getParent();
+        $structureType = $parent->getStructureType();
 
-        $attributeName = $parentName . $name;
-        
-        $selectName = ucfirst($parentName) . 'Select';
-        
-        $this->currentClassAttributes .= "\tprivate \$" . $attributeName . ";\n";
-        
-        $choiceConstant = $parentName . '_' . $name . '_CHOICE';
-        $choiceConstant = strtoupper($choiceConstant);
+        if ($structureType === PiBX_AST_StructureType::CHOICE()) {
+            $parentName = $parent->getName();
+            $attributeName = $parentName . ucfirst($name);
+            $this->addPrivateMember($attributeName);
 
-        $setter = PiBX_Binding_Names::createSetterNameFor($structureElement);
-        $getter = PiBX_Binding_Names::createGetterNameFor($structureElement);
+            $choiceConstant = $parentName . '_' . $name . '_CHOICE';
+            $choiceConstant = strtoupper($choiceConstant);
+            $choiceMember = $parentName . 'Select';
 
-        $methodName = ucfirst($attributeName);
-
-        $methods = "\tpublic function if{$methodName}() {\n"
-                . "\t\treturn \$this->{$parentName}Select == \$this->$choiceConstant;\n"
-                . "\t}\n";
-        $methods .= "\tpublic function {$setter}(\${$attributeName}) {\n"
-                  . "\t\t\$this->set{$selectName}(\$this->{$choiceConstant});\n";
-        
-        if ($this->doTypeChecks) {
-            $methods .= $this->typeChecks->getTypeCheckFor($structureElement->getType(), $attributeName);
+            $methodName = 'if' . ucfirst($attributeName);
+            $parameter = array();            
+            $body = 'return $this->'.$choiceMember . ' == $this->' . $choiceConstant . ';';
+            $this->addPublicMethod($methodName, $parameter, $body);
+            
+            $methodName = 'set' . ucfirst($attributeName);
+            $parameter = array(array($attributeName => $structureElement->getType()));
+            $body = '$this->set' . ucfirst($parentName) . 'Select($this->' . $choiceConstant . ');';
+            if ($this->doTypeChecks) {
+                $typeCheckCode = $this->typeChecks->getTypeCheckFor($structureElement->getType(), $attributeName);
+                $body .= $typeCheckCode;
+            }
+            $body .= '$this->' . $attributeName . ' = $' . $attributeName . ';';
+            $this->addPublicMethod($methodName, $parameter, $body);
+            
+            $methodName = 'get' . ucfirst($attributeName);
+            $parameter = array();
+            $body = 'return $this->' . $attributeName . ';';
+            $this->addPublicMethod($methodName, $parameter, $body);
         }
-        
-        $methods .= "\t\t\$this->{$attributeName} = \${$attributeName};\n"
-                  . "\t}\n";
-        $methods .= "\tpublic function {$getter}() {\n"
-                  . "\t\treturn \$this->{$attributeName};\n"
-                  . "\t}\n";
 
-        $this->currentClassMethods .= $methods;
-        
         return true;
     }
     public function visitStructureElementLeave(PiBX_AST_StructureElement $structureElement) {
@@ -298,65 +329,141 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     }
     
     public function visitTypeEnter(PiBX_AST_Type $type) {
+        $name = $type->getName();
+        $typesType = $type->getType();
+
         $this->currentClassName = PiBX_Binding_Names::createClassnameFor($type);
-        $this->currentClass = 'class ' . $this->currentClassName . " {\n";
+        $this->addClass($this->currentClassName);
+
+        if ( !$type->hasChildren() ) {
+            $methodName = PiBX_Binding_Names::getCamelCasedName($name);
+            
+            if (!PiBX_Util_XsdType::isBaseType($typesType)) {
+                // complexTypes (i.e. classes) have to be type-hinted
+                // in the method signature.
+                $expectedType = PiBX_Binding_Names::createClassnameFor($type);
+            }
+
+            $this->addPrivateMember($name);
+            $this->addSetterFor($type);
+            $this->addGetterFor($type);
+        }
         
         return true;
     }
-    public function visitTypeLeave(PiBX_AST_Type $type) {
-        $this->currentClass .= $this->currentClassAttributes;
-        $this->currentClass .= "\n";
-        $this->currentClass .= $this->currentClassMethods;
-        $this->currentClass .= '}';
-        if (trim($this->classAppendix) != '') {
-            $this->currentClass .= "\n";
-            $this->currentClass .= $this->classAppendix;
-        }
-        $this->classes[$this->currentClassName] = $this->currentClass;
 
-        $this->currentClassAttributes = '';
-        $this->currentClassMethods = '';
-        $this->currentClass = '';
-        $this->classAppendix = '';
+    private function addClass($name) {
+        $initialScopeElements = array(
+            'public' => array(),
+            'protected' => array(),
+            'private' => array()
+        );
+        
+        $this->attributes[$name] = $initialScopeElements;
+        $this->methods[$name] = $initialScopeElements;
+        $this->localClasses[$name] = $initialScopeElements;
+    }
+
+    private function addPrivateMember($name, $initialValue = '') {
+        $this->attributes[$this->currentClassName]['private'][] = array($name, $initialValue);
+    }
+
+    private function addPublicMethod($name, array $parameter, $body) {
+        $this->methods[$this->currentClassName]['public'][] = array(
+            'name' => $name,
+            'parameter' => $parameter,
+            'body' => $body
+        );
+    }
+
+    private function addPrivateMethod($name, array $parameter, $body) {
+        $this->methods[$this->currentClassName]['private'][] = array(
+            'name' => $name,
+            'parameter' => $parameter,
+            'body' => $body
+        );
+    }
+
+    public function visitTypeLeave(PiBX_AST_Type $type) {
         return true;
     }
 
     public function visitTypeAttributeEnter(PiBX_AST_TypeAttribute $typeAttribute) {
         if ($typeAttribute->countChildren() == 0) {
-            // base type attribute
-            $attributeName = PiBX_Binding_Names::getAttributeName($typeAttribute->getName());
-            $methodName = PiBX_Binding_Names::getCamelCasedName($typeAttribute->getName());
-            
-            $this->currentClassAttributes .= "\tprivate \$".$attributeName.";\n";
+            $name = $typeAttribute->getName();
             $type = $typeAttribute->getType();
-
-            $methods = "\tpublic function set".$methodName."(";
-            if (!PiBX_Util_XsdType::isBaseType($type)) {
-                // complexTypes (i.e. classes) have to be type-hinted
-                // in the method signature.
-                $expectedType = PiBX_Binding_Names::createClassnameFor($type);
-                $methods .= $expectedType . ' ';
-            }
-            $methods .= "\$".$attributeName.") {\n";
+            // base type attribute
+            $attributeName = PiBX_Binding_Names::getAttributeName($name);
             
-            if ($this->doTypeChecks) {
-                $methods .= $this->typeChecks->getTypeCheckFor($typeAttribute->getType(), $attributeName);
-            }
-            
-            $methods .= "\t\t\$this->". $attributeName . " = \$".$attributeName.";\n"
-                     . "\t}\n"
-                     . "\tpublic function get".$methodName."() {\n"
-                     . "\t\treturn \$this->". $attributeName . ";\n"
-                     . "\t}\n";
-
-            $this->currentClassMethods .= $methods;
+            $this->addPrivateMember($attributeName);
+            $this->addSetterFor($typeAttribute);
+            $this->addGetterFor($typeAttribute);
 
             return false;
         } else {
             return true;
         }
     }
+
+    protected function addSetterFor(PiBX_AST_Tree $tree) {
+        $name = $tree->getName();
+        $type = $tree->getType();
+        $attributeName = PiBX_Binding_Names::getAttributeName($name);
+        $methodName    = PiBX_Binding_Names::getCamelCasedName($name);
+        $typeCheckCode = '';
+        
+        if ($tree instanceof PiBX_AST_CollectionItem) {
+            $methodName = $this->buildPlural($methodName);
+            $attributeName .= 'List';
+            $type = $this->TYPEHINT_ARRAY;
+            if ($this->doTypeChecks) {
+                $typeCheckCode = $this->typeChecks->getListTypeCheckFor($tree, $attributeName);
+            }
+        } elseif ($tree instanceof PiBX_AST_Enumeration) {
+            $firstEnumerationValue = $tree->get(0);
+            // the type is stored in the actual EnumerationValue nodes, not in the Enumeration itself
+            $type = $firstEnumerationValue->getType();
+            if ($this->doTypeChecks) {
+                $typeCheckCode = $this->typeChecks->getEnumerationTypeCheckFor($tree, $attributeName);
+            }
+        } else {
+            if ($this->doTypeChecks) {
+                $typeCheckCode = $this->typeChecks->getTypeCheckFor($type, $attributeName);
+            }
+        }
+        
+        $parameter = array(array($attributeName => $type));
+        $body = $typeCheckCode . '$this->' . $attributeName . ' = $' . $attributeName . ';';
+        
+        $this->addPublicMethod('set' . $methodName, $parameter, $body);
+    }
+
+    protected function addGetterFor(PiBX_AST_Tree $tree) {
+        $name = $tree->getName();
+        $type = $tree->getType();
+        $attributeName = PiBX_Binding_Names::getAttributeName($name);
+        $methodName    = PiBX_Binding_Names::getCamelCasedName($name);
+
+        if ($tree instanceof PiBX_AST_CollectionItem) {
+            $methodName = $this->buildPlural($methodName);
+            $attributeName .= 'List';
+        }
+
+        $body = 'return $this->' . $attributeName . ';';
+        
+        $this->addPublicMethod('get' . $methodName, array(), $body);
+    }
+    
     public function visitTypeAttributeLeave(PiBX_AST_TypeAttribute $typeAttribute) {
         return true;
+    }
+
+    private function buildPlural($name) {
+        $lastCharacter = substr($name, -1);
+        if (strtolower($lastCharacter) == 's') {
+            return $name;
+        }
+
+        return $name . 's';
     }
 }

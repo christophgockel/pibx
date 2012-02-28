@@ -28,22 +28,21 @@
  */
 require_once dirname(__FILE__) . '/../bootstrap.php';
 require_once 'PHPUnit/Autoload.php';
-require_once 'Tests/CodeGen/ClassGeneratorTest.php';
-require_once 'Tests/CodeGen/SchemaParserTest.php';
-require_once 'Tests/CodeGen/ASTCreatorTest.php';
-/**
- * Test-Suite of package "CodeGen".
- *
- * @author Christoph Gockel
- */
-class PiBX_CodeGen_Suite extends PHPUnit_Framework_TestSuite {
-    
-    public static function suite() {
-        $suite = new PHPUnit_Framework_TestSuite();
-        $suite->addTestSuite('PiBX_CodeGen_ClassGeneratorTest');
-        $suite->addTestSuite('PiBX_CodeGen_ASTCreatorTest');
-        $suite->addTestSuite('PiBX_CodeGen_SchemaParserTest');
+require_once 'PiBX/Binding/Names.php';
+
+class PiBX_Binding_NamesTest extends PHPUnit_Framework_TestCase {
+    public function testAttributeNames() {
+        $this->assertEquals('lowercase', PiBX_Binding_Names::getAttributeName('lowercase'));
+        $this->assertEquals('camelCased', PiBX_Binding_Names::getAttributeName('camelCased'));
+        $this->assertEquals('camelCased', PiBX_Binding_Names::getAttributeName('camel_Cased'));
+        $this->assertEquals('camelCased', PiBX_Binding_Names::getAttributeName('camel_cased'));
+        $this->assertEquals('camelCased', PiBX_Binding_Names::getAttributeName('camel-Cased'));
+        $this->assertEquals('camelCased', PiBX_Binding_Names::getAttributeName('camel-cased'));
+        $this->assertEquals('UPPERCASED', PiBX_Binding_Names::getAttributeName('UPPERCASED'));
+        $this->assertEquals('name', PiBX_Binding_Names::getAttributeName('Name'));
+        $this->assertEquals('NAme', PiBX_Binding_Names::getAttributeName('NAme'));
         
-        return $suite;
+        $this->assertEquals('nameWithUPperANdLowercase', PiBX_Binding_Names::getAttributeName('Name-With-UPper-aNd-Lowercase'));
+        $this->assertEquals('nameWithUPPERCase', PiBX_Binding_Names::getAttributeName('Name-With-UPPER-case'));
     }
 }

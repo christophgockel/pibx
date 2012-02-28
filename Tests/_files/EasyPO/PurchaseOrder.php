@@ -2,7 +2,7 @@
 class PurchaseOrder {
 	private $customer;
 	private $date;
-	private $lineitemlist;
+	private $lineItemList;
 	private $shipper;
 
 	public function setCustomer(Customer $customer) {
@@ -17,11 +17,11 @@ class PurchaseOrder {
 	public function getDate() {
 		return $this->date;
 	}
-	public function setLineItems(array $lineitemlist) {
-		$this->lineitemlist = $lineitemlist;
+	public function setLineItems(array $lineItemList) {
+		$this->lineItemList = $lineItemList;
 	}
 	public function getLineItems() {
-		return $this->lineitemlist;
+		return $this->lineItemList;
 	}
 	public function setShipper(Shipper $shipper) {
 		$this->shipper = $shipper;

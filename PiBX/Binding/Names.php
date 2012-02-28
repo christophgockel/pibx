@@ -203,6 +203,17 @@ class PiBX_Binding_Names {
         return implode('', $parts);
     }
 
+    private static function combineNamePartsCamelCased($name) {
+        $name  = str_replace('_', '-', $name);
+        $parts = explode('-', $name);
+
+        foreach ($parts as &$part) {
+            $part = ucfirst($part);
+        }
+
+        return implode('', $parts);
+    }
+
     /**
      * Strips off "-" and "_" characters in a name to create a valid attribute
      * name.
@@ -211,10 +222,16 @@ class PiBX_Binding_Names {
      * @return string
      */
     public static function getAttributeName($name) {
-        $name = str_replace('-', '', $name);
-        $name = str_replace('_', '', $name);
+        $camelCasedName = self::combineNamePartsCamelCased($name);//self::getCamelCasedName($name);
+        
+        $firstTwoLettersOfOriginalName = substr($name, 0, 2);
+        $firstTwoLettersOfCamelCasedName = substr($camelCasedName, 0, 2);
 
-        return strtolower($name);
+        if ($firstTwoLettersOfOriginalName == strtoupper($firstTwoLettersOfCamelCasedName)) {
+            return $camelCasedName;
+        }
+        
+        return lcfirst($camelCasedName);
     }
 
     /**
@@ -226,11 +243,11 @@ class PiBX_Binding_Names {
      * @return string Plural of $name
      */
     private static function getCollectionName($name) {
-        $lowercaseLastLetter = strtolower(substr($name, -1));
+        $lastLetterInLowerCase = strtolower(substr($name, -1));
         
-        if ($lowercaseLastLetter == 'y') {
+        if ($lastLetterInLowerCase == 'y') {
             $name = substr_replace($name, 'ies', strlen($name) - 1, 1);
-        } elseif ($lowercaseLastLetter != 's') {
+        } elseif ($lastLetterInLowerCase != 's') {
             $name .= 's';
         }
         

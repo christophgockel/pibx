@@ -92,7 +92,7 @@ class PiBX_Scenarios_EasyPO_ClassGeneratorTest extends PHPUnit_Framework_TestCas
         $this->assertEquals(file_get_contents($shipperFile), "<?php\n" . $classes['Shipper']);
     }
     
-    public function testClassGenerationWithTypeChecks() {
+    public function _testClassGenerationWithTypeChecks() {
         $filepath = dirname(__FILE__) . '/../../_files/EasyPO';
         $schemaFile = $filepath . '/easypo.xsd';
         $bindingFile = $filepath . '/binding.xml';
