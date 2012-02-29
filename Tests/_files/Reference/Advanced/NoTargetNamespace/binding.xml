@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<binding>
+  <mapping class="NoTargetNamespace" name="noTargetNamespace">
+    <value style="text" get-method="getNoTargetNamespace" set-method="setNoTargetNamespace"/>
+  </mapping>
+</binding>
