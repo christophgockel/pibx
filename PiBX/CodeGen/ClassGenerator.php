@@ -256,20 +256,28 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $structureType = $structure->getStructureType();
 
         if ($structureType === PiBX_AST_StructureType::CHOICE()) {
-            $selectionAttribute = $name . 'Select';
+            if ($name != '') {
+                $selectionAttribute = $name . 'Select';
+            } else {
+                $selectionAttribute = 'choiceSelect';
+            }
             $this->addPrivateMember($selectionAttribute, '-1');
             $childrenCount = $structure->countChildren();
             for ($i = 0; $i < $childrenCount; $i++) {
                 $child = $structure->get($i);
 
                 $childName = $child->getName();
-                $attributeName = $name . '_' . $childName . '_CHOICE';
+                $attributeName = '';
+                if ($name != '') {
+                    $attributeName = $name . '_';
+                }
+                $attributeName = $attributeName . $childName . '_CHOICE';
                 $attributeName = strtoupper($attributeName);
 
                 $this->addPrivateMember($attributeName, $i);
             }
 
-            $methodName = ucfirst($name) . 'Select';
+            $methodName = ucfirst($selectionAttribute);
             $parameter = array(array('choice' => 'string'));
             $body = 'if ($this->' . $selectionAttribute . ' == -1) {';
                 $body .= '$this->' . $selectionAttribute . ' = $choice;';
@@ -294,13 +302,20 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
 
         if ($structureType === PiBX_AST_StructureType::CHOICE()) {
             $parentName = $parent->getName();
-            $attributeName = $parentName . ucfirst($name);
+            
+            if ($parentName == '') {
+                $attributeName  = $name;
+                $choiceConstant = $name . '_CHOICE';
+                $choiceMember   = 'choiceSelect';
+            } else {
+                $attributeName  = $parentName . ucfirst($name);
+                $choiceConstant = $parentName . '_' . $name . '_CHOICE';
+                $choiceMember   = $parentName . 'Select';
+            }
+            
             $this->addPrivateMember($attributeName);
 
-            $choiceConstant = $parentName . '_' . $name . '_CHOICE';
             $choiceConstant = strtoupper($choiceConstant);
-            $choiceMember = $parentName . 'Select';
-
             $methodName = 'if' . ucfirst($attributeName);
             $parameter = array();            
             $body = 'return $this->'.$choiceMember . ' == $this->' . $choiceConstant . ';';
@@ -308,7 +323,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
             
             $methodName = 'set' . ucfirst($attributeName);
             $parameter = array(array($attributeName => $structureElement->getType()));
-            $body = '$this->set' . ucfirst($parentName) . 'Select($this->' . $choiceConstant . ');';
+            $body = '$this->set' . ucfirst($choiceMember) . '($this->' . $choiceConstant . ');';
             if ($this->doTypeChecks) {
                 $typeCheckCode = $this->typeChecks->getTypeCheckFor($structureElement->getType(), $attributeName);
                 $body .= $typeCheckCode;

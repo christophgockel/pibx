@@ -97,4 +97,58 @@ class PiBX_CodeGen_ClassGeneratorTest extends PHPUnit_Framework_TestCase {
                            . "}";
         $this->assertEquals($expectedClassCode, $classes['GeneratedWithoutIndentation']);
     }
+
+    public function testGlobalComplexTypeChoice() {
+        $type = new PiBX_AST_Type('Fruit');
+            $type_structure = new PiBX_AST_Structure();
+            $type_structure->setStructureType(PiBX_AST_StructureType::CHOICE());
+            $type_structure->add(new PiBX_AST_StructureElement('apple', 'string'));
+            $type_structure->add(new PiBX_AST_StructureElement('orange', 'string'));
+        $type->add($type_structure);
+
+        $generator = new PiBX_CodeGen_ClassGenerator('  ');
+        $type->accept($generator);
+
+        $classes = $generator->getClasses();
+
+        $expectedClassCode  = "class Fruit {\n"
+                            . "  private \$choiceSelect = -1;\n"
+                            . "  private \$APPLE_CHOICE = 0;\n"
+                            . "  private \$ORANGE_CHOICE = 1;\n"
+                            . "  private \$apple;\n"
+                            . "  private \$orange;\n"
+                            . "\n"
+                            . "  public function clearChoiceSelect() {\n"
+                            . "    \$this->choiceSelect = -1;\n"
+                            . "  }\n"
+                            . "  public function ifApple() {\n"
+                            . "    return \$this->choiceSelect == \$this->APPLE_CHOICE;\n"
+                            . "  }\n"
+                            . "  public function setApple(\$apple) {\n"
+                            . "    \$this->setChoiceSelect(\$this->APPLE_CHOICE);\n"
+                            . "    \$this->apple = \$apple;\n"
+                            . "  }\n"
+                            . "  public function getApple() {\n"
+                            . "    return \$this->apple;\n"
+                            . "  }\n"
+                            . "  public function ifOrange() {\n"
+                            . "    return \$this->choiceSelect == \$this->ORANGE_CHOICE;\n"
+                            . "  }\n"
+                            . "  public function setOrange(\$orange) {\n"
+                            . "    \$this->setChoiceSelect(\$this->ORANGE_CHOICE);\n"
+                            . "    \$this->orange = \$orange;\n"
+                            . "  }\n"
+                            . "  public function getOrange() {\n"
+                            . "    return \$this->orange;\n"
+                            . "  }\n"
+                            . "  private function setChoiceSelect(\$choice) {\n"
+                            . "    if (\$this->choiceSelect == -1) {\n"
+                            . "      \$this->choiceSelect = \$choice;\n"
+                            . "    } elseif (\$this->choiceSelect != \$choice) {\n"
+                            . "      throw new RuntimeException('Need to call clearChoiceSelect() before changing existing choice');\n"
+                            . "    }\n"
+                            . "  }\n"
+                            ."}";
+        $this->assertEquals($expectedClassCode, $classes['Fruit']);
+    }
 }
