@@ -215,8 +215,9 @@ class PiBX_Binding_Names {
     }
 
     /**
-     * Strips off "-" and "_" characters in a name to create a valid attribute
-     * name.
+     * Creates a valid attribute name.
+     *
+     * Strips off "-" and "_" characters in a name.
      * 
      * @param string $name
      * @return string
@@ -232,6 +233,40 @@ class PiBX_Binding_Names {
         }
         
         return lcfirst($camelCasedName);
+    }
+
+    /**
+     * Creates a valid name for a list attribute.
+     *
+     * @param string $name
+     * @return string
+     */
+    public static function getListAttributeName($name) {
+        $attributeName = self::getAttributeName($name);
+
+        if (self::nameAlreadyEndsWithWordList($attributeName)) {
+            return $attributeName;
+        }
+        
+        return $attributeName . 'List';
+    }
+
+    private static function nameAlreadyEndsWithWordList($name) {
+        $lowercaseName = strtolower($name);
+
+        if ($lowercaseName == 'list') {
+            return true;
+        }
+
+        if (strlen($lowercaseName) <= 4) {
+            return false;
+        }
+
+        if (substr($lowercaseName, -4) == 'list') {
+            return true;
+        }
+        
+        return false;
     }
 
     /**

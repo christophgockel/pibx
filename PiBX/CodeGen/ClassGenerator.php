@@ -219,7 +219,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
     }
 
     public function visitCollectionItem(PiBX_AST_CollectionItem $collectionItem) {        
-        $name = PiBX_Binding_Names::getAttributeName($collectionItem->getName()) . 'List';
+        $name = PiBX_Binding_Names::getListAttributeName($collectionItem->getName());
 
         $this->addPrivateMember($name);
         $this->addSetterFor($collectionItem);//TODO: add parameter $name, to pass pre-defined name?

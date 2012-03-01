@@ -45,4 +45,11 @@ class PiBX_Binding_NamesTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('nameWithUPperANdLowercase', PiBX_Binding_Names::getAttributeName('Name-With-UPper-aNd-Lowercase'));
         $this->assertEquals('nameWithUPPERCase', PiBX_Binding_Names::getAttributeName('Name-With-UPPER-case'));
     }
+
+    public function testListAttributeNames() {
+        $this->assertEquals('lowercaseList', PiBX_Binding_Names::getListAttributeName('lowercase'));
+        $this->assertEquals('lowercaseList', PiBX_Binding_Names::getListAttributeName('lowercaseList'));
+        $this->assertEquals('list', PiBX_Binding_Names::getListAttributeName('list'));
+        $this->assertEquals('abcList', PiBX_Binding_Names::getListAttributeName('abc'));
+    }
 }
