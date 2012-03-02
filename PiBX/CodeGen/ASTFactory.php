@@ -170,7 +170,7 @@ class PiBX_CodeGen_ASTFactory {
                 // when the current restriction's simpleType is a root-level
                 // simpleType, an enumeration container is needed for the
                 // next-to-be-added EnumerationValues.
-                return new PiBX_AST_Enumeration();
+                return new PiBX_AST_Enumeration($restrictionParent->getName());
             }
         }
     }
