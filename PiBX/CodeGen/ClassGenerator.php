@@ -351,7 +351,6 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $this->addClass($this->currentClassName);
 
         if ( !$type->hasChildren() ) {
-            $methodName = PiBX_Binding_Names::getCamelCasedName($name);
             
             if (!PiBX_Util_XsdType::isBaseType($typesType)) {
                 // complexTypes (i.e. classes) have to be type-hinted
@@ -428,8 +427,10 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $typeCheckCode = '';
         
         if ($tree instanceof PiBX_AST_CollectionItem) {
-            $methodName = $this->buildPlural($methodName);
-            $attributeName .= 'List';
+            if (!PiBX_Binding_Names::nameAlreadyEndsWithWordList($methodName)) {
+                $methodName = $this->buildPlural($methodName);
+                $attributeName = PiBX_Binding_Names::getListAttributeName($name);
+            }
             $type = $this->TYPEHINT_ARRAY;
             if ($this->doTypeChecks) {
                 $typeCheckCode = $this->typeChecks->getListTypeCheckFor($tree, $attributeName);
@@ -455,13 +456,14 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
 
     protected function addGetterFor(PiBX_AST_Tree $tree) {
         $name = $tree->getName();
-        $type = $tree->getType();
-        $attributeName = PiBX_Binding_Names::getAttributeName($name);
         $methodName    = PiBX_Binding_Names::getCamelCasedName($name);
 
-        if ($tree instanceof PiBX_AST_CollectionItem) {
+        if ($tree instanceof PiBX_AST_CollectionItem && !PiBX_Binding_Names::nameAlreadyEndsWithWordList($name)) {
             $methodName = $this->buildPlural($methodName);
-            $attributeName .= 'List';
+            $attributeName = PiBX_Binding_Names::getListAttributeName($name);
+        }
+        else {
+            $attributeName = PiBX_Binding_Names::getAttributeName($name);
         }
 
         $body = 'return $this->' . $attributeName . ';';
