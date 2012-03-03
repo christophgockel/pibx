@@ -151,4 +151,32 @@ class PiBX_CodeGen_ClassGeneratorTest extends PHPUnit_Framework_TestCase {
                             ."}";
         $this->assertEquals($expectedClassCode, $classes['Fruit']);
     }
+
+    public function testGlobalEnumerationType() {
+        $ast = new PiBX_AST_Type('EnumerationType');
+        $ast->setAsRoot();
+            $enumeration = new PiBX_AST_Enumeration();
+                $enumeration->add(new PiBX_AST_EnumerationValue('One', 'string'));
+                $enumeration->add(new PiBX_AST_EnumerationValue('Two', 'string'));
+                $enumeration->add(new PiBX_AST_EnumerationValue('Three', 'string'));
+        $ast->add($enumeration);
+
+        $generator = new PiBX_CodeGen_ClassGenerator('  ');
+        $ast->accept($generator);
+
+        $classes = $generator->getClasses();
+
+        $expectedClassCode  = "class EnumerationType {\n"
+                            . "  private \$enumerationType;\n"
+                            . "\n"
+                            . "  public function setEnumerationType(\$enumerationType) {\n"
+                            . "    \$this->enumerationType = \$enumerationType;\n"
+                            . "  }\n"
+                            . "  public function getEnumerationType() {\n"
+                            . "    return \$this->enumerationType;\n"
+                            . "  }\n"
+                            . "}";
+        
+        $this->assertEquals($expectedClassCode, $classes['EnumerationType']);
+    }
 }

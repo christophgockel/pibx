@@ -232,6 +232,18 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         $name = $enumeration->getName();
         $parent = $enumeration->getParent();
 
+        if ($name == '' && $this->enumerationIsAnOwnType($enumeration)) {
+            $name = $parent->getName();
+            $attributeName = PiBX_Binding_Names::getAttributeName($name);
+            $methodName = PiBX_Binding_Names::getCamelCasedName($name);
+            
+            $this->addPrivateMember($attributeName);
+            $this->addSetterFor($enumeration);
+            $this->addGetterFor($enumeration);
+
+            return false;
+        }
+
         $this->addPrivateMember($name);
 
         $this->addSetterFor($enumeration);
@@ -435,6 +447,12 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
                 $typeCheckCode = $this->typeChecks->getListTypeCheckFor($tree, $attributeName);
             }
         } elseif ($tree instanceof PiBX_AST_Enumeration) {
+            if ($this->enumerationIsAnOwnType($tree)) {
+                $name = $tree->getParent()->getName();
+                $attributeName = PiBX_Binding_Names::getAttributeName($name);
+                $methodName = PiBX_Binding_Names::getCamelCasedName($name);
+            }
+            
             $firstEnumerationValue = $tree->get(0);
             // the type is stored in the actual EnumerationValue nodes, not in the Enumeration itself
             $type = $firstEnumerationValue->getType();
@@ -462,11 +480,21 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         if ($tree instanceof PiBX_AST_CollectionItem) {
             $methodName = $this->buildPlural($methodName);
             $attributeName .= 'List';
+        } elseif ($tree instanceof PiBX_AST_Enumeration && $this->enumerationIsAnOwnType($tree)) {
+            $name = $tree->getParent()->getName();
+            $attributeName = PiBX_Binding_Names::getAttributeName($name);
+            $methodName = PiBX_Binding_Names::getCamelCasedName($name);
         }
 
         $body = 'return $this->' . $attributeName . ';';
         
         $this->addPublicMethod('get' . $methodName, array(), $body);
+    }
+
+    private function enumerationIsAnOwnType(PiBX_AST_Enumeration $enumeration) {
+        $parent = $enumeration->getParent();
+        
+        return $parent instanceof PiBX_AST_Type && $parent->isRoot();
     }
     
     public function visitTypeAttributeLeave(PiBX_AST_TypeAttribute $typeAttribute) {
