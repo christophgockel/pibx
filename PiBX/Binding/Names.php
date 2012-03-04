@@ -252,21 +252,7 @@ class PiBX_Binding_Names {
     }
 
     private static function nameAlreadyEndsWithWordList($name) {
-        $lowercaseName = strtolower($name);
-
-        if ($lowercaseName == 'list') {
-            return true;
-        }
-
-        if (strlen($lowercaseName) <= 4) {
-            return false;
-        }
-
-        if (substr($lowercaseName, -4) == 'list') {
-            return true;
-        }
-        
-        return false;
+        return preg_match('/lists?$/is', $name) > 0;
     }
 
     /**

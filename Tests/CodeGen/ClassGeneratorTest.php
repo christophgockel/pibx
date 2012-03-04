@@ -203,4 +203,35 @@ class PiBX_CodeGen_ClassGeneratorTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($expectedClassCode, $classes['Type']);
     }
+    public function testValidCollectionNames() {
+        $ast = new PiBX_AST_Type('Type');
+        $ast->setAsRoot();
+        $ast->add(new PiBX_AST_CollectionItem('oneList', 'string'));
+        $ast->add(new PiBX_AST_CollectionItem('otherLists', 'string'));
+
+        $generator = new PiBX_CodeGen_ClassGenerator('  ');
+        $ast->accept($generator);
+
+        $classes = $generator->getClasses();
+
+        $expectedClassCode  = "class Type {\n"
+                            . "  private \$oneList;\n"
+                            . "  private \$otherLists;\n"
+                            . "\n"
+                            . "  public function setOneLists(array \$oneList) {\n"
+                            . "    \$this->oneList = \$oneList;\n"
+                            . "  }\n"
+                            . "  public function getOneLists() {\n"
+                            . "    return \$this->oneList;\n"
+                            . "  }\n"
+                            . "  public function setOtherLists(array \$otherLists) {\n"
+                            . "    \$this->otherLists = \$otherLists;\n"
+                            . "  }\n"
+                            . "  public function getOtherLists() {\n"
+                            . "    return \$this->otherLists;\n"
+                            . "  }\n"
+                            . "}";
+
+        $this->assertEquals($expectedClassCode, $classes['Type']);
+    }
 }
