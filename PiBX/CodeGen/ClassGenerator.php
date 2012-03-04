@@ -441,7 +441,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
         
         if ($tree instanceof PiBX_AST_CollectionItem) {
             $methodName = $this->buildPlural($methodName);
-            $attributeName .= 'List';
+            $attributeName = PiBX_Binding_Names::getListAttributeName($name);
             $type = $this->TYPEHINT_ARRAY;
             if ($this->doTypeChecks) {
                 $typeCheckCode = $this->typeChecks->getListTypeCheckFor($tree, $attributeName);
@@ -479,7 +479,7 @@ class PiBX_CodeGen_ClassGenerator implements PiBX_AST_Visitor_VisitorAbstract {
 
         if ($tree instanceof PiBX_AST_CollectionItem) {
             $methodName = $this->buildPlural($methodName);
-            $attributeName .= 'List';
+            $attributeName = PiBX_Binding_Names::getListAttributeName($name);
         } elseif ($tree instanceof PiBX_AST_Enumeration && $this->enumerationIsAnOwnType($tree)) {
             $name = $tree->getParent()->getName();
             $attributeName = PiBX_Binding_Names::getAttributeName($name);

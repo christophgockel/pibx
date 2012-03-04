@@ -179,4 +179,28 @@ class PiBX_CodeGen_ClassGeneratorTest extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($expectedClassCode, $classes['EnumerationType']);
     }
+
+    public function testIndirectCollection() {
+        $ast = new PiBX_AST_Type('Type');
+        $ast->setAsRoot();
+        $ast->add(new PiBX_AST_CollectionItem('memberList', 'string'));
+
+        $generator = new PiBX_CodeGen_ClassGenerator('  ');
+        $ast->accept($generator);
+
+        $classes = $generator->getClasses();
+
+        $expectedClassCode  = "class Type {\n"
+                            . "  private \$memberList;\n"
+                            . "\n"
+                            . "  public function setMemberLists(array \$memberList) {\n"
+                            . "    \$this->memberList = \$memberList;\n"
+                            . "  }\n"
+                            . "  public function getMemberLists() {\n"
+                            . "    return \$this->memberList;\n"
+                            . "  }\n"
+                            . "}";
+
+        $this->assertEquals($expectedClassCode, $classes['Type']);
+    }
 }
