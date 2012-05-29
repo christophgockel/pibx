@@ -93,7 +93,7 @@ class PiBX_CodeGen {
         print "Generating classes to: ./output\n";
         $generator = new PiBX_CodeGen_ClassGenerator();
 
-        if ($options['typechecks'] === true) {
+        if (isset($options['typechecks']) && $options['typechecks'] === true) {
             $generator->enableTypeChecks();
         }
         
